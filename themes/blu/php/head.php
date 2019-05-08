@@ -362,12 +362,12 @@ if ($idprenota_origine) $anno = $anno - 1;
 if ($mostra_X == "SI") {
 if (@is_array($_POST)) reset($_POST);
 for ($num1 = 0 ; $num1 < count($_POST) ; $num1++) {
-$lista_var_X .= "&amp;".key($_POST)."=".$_POST[key($_POST)];
+$lista_var_X .= "&amp;".key($_POST)."=".urlencode($_POST[key($_POST)]);
 next($_POST);
 } # fine for $num1
 if (@is_array($_GET)) reset($_GET);
 for($num1 = 0 ; $num1 < count($_GET); $num1++) {
-$lista_var_X .= "&amp;".key($_GET)."=".$_GET[key($_GET)];
+$lista_var_X .= "&amp;".key($_GET)."=".urlencode($_GET[key($_GET)]);
 next($_GET);
 } # fine for $num1
 if ($lista_var_X) {

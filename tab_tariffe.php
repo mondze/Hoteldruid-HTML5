@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -225,10 +225,10 @@ unlock_tabelle($tabelle_lock);
 $numero_tariffe = $dati_tariffe['num'];
 if (!$num_tariffe_mostra) $num_tariffe_mostra = 1;
 for ($num1 = 1 ; $num1 <= $num_tariffe_mostra ; $num1++) {
-if (${"numtariffa".$num1} < 1 or ${"numtariffa".$num1} > $numero_tariffe) {
+if (${"numtariffa".$num1} < 1 or ${"numtariffa".$num1} > $numero_tariffe or controlla_num_pos(${"numtariffa".$num1}) != "SI") {
 if ($num1 == 1) ${"numtariffa".$num1} = 1;
-else $num_tariffe_mostra = ($num1 - 1);
-} # fine if (${"numtariffa".$num1} < 1 or ${"numtariffa".$num1} > $numero_tariffe)
+else $num_tariffe_mostra = 1;
+} # fine if (${"numtariffa".$num1} < 1 or ${"numtariffa".$num1} > $numero_tariffe or...
 } # fine for $num1
 
 $attiva_tariffe_consentite_ut = $attiva_tariffe_consentite;
@@ -684,7 +684,9 @@ $lista_sett_in_per .= $sett_in_per_col[$num_colonne_periodi].",";
 if (!$mobile_device) $max_num_colonne = 18;
 else $max_num_colonne = 8;
 $num_tabelle = ceil($num_colonne_periodi / $max_num_colonne);
+if (!$num_tabelle) $num_tabelle = 1;
 $max_num_colonne = ceil($num_colonne_periodi / $num_tabelle);
+if (!$max_num_colonne) $max_num_colonne = 1;
 if ($raggruppa_date == "n") {
 $mese_ini = substr($ini_colonna_periodo[0],5,2);
 $anno_ini = substr($ini_colonna_periodo[0],0,4);
@@ -968,7 +970,7 @@ else echo "<em>".str_replace(",","</em>, <em>",$dati_r2[$tariffa[1]])."</em>.";
 if ($id_utente == 1) echo " <a style=\"display: inline-block; margin-bottom: 2px;\" href=\"./crearegole.php?id_sessione=$id_sessione&amp;anno=$anno&amp;tipotariffa_regola2=".$tariffa[1]."&amp;origine=tab_tariffa\">".mex("Modifica la regola di assegnazione",'interconnessioni.php')." 2</a>";
 echo "<br><br>";
 
-$regola4 = esegui_query("select * from $tableregole where tariffa_per_persone = '".$tariffa[1]."'");
+$regola4 = esegui_query("select * from $tableregole where tariffa_per_persone = '".$tariffa[1]."' ");
 if (numlin_query($regola4)) $num_pers_reg4 = risul_query($regola4,0,'iddatainizio');
 else $num_pers_reg4 = mex("non definito",$pag);
 echo mex("Numero di persone predefinito per la tariffa",$pag)." \"".$nometariffa_vedi[1]."\": <em>$num_pers_reg4</em>.";

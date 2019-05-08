@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -63,10 +63,22 @@ function esegui_query ($query,$silenzio = "",$idlog = "") {
 global $link_mysqli;
 $risul[-1] = mysqli_query($link_mysqli,$query);
 $risul[-2] = -1;
-if (!$risul[-1] and !$silenzio) {
+
+if (!$risul[-1]) {
+# bug mariadb: temporary table already existing when adding a column
+if (strtolower(substr($query,0,12)) == "alter table ") {
+sleep(1);
+$risul[-1] = mysqli_query($link_mysqli,$query);
+} # fine if (strtolower(substr($query,0,12)) == "alter table ")
+if (!$risul[-1]) {
+$risul = $risul[-1];
+if ($silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
-} # fine if (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." MYSQL ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."... - ".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli));
+} # fine if ($silenzio != "totale")
+} # fine if (!$risul[-1])
+} # fine if (!$risul[-1])
 
 return $risul;
 
@@ -83,10 +95,22 @@ function esegui_query ($query,$silenzio = "",$idlog = "") {
 global $link_mysqli;
 $risul[-1] = mysqli_query($link_mysqli,$query);
 $risul[-2] = -3;
-if (!$risul[-1] and !$silenzio) {
+
+if (!$risul[-1]) {
+# bug mariadb: temporary table already existing when adding a column
+if (strtolower(substr($query,0,12)) == "alter table ") {
+sleep(1);
+$risul[-1] = mysqli_query($link_mysqli,$query);
+} # fine if (strtolower(substr($query,0,12)) == "alter table ")
+if (!$risul[-1]) {
+$risul = $risul[-1];
+if ($silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
-} # fine if (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." MYSQL ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."... - ".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli));
+} # fine if ($silenzio != "totale")
+} # fine if (!$risul[-1])
+} # fine if (!$risul[-1])
 
 if ($idlog != 1) inserisci_log($query,$idlog);
 
@@ -213,7 +237,10 @@ $lista_tabelle .= $altre_tab_usate[$num1]." read,";
 $lista_tabelle = substr($lista_tabelle,0,-1);
 global $link_mysqli;
 $risul = mysqli_query($link_mysqli,"lock tables $lista_tabelle");
-if (!$risul) echo "<br>ERROR IN: lock tables $lista_tabelle<br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
+if (!$risul) {
+echo "<br>ERROR IN: lock tables $lista_tabelle<br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." MYSQL ERROR: lock tables $lista_tabelle - ".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli));
+} # fine if (!$risul)
 
 return $risul;
 

@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2018-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -23,10 +23,10 @@
 
 
 
+include_once("./includes/funzioni_costi_agg.php");
 $tabelle_lock = "";
 $altre_tab_lock = array($tableanni,$tableprenota,$tablecostiprenota,$tableperiodi,$tableclienti,$tablerelclienti,$tablesoldi,$tableutenti);
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
-include("./includes/funzioni_costi_agg.php");
 $num_r = 0;
 $lista_p = array();
 for ($num1 = 1 ; $num1 <= $num_ripeti ; $num1++) {
@@ -146,11 +146,16 @@ if (strcmp(risul_query($dati_prenota,0,'commissioni'),"")) ${"commissioni_".$num
 $numpersone = risul_query($dati_prenota,0,'num_persone');
 if (strcmp($numpersone,"")) ${"num_persone_".$num_r} = $numpersone;
 ${"unita_occupata_".$num_r} = risul_query($dati_prenota,0,'idappartamenti');
+$cat_persone = dati_cat_pers_p($dati_prenota,0,$dati_cat_pers,$numpersone,$lingua_mex,0);
+for ($num2 = 0 ; $num2 < $dati_cat_pers['num'] ; $num2++) {
+if ($cat_persone[$num2]['esist']) ${"num_persone_tipo_".($num2 + 1)."_".$num_r} = $cat_persone[$cat_persone[$num2]['ncp']]['molt'];
+else ${"num_persone_tipo_".($num2 + 1)."_".$num_r} = 0;
+} # fine for $num2
 ${"unita_assegnabili_".$num_r} = risul_query($dati_prenota,0,'app_assegnabili');
 if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i") ${"pagato_".$num_r} = risul_query($dati_prenota,0,'pagato');
 unset($num_letti_agg);
 $costo_agg_tot = (double) 0;
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota);
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota,$dati_cat_pers);
 for ($numca = 0 ; $numca < $dati_cap['num'] ; $numca++) {
 aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","");
 $costo_agg_parziale = (double) calcola_prezzo_totale_costo($dati_cap,$numca,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costo_agg_tot - $sconto),$caparra,$numpersone,0,1);
@@ -169,6 +174,8 @@ if ($dati_cap[$numca]['settimane']) ${"giorni_costo_agg".$numca."_".$num_r} = $d
 else ${"giorni_costo_agg".$numca."_".$num_r} = ",";
 } # fine if ($dati_cap[$numca]['associasett'] == "s")
 else ${"giorni_costo_agg".$numca."_".$num_r} = "";
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num']) ${"tipo_persona_costo_agg".$numca."_".$num_r} = ($dati_cap[$numca]['cat_pers']['ord'][0] + 1);
+else ${"tipo_persona_costo_agg".$numca."_".$num_r} = "";
 ${"data_inserimento_costo_agg".$numca."_".$num_r} = substr($dati_cap[$numca]['datainserimento'],0,10);
 ${"utente_inserimento_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['utente_inserimento'];
 } # fine if ($priv_mod_costi_agg != "n")

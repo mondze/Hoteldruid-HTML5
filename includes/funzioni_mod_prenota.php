@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -222,7 +222,7 @@ global $priv_mod_prenota_comp,$priv_mod_prenota_iniziate,$priv_mod_prenota_ore,$
 $tableprenota = $PHPR_TAB_PRE."prenota".$anno;
 $tablesoldi = $PHPR_TAB_PRE."soldi".$anno;
 
-$id_prenota = aggslashdb($id_prenota);
+$id_prenota = aggslashdb(htmlspecialchars($id_prenota));
 $id_prenota_int = $id_prenota;
 $id_prenota_idpr = array();
 $id_prenota_idpr[0] = $id_prenota;
@@ -245,20 +245,20 @@ else $utente_inserimento = "NO";
 if ($priv_mod_prenotazioni == "p" and $utente_inserimento != $id_utente) $priv_mod_prenotazioni = "n";
 if ($priv_mod_prenotazioni == "g" and !$utenti_gruppi[$utente_inserimento]) $priv_mod_prenotazioni = "n";
 } # fine if ($priv_mod_prenotazioni == "p" or $priv_mod_prenotazioni == "g")
+$d_prenota = esegui_query("select iddatainizio,datainserimento from $tableprenota where idprenota = '$id_prenota'");
+if (!numlin_query($d_prenota) or controlla_num($id_prenota) != "SI") $priv_mod_prenotazioni = "n";
+else {
 if ($priv_mod_prenota_iniziate != "s") {
-$id_inizio_prenota = esegui_query("select iddatainizio from $tableprenota where idprenota = '$id_prenota'");
-if (numlin_query($id_inizio_prenota) == 1) $id_inizio_prenota = risul_query($id_inizio_prenota,0,'iddatainizio');
-else $id_inizio_prenota = -2;
+$id_inizio_prenota = risul_query($d_prenota,0,'iddatainizio');
 if ($id_periodo_corrente >= $id_inizio_prenota) $priv_mod_prenotazioni = "n";
 } # fine if ($priv_mod_prenota_iniziate != "s")
 if ($priv_mod_prenota_ore != "000") {
 $adesso = date("YmdHis",(time() + (C_DIFF_ORE * 3600)));
-$data_ins = esegui_query("select datainserimento from $tableprenota where idprenota = '$id_prenota'");
-if (numlin_query($data_ins) == 1) $data_ins = risul_query($data_ins,0,'datainserimento');
-else $data_ins = "1971-01-01 00:00:00";
+$data_ins = risul_query($d_prenota,0,'datainserimento');
 $limite = date("YmdHis",mktime((substr($data_ins,11,2) + $priv_mod_prenota_ore),substr($data_ins,14,2),substr($data_ins,17,2),substr($data_ins,5,2),substr($data_ins,8,2),substr($data_ins,0,4)));
 if ($adesso > $limite) $priv_mod_prenotazioni = "n";
 } # fine if ($priv_mod_prenota_ore != "000")
+} # fine else if (!numlin_query($d_prenota))
 } # fine for $num_idpr
 
 if ($priv_mod_pagato == "s" and defined("C_MASSIMO_NUM_STORIA_SOLDI") and C_MASSIMO_NUM_STORIA_SOLDI != 0) {
@@ -274,7 +274,7 @@ if ($num_soldi_esistenti >= (C_MASSIMO_NUM_STORIA_SOLDI + 1)) $priv_mod_pagato =
 
 function prepara_modifiche_prenotazione ($id_prenota_idpr,$num_id_prenota,&$prenota_in_anno_succ,&$dati_da_anno_prec,&$tra_anni,$anno,$PHPR_TAB_PRE) {
 global $d_id_utente_inserimento_idpr,$d_id_clienti_idpr,$d_id_data_inizio_idpr,$d_id_data_fine_idpr,$d_appartamento_idpr,$d_assegnazione_app_idpr,$d_app_assegnabili_idpr,$d_nome_tipotariffa_idpr,$d_app_eliminati_costi_idpr,$d_sconto_idpr,$d_caparra_idpr,$d_met_paga_caparra_idpr,$d_commissioni_idpr,$d_num_persone_idpr,$d_nome_tariffa_idpr,$d_costo_tariffa_idpr,$d_molt_tariffa_idpr,$d_tariffesettimanali_idpr,$d_costo_agg_tot_idpr,$d_prezzo_costo_agg_idpr,$d_costo_tot_idpr,$d_pagato_idpr,$d_confermato_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_commento,$d_prenota_comp_idpr;
-global $dati_tariffe,$dati_cat_pers,$dati_ca,$dati_prenota_modifica,$id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$fineperiodo_orig,$stile_data,$d_data_inizio_f,$d_data_fine_f,$n_host_inserimento_idpr,$id_utente,$lingua_mex,$d_cat_persone_idpr;
+global $dati_tariffe,$dati_cat_pers,$dati_ca,$dati_prenota_modifica,$id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$fineperiodo_orig,$stile_data,$d_data_inizio_f,$d_data_fine_f,$n_host_inserimento_idpr,$id_utente,$lingua_mex,$d_cat_persone_idpr,$id_prenota_prec;
 if (!function_exists('dati_tariffe')) include("./includes/funzioni_tariffe.php");
 if (!function_exists('dati_costi_agg_ntariffe')) include("./includes/funzioni_costi_agg.php");
 
@@ -504,8 +504,8 @@ $n_host_inserimento_idpr[$id_prenota] = risul_query($dati_prenota_modifica,0,'ho
 
 function esegui_modifiche_prenotazione (&$inserire,&$cancellata,$id_prenota_int,$id_prenota_idpr,$num_id_prenota,$id_transazione,$id_sessione,$anno,$id_nuovo_utente_inserimento,$n_stima_checkin,$n_met_paga_caparra,$n_origine_prenota,$n_pagato,$n_confermato,$tipo_commento,$n_commento,$n_cancella_commento,$tableprenota_da_aggiornare,$tipo_sposta,$dati_da_anno_prec,$prenota_in_anno_succ,$tra_anni,$PHPR_TAB_PRE) {
 global $id_utente,$priv_mod_checkin,$attiva_regole1_consentite,$regole1_consentite,$attiva_tariffe_consentite,$tariffe_consentite_vett,$priv_mod_date,$priv_ins_periodi_passati,$priv_mod_commento,$priv_mod_commenti_pers,$priv_mod_sconto,$priv_mod_caparra,$priv_mod_pagato,$priv_mod_orig_prenota,$d_commento,$cassa_pagamenti,$nome_utente;
-global $dati_ca,$dati_cat_pers,$d_cat_persone_idpr,$d_id_utente_inserimento_idpr,$d_appartamento_idpr,$d_id_data_inizio_idpr,$d_nome_tariffa_idpr,$d_app_eliminati_costi_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_prenota_comp_idpr,$fineperiodo_orig,$comm_pers_presenti;
-global $id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$stile_data,$tipo_n_app,$priv_mod_utente_ins,$utenti_gruppi;
+global $dati_ca,$dati_cat_pers,$d_cat_persone_idpr,$d_id_utente_inserimento_idpr,$d_appartamento_idpr,$d_id_data_inizio_idpr,$d_id_data_fine_idpr,$d_nome_tariffa_idpr,$d_app_eliminati_costi_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_prenota_comp_idpr,$fineperiodo_orig,$comm_pers_presenti;
+global $id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$stile_data,$tipo_n_app,$priv_mod_utente_ins,$utenti_gruppi,$dati_prenota_modifica;
 
 $pag = "modifica_prenota.php";
 $tablenometariffe = $PHPR_TAB_PRE."ntariffe".$anno;
@@ -641,6 +641,7 @@ for ($num_idpr = 0 ; $num_idpr < $num_id_prenota ; $num_idpr++) {
 $id_prenota = $id_prenota_idpr[$num_idpr];
 $d_checkin = $d_checkin_idpr[$id_prenota];
 $d_id_data_inizio = $d_id_data_inizio_idpr[$id_prenota];
+$d_id_data_fine = $d_id_data_fine_idpr[$id_prenota];
 $d_cat_persone = $d_cat_persone_idpr[$id_prenota];
 $n_costo_tot = $n_costo_tot_idpr[$id_prenota];
 $n_appartamento = $n_appartamento_idpr[$id_prenota];

@@ -405,7 +405,7 @@ $moltiplica_max = $moltiplica;
 } # fine else if ($dati_ca[$num_costo][tipo] == "s" and $dati_ca[$num_costo]['associasett'] == "s")
 } # fine if ($dati_ca[$num_costo][moltiplica] == "t")
 else {
-$moltiplica = max(($moltiplica + $dati_ca[$num_costo]['molt_agg']),0);
+$moltiplica = max(((int) $moltiplica + $dati_ca[$num_costo]['molt_agg']),0);
 $moltiplica_max = $moltiplica;
 if ($dati_ca[$num_costo]['tipo'] == "s" and $dati_ca[$num_costo]['associasett'] == "s") {
 $moltiplica = "";
@@ -422,7 +422,7 @@ return $moltiplica_max;
 
 
 
-function aggiorna_letti_agg_in_periodi ($dati_ca,$num_costo,&$num_letti_agg,$idinizioperiodo,$idfineperiodo,$settimane_costo,$moltiplica,$nummoltiplica_ca,$numpersone) {
+function aggiorna_letti_agg_in_periodi ($dati_ca,$num_costo,&$num_letti_agg,$idinizioperiodo,$idfineperiodo,$settimane_costo,$moltiplica,$nummoltiplica_ca,$numpersone,$dati_cat_pers=array()) {
 
 if ($num_letti_agg['max'] == "") $num_letti_agg['max'] = 0;
 if ($dati_ca[$num_costo]['letto'] == "s") {
@@ -433,12 +433,30 @@ if ($dati_ca[$num_costo]['associasett'] == "s") {
 if ($settimane_costo != str_replace(",$num1,","",$settimane_costo)) {
 $settimane = explode(",",$settimane_costo);
 $moltiplica_sett = explode(",",$moltiplica);
-for ($num2 = 0 ; $num2 < count($settimane) ; $num2++) if ($settimane[$num2] == $num1) $moltiplica_sett = $moltiplica_sett[$num2];
-$num_letti_agg[$num1] = $num_letti_agg[$num1] + $moltiplica_sett;
+for ($num2 = 0 ; $num2 < count($settimane) ; $num2++) if ($settimane[$num2] == $num1) $moltiplica_corr = $moltiplica_sett[$num2];
 } # fine if ($settimane_costo != str_replace(",$num1,","",$settimane_costo))
 } # fine if ($dati_ca[$num_costo]['associasett'] == "s")
-else $num_letti_agg[$num1] = $num_letti_agg[$num1] + $moltiplica;
-if ($num_letti_agg[$num1] > $num_letti_agg['max']) $num_letti_agg['max'] = $num_letti_agg[$num1];
+else $moltiplica_corr = $moltiplica;
+$num_letti_agg[$num1] = $num_letti_agg[$num1] + $moltiplica_corr;
+
+if ($dati_cat_pers['num']) {
+$num_letti_agg['catp'][$num1] .= " + $moltiplica_corr ";
+if ($dati_ca[$num_costo]['cat_pers']['esist'][0]) {
+if ($moltiplica_corr > 1) $num_letti_agg['catp'][$num1] .= $dati_cat_pers[$dati_ca[$num_costo]['cat_pers']['ord'][0]]['n_plur'];
+else $num_letti_agg['catp'][$num1] .= $dati_cat_pers[$dati_ca[$num_costo]['cat_pers']['ord'][0]]['n_sing'];
+$num_letti_agg['catp_tot'][$num1][$dati_ca[$num_costo]['cat_pers']['ord'][0]] += $moltiplica_corr;
+} # fine if ($dati_ca[$num_costo]['cat_pers']['esist'][0])
+else {
+if ($moltiplica_corr > 1) $num_letti_agg['catp'][$num1] .= $dati_ca[$num_costo]['cat_pers'][0]['n_plur'];
+else $num_letti_agg['catp'][$num1] .= $dati_ca[$num_costo]['cat_pers'][0]['n_sing'];
+$num_letti_agg['catp_tot'][$num1]['ex'][$dati_ca[$num_costo]['cat_pers'][0]['n_plur']] += $moltiplica_corr;
+} # fine if ($dati_ca[$num_costo]['cat_pers']['esist'][0])
+} # fine if ($dati_cat_pers['num'])
+
+if ($num_letti_agg[$num1] > $num_letti_agg['max']) {
+$num_letti_agg['max'] = $num_letti_agg[$num1];
+$num_letti_agg['sett_max'] = $num1;
+} # fine if ($num_letti_agg[$num1] > $num_letti_agg['max'])
 } # fine for $num1
 } # fine if ($dati_ca[$num_costo]['letto'] == "s")
 

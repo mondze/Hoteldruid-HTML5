@@ -1,3 +1,23 @@
+2.3.1 (20/02/2019)
+======================
+-new document variables for person types and person type for extra costs as extra bed
+-extended custom person types support to availability check, webpages and reservations tables
+-fiexd bug: custom comments and client fields not defined in document conditions if not in Italian
+-updated the format of default Italian document "fattura elettronica"
+-fixed bugs: multiple cross site scripting vulnerabilities in backend
+-fixed bug: rate number not escaped in single rate page
+-fixed bug: error when modifying final date of reservations begun in previous year
+-fixed bug: user id not escaped when changing user groups
+-fixed bug: cost multiplied by people may be wrong when inserting reservations with multiple rule 2
+-set selection_starting_date and selection_ending_date variables in corresponding documents API
+-fixed bug: error when setting a % deposit for a reservation with a rate with daily deposit
+-fixed bug: values of custom client fields not escaped
+-try again to alter a table in mysqli functions if error occurs (mariadb temporary table bug)
+-fixed bug: errors when viewing deleted reservation
+-fixed bug: error when viewing single rate table with one column
+-php log of sql database errors
+
+
 2.3.0 (09/11/2018)
 ======================
 -initial support for different custom person types

@@ -184,6 +184,7 @@ $oggi = date("j/n/Y",(time() + (C_DIFF_ORE * 3600)));
 $ora = date("H:i",(time() + (C_DIFF_ORE * 3600)));
 echo "<small><small>".mex("situazione alle",$pag)." $ora ".mex("del",$pag)." $oggi</small></small><br>";
 
+if (controlla_num_pos($mese) != "SI") $mese = 1;
 if ($anno_succ == "SI") { $mese = $mese + 12; }
 
 $data_inizio_periodi = esegui_query("select * from $tableperiodi where idperiodi = 1");

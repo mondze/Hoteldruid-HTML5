@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2009 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@
 
 
 $tableanni = $PHPR_TAB_PRE."anni";
-$tipo_periodi = esegui_query("select * from $tableanni where idanni = $anno");
+$tipo_periodi = esegui_query("select * from $tableanni where idanni = '$anno' ");
 $tipo_periodi = risul_query($tipo_periodi,0,'tipo_periodi');
 if ($tipo_periodi == "g") {
 $parola_settimanale = "giornaliero";

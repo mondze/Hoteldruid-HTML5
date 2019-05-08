@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -92,10 +92,11 @@ $risultato['num'] = $num1;
 } # fine if ($risul)
 else $risultato = $risul;
 
-if (!$risul and !$silenzio) {
+if (!$risul and $silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
-} # fine (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." SQLITE ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."...");
+} # fine (!$risul and $silenzio != "totale")
 
 return $risultato;
 

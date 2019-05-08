@@ -95,10 +95,23 @@ function mex2 ($messaggio) {
 global $trad_var,$lingua_mex;
 if (!$trad_var and $lingua_mex != "ita") include("./includes/lang/$lingua_mex/visualizza_contratto_var.php");
 if ($trad_var[$messaggio]) $messaggio = $trad_var[$messaggio];
-elseif (substr($messaggio,-1) == ")") {
+else {
+if (substr($messaggio,-1) == ")") {
 $mess_vett = explode("(",substr($messaggio,0,-1));
 if ($trad_var[$mess_vett[1]]) $messaggio = $mess_vett[0]."(".$trad_var[$mess_vett[1]].")";
-} # fine elseif (substr($messaggio,-1) == ")")
+else {
+if (substr($mess_vett[1],0,24) == "commento_personalizzato_") $messaggio =  $mess_vett[0]."(".$trad_var["commento_personalizzato"].substr($mess_vett[1],23).")";
+elseif (substr($mess_vett[1],0,21) == "campo_personalizzato_") $messaggio =  $mess_vett[0]."(".$trad_var["campo_personalizzato"].substr($mess_vett[1],20).")";
+} # fine else if ($trad_var[$mess_vett[1]])
+} # fine if (substr($messaggio,-1) == ")")
+else {
+if (substr($messaggio,0,24) == "commento_personalizzato_") $messaggio = $trad_var["commento_personalizzato"].substr($messaggio,23);
+else {
+if (substr($messaggio,0,21) == "campo_personalizzato_") $messaggio = $trad_var["campo_personalizzato"].substr($messaggio,20);
+elseif (substr($messaggio,0,17) == "num_persone_tipo_") $messaggio = $trad_var["num_persone_tipo"].substr($messaggio,16);
+} # fine else if (substr($messaggio,0,24) == "commento_personalizzato_")
+} # fine else if (substr($messaggio,-1) == ")")
+} # fine else if ($trad_var[$messaggio])
 return $messaggio;
 } # fine function mex2
 
@@ -114,8 +127,13 @@ $campi_pers_cliente = explode(">",risul_query($campi_pers_cliente,0,'valpersonal
 $num_campi_pers_cliente = count($campi_pers_cliente);
 } # fine if (numlin_query($campi_pers_cliente))
 else $num_campi_pers_cliente = 0;
-$commento_personalizzato_ = mex2("commento_personalizzato")."_";
-$campo_personalizzato_ = mex2("campo_personalizzato")."_";
+include_once("./includes/funzioni_tariffe.php");
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
+#$commento_personalizzato_ = mex2("commento_personalizzato")."_";
+#$campo_personalizzato_ = mex2("campo_personalizzato")."_";
+$commento_personalizzato_ = "commento_personalizzato_";
+$campo_personalizzato_ = "campo_personalizzato_";
+$num_persone_tipo_ = "num_persone_tipo_";
 include("./includes/variabili_contratto.php");
 
 
@@ -197,7 +215,7 @@ if (preg_replace("/[A-Za-z0-9_]/","",$nuova_var_pers) != "") $continua = "NO";
 $ultima_parte = explode("_",$nuova_var_pers);
 $ultima_parte = (string) $ultima_parte[(count($ultima_parte) - 1)];
 if ($ultima_parte != "" and preg_replace("/[0-9]/","",$ultima_parte) == "") $continua = "NO";
-if ($var_riserv[$nuova_var_pers] or substr($nuova_var_pers,0,20) == "campo_personalizzato" or substr($nuova_var_pers,0,23) == "commento_personalizzato") $continua = "NO";
+if ($var_riserv[$nuova_var_pers] or substr($nuova_var_pers,0,20) == "campo_personalizzato" or substr($nuova_var_pers,0,23) == "commento_personalizzato" or substr($nuova_var_pers,0,16) == "num_persone_tipo") $continua = "NO";
 if ($continua == "SI") {
 $tabelle_lock = array($tablecontratti);
 $tabelle_lock = lock_tabelle($tabelle_lock);

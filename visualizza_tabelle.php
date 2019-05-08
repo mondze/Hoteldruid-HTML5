@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -326,6 +326,16 @@ if (substr($ordine_prenota,-10) == ",idprenota") $ordine_prenota = substr($ordin
 if ($ordine_prenota != "iddatafine" and $ordine_prenota != "idprenota" and $ordine_prenota != "origine" and $ordine_prenota != "tariffa" and $ordine_prenota != "datainserimento" and $ordine_prenota != "idappartamenti") $ordine_prenota = "iddatainizio";
 if ($ordine_prenota != "idprenota") $ordine_prenota .= ",idprenota";
 if ($priv_mod_prenota_iniziate != "s") $id_periodo_corrente = calcola_id_periodo_corrente($anno);
+if ($opz_cerc_pren != "arr" and $opz_cerc_pren != "part") $opz_cerc_pren = "";
+$pag_pren_corr = htmlspecialchars($pag_pren_corr);
+$pag_pren_prec = htmlspecialchars($pag_pren_prec);
+$pag_pren_succ = htmlspecialchars($pag_pren_succ);
+if ($id_utente_vedi and controlla_num_pos($id_utente_vedi) != "SI") $id_utente_vedi = $id_utente;
+if ($cerca_prenota != "SI" and $cerca_prenota != "tutte") $cerca_prenota = "";
+if (preg_replace("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/","",$cerca_ini)) $cerca_ini = "";
+if (preg_replace("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/","",$cerca_fine)) $cerca_fine = "";
+if ($senza_colori) $senza_colori = "SI";
+$lista_prenota = htmlspecialchars($lista_prenota);
 
 if ($cambia_pagato) {
 
@@ -434,10 +444,10 @@ echo "<br>
 <input type=\"hidden\" name=\"pag_pren_prec\" value=\"$pag_pren_prec\">
 <input type=\"hidden\" name=\"cerca_prenota\" value=\"$cerca_prenota\">
 <input type=\"hidden\" name=\"opz_cerc_pren\" value=\"$opz_cerc_pren\">
-<input type=\"hidden\" name=\"somma_pagata\" value=\"$somma_pagata\">
+<input type=\"hidden\" name=\"somma_pagata\" value=\"".htmlspecialchars($somma_pagata)."\">
 <input type=\"hidden\" name=\"continua\" value=\"SI\">
 $nascosti_in_form
-<input type=\"hidden\" name=\"numeri_cambia\" value=\"$numeri_cambia\">
+<input type=\"hidden\" name=\"numeri_cambia\" value=\"".htmlspecialchars($numeri_cambia)."\">
 <button class=\"cont\" type=\"submit\"><div>".mex("Continua",$pag)."</div></button>
 </div></form><table cellspacing=0 cellpadding=0><tr><td style=\"height: 1px;\"></td></tr></table>
 <hr style=\"width: 350px; margin-left: 0; text-align: left;\"><br><br>";
@@ -615,7 +625,7 @@ $sel_tab_prenota = risul_query($transaz_esistente,0,'dati_transazione13');
 
 if ($subtotale_selezionate) {
 $lista_prenota = "";
-for ($num1 = 1 ; $num1 <= $num_cambia_pren ; $num1++) if (${"cambia".$num1}) $lista_prenota .= ${"cambia".$num1}.",";
+for ($num1 = 1 ; $num1 <= $num_cambia_pren ; $num1++) if (${"cambia".$num1} and controlla_num_pos(${"cambia".$num1}) == "SI") $lista_prenota .= ${"cambia".$num1}.",";
 $lista_prenota = substr($lista_prenota,0,-1);
 } # fine if ($subtotale_selezionate)
 elseif ($lista_prenota) {
@@ -698,6 +708,7 @@ $cerca_prenota = "SI";
 } # fine if ($sel_tab_prenota == "partcorr" and $cerca_ini and $cerca_fine)
 } # fine if (numlin_query($oggi) != 0)
 } # fine if ($sel_tab_prenota == "correnti" or...
+elseif ($sel_tab_prenota != "tutte") $sel_tab_prenota = "";
 } # fine if (!$cerca_prenota)
 
 if ($show_bar != "NO") {
@@ -832,6 +843,7 @@ $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
 
 $prendi_app = 0;
 $prendi_doc = 0;
+$prendi_cpe = 0;
 $attiva_checkin = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'attiva_checkin' and idutente = '$id_utente_vedi'");
 $attiva_checkin = risul_query($attiva_checkin,0,'valpersonalizza');
 $col_tab_tutte_prenota = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'col_tab_tutte_prenota' and idutente = '$id_utente_vedi'");
@@ -858,6 +870,7 @@ unset($colonna_appartamento);
 unset($colonna_piano);
 unset($colonna_casa);
 unset($colonna_persone);
+unset($colonna_catpersone);
 unset($colonna_commento);
 unset($colonna_origine_prenota);
 unset($colonna_docsalvati);
@@ -884,6 +897,7 @@ if ($colonna_selezionata[0] == "ap") $colonna_appartamento = "SI";
 if ($colonna_selezionata[0] == "pi") { $colonna_piano = "SI"; $prendi_app = 1; }
 if ($colonna_selezionata[0] == "ka") { $colonna_casa = "SI"; $prendi_app = 1; }
 if ($colonna_selezionata[0] == "pe") $colonna_persone = "SI";
+if ($colonna_selezionata[0] == "tp") { $colonna_catpersone = "SI"; $prendi_cpe = 1; }
 if ($colonna_selezionata[0] == "co") $colonna_commento = "SI";
 if ($colonna_selezionata[0] == "or") $colonna_origine_prenota = "SI";
 if ($colonna_selezionata[0] == "ds") { $colonna_docsalvati = "SI"; $prendi_doc = 1; }
@@ -918,6 +932,7 @@ if ($dati_col_gr[0] == "ap") $col_gr_appartamento[$num_gr_tab] = "SI";
 if ($dati_col_gr[0] == "pi") { $col_gr_piano[$num_gr_tab] = "SI"; $prendi_app = 1; }
 if ($dati_col_gr[0] == "ka") { $col_gr_casa[$num_gr_tab] = "SI"; $prendi_app = 1; }
 if ($dati_col_gr[0] == "pe") $col_gr_persone[$num_gr_tab] = "SI";
+if ($dati_col_gr[0] == "tp") { $col_gr_catpersone[$num_gr_tab] = "SI"; $prendi_cpe = 1; }
 if ($dati_col_gr[0] == "co") $col_gr_commento[$num_gr_tab] = "SI";
 if ($dati_col_gr[0] == "or") $col_gr_origine_prenota[$num_gr_tab] = "SI";
 if ($dati_col_gr[0] == "ds") { $col_gr_docsalvati[$num_gr_tab] = "SI"; $prendi_doc = 1; }
@@ -1020,6 +1035,13 @@ closedir($contr_dir);
 } # fine for $num_c 
 } # fine if ($prendi_doc)
 
+if ($prendi_cpe) {
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
+if (!$dati_cat_pers['num']) unset($colonna_catpersone);
+elseif ($colonna_catpersone == "SI") $colonna_persone = "SI";
+} # fine if ($prendi_cpe)
+else $dati_cat_pers = array();
+
 if ($priv_vedi_tab_prenotazioni == "p" or $priv_vedi_tab_prenotazioni == "g") {
 $condizione_prenota_proprie = "and ( utente_inserimento = '$id_utente_vedi'";
 if ($priv_vedi_tab_prenotazioni == "g") {
@@ -1102,7 +1124,7 @@ $lista_date0 = explode("<option value=\"$cerca_ini\">",$dates_options_list);
 $lista_date1 = explode("<option value=\"",$lista_date0[1]);
 if (substr($lista_date1[2],0,10) == $cerca_fine) $num_fine = 2;
 else $num_fine = 1;
-if (!$opz_cerc_pren and $num_fine == 2 and $cerca_fine == date("Y-m-d",mktime(0,0,0,substr($cerca_ini,5,2),(substr($cerca_ini,8,2) + 2),substr($cerca_ini,0,4)))) $frase_cerca = " ".mex("presenti in data",$pag)." ".formatta_data(substr($lista_date1[1],0,10),$stile_data)." (".mex("comprese partenze",$pag).")";
+if (!$opz_cerc_pren and $num_fine == 2 and $cerca_ini and $cerca_fine == date("Y-m-d",mktime(0,0,0,substr($cerca_ini,5,2),(substr($cerca_ini,8,2) + 2),substr($cerca_ini,0,4)))) $frase_cerca = " ".mex("presenti in data",$pag)." ".formatta_data(substr($lista_date1[1],0,10),$stile_data)." (".mex("comprese partenze",$pag).")";
 else {
 $frase_cerca = " ".mex("presenti dal",$pag)." $cerca_ini_f";
 if ($cerca_fine) $frase_cerca .= " ".mex("al",$pag)." $cerca_fine_f";
@@ -1222,6 +1244,7 @@ $restocomm_TOT = 0;
 $pagato_TOT = 0;
 $tasse_TOT = 0;
 $num_persone_TOT = 0;
+$cat_persone_TOT = array();
 if ($num_tab > 1) {
 if ($tab_precedenti == "SI") {
 $tab_precedenti = "";
@@ -1448,6 +1471,16 @@ $datainserimento_f =formatta_data($datainserimento,$stile_data);
 $numpersone = risul_query($prenotazioni,$num1,'num_persone');
 if (!$numpersone or $numpersone == 0) $num_persone = "?";
 else $num_persone = $numpersone;
+$cat_persone = "";
+if ($colonna_catpersone and $numpersone) {
+$d_cat_persone = dati_cat_pers_p($prenotazioni,$num1,$dati_cat_pers,$numpersone,$lingua_mex,0);
+for ($num2 = 0 ; $num2 < $d_cat_persone['num'] ; $num2++) {
+if ($num2 > 0) $cat_persone .= ", ";
+$cat_persone .= $d_cat_persone[$num2]['molt']."&nbsp;".str_replace(" ","&nbsp;",$d_cat_persone[$num2]['n_corr']);
+if ($d_cat_persone['esist'][$num2]) $cat_persone_TOT[$d_cat_persone['ord'][$num2]] += $d_cat_persone[$num2]['molt'];
+else $cat_persone_TOT['ex'][$d_cat_persone[$num2]['n_plur']] += $d_cat_persone[$num2]['molt'];
+} # fine for $num2
+} # fine if ($colonna_catpersone and $numpersone)
 $tariffesettimanali = risul_query($prenotazioni,$num1,'tariffesettimanali');
 
 $nome_tariffa = risul_query($prenotazioni,$num1,'tariffa');
@@ -1491,7 +1524,7 @@ $tasse = $tasse * $dati_tariffe['tasse_arrotond'];
 $tasse_TOT = $tasse_TOT + $tasse;
 } # fine if ($tasseperc)
 
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$numero);
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$numero,$dati_cat_pers);
 unset($num_letti_agg);
 unset($cu_presente);
 unset($cs_presente);
@@ -1516,7 +1549,7 @@ else {
 $settimane_costo[$numca] = $dati_cap[$numca]['settimane'];
 $moltiplica_costo[$numca] = $dati_cap[$numca]['moltiplica_costo'];
 } # fine else if ($c_idinizioperiodo or $c_idfineperiodo)
-aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$settimane_costo[$numca],$moltiplica_costo[$numca],"","");
+aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$settimane_costo[$numca],$moltiplica_costo[$numca],"","",$dati_cat_pers);
 if ($settimane_costo[$numca]) $cs_presente[$dati_cap[$numca]['nome']] = (string) $numca;
 $num_sett_costo[$numca] = explode(",",$settimane_costo[$numca]);
 $num_sett_costo[$numca] = count($num_sett_costo[$numca]) - 2;
@@ -1533,7 +1566,7 @@ $cs_presente[$dati_cap[$numca]['nome']] = (string) $numca;
 $num_sett_costo[$numca] = $dati_cap[$numca]['settimane'];
 } # fine if ($dati_cap[$numca][tipo] == "s")
 $moltiplica_costo[$numca] = $dati_cap[$numca]['moltiplica_costo'];
-aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","");
+aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","",$dati_cat_pers);
 } # fine else if ($dati_cap[$numca][associasett] == "s")
 $costo_agg_parziale = (double) calcola_prezzo_totale_costo($dati_cap,$numca,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costo_agg_tot - $sconto),$caparra,$numpersone,$costo_escludi_perc);
 $costo_agg_tot = (double) $costo_agg_tot + $costo_agg_parziale;
@@ -1549,6 +1582,19 @@ $tasse = $tasse * (double) $dati_tariffe['tasse_arrotond'];
 $tasse_TOT = (double) $tasse_TOT + (double) $tasse;
 } # fine if ($dati_cap[$numca]['tasseperc'])
 } # fine for $numca
+if ($num_letti_agg['max']) {
+$cat_persone .= $num_letti_agg['catp'][$num_letti_agg['sett_max']];
+$cat_lettiagg_tot = $num_letti_agg['catp_tot'][$num_letti_agg['sett_max']];
+reset($cat_lettiagg_tot);
+foreach ($cat_lettiagg_tot as $cat_corr => $val) {
+if ((string) $cat_corr == "ex") {
+$cat_pers_ex = $val;
+reset($cat_pers_ex);
+foreach ($cat_pers_ex as $cat_ex => $val2) $cat_persone_TOT['ex'][$cat_ex] += $val2;
+} # fine if ((string) $cat_corr == "ex")
+else $cat_persone_TOT[$cat_corr] += $val;
+} # fine foreach ($cat_lettiagg_tot as $cat_corr => $val)
+} # fine if ($num_letti_agg['max'])
 $n_letti_agg = $num_letti_agg['max'];
 
 $link_modifica = "SI";
@@ -1692,6 +1738,7 @@ $colonne_costi .= "$spazio$num_persone";
 if ($n_letti_agg != 0) { $colonne_costi .= "+$n_letti_agg"; }
 $spazio = $separatore;
 } # fine if ($col_gr_persone[$num2] == "SI")
+if ($col_gr_catpersone[$num2] == "SI") { $colonne_costi .= $spazio.$cat_persone; $spazio = $separatore; }
 if ($col_gr_commento[$num2] == "SI") { $colonne_costi .= "$spazio$commento"; $spazio = $separatore; }
 if ($col_gr_origine_prenota[$num2] == "SI") { $colonne_costi .= "$spazio$origine_prenota"; $spazio = $separatore; }
 if ($col_gr_docsalvati[$num2] == "SI") { $colonne_costi .= "$spazio$documenti_salvati"; $spazio = $separatore; }
@@ -1756,6 +1803,7 @@ if ($colonna_casa) echo "<td>".$casa_app[$appartamento]."</td>";
 if ($colonna_persone) {
 echo "<td>$num_persone";
 if ($n_letti_agg != 0) echo "+$n_letti_agg";
+if ($cat_persone) echo "<small> ($cat_persone)</small>";
 echo "</td>";
 } # fine if ($colonna_persone)
 if ($colonna_commento) echo "<td style=\"font-size: x-small;\">$commento</td>";
@@ -1863,7 +1911,30 @@ if ($colonna_nometariffa) echo "<td>&nbsp;</td>";
 if ($colonna_appartamento) echo "<td>&nbsp;</td>";
 if ($colonna_piano) echo "<td>&nbsp;</td>";
 if ($colonna_casa) echo "<td>&nbsp;</td>";
-if ($colonna_persone)  echo "<td>$num_persone_TOT_p</td>";
+if ($colonna_persone) {
+echo "<td>$num_persone_TOT_p";
+if (!empty($cat_persone_TOT)) {
+echo "<small> (";
+$ini = 1;
+reset($cat_persone_TOT);
+foreach ($cat_persone_TOT as $cat_corr => $val) {
+if (!$ini) echo ", ";
+$ini = 0;
+if ((string) $cat_corr == "ex") {
+$cat_pers_ex = $val;
+reset($cat_pers_ex);
+foreach ($cat_pers_ex as $cat_ex => $val2) echo "$val2 $cat_ex";
+} # fine if ((string) $cat_corr == "ex")
+else {
+echo "$val ";
+if ($val > 1) echo $dati_cat_pers[$cat_corr]['n_plur'];
+else echo $dati_cat_pers[$cat_corr]['n_sing'];
+} # fine else if ((string) $cat_corr == "ex")
+} # fine foreach ($cat_persone_TOT as $cat_corr => $val)
+echo ")</small>";
+} # fine if (!empty($cat_persone_TOT))
+echo "</td>";
+} # fine if ($colonna_persone)
 if ($colonna_commento) echo "<td>&nbsp;</td>";
 if ($colonna_origine_prenota) echo "<td>&nbsp;</td>";
 if ($colonna_docsalvati) echo "<td>&nbsp;</td>";
@@ -2603,6 +2674,8 @@ $attiva_costi_agg_consentiti = $attiva_costi_agg_consentiti_gr;
 $costi_agg_consentiti_vett = $costi_agg_consentiti_vett_gr;
 } # fine if ($priv_vedi_tab_periodi == "g")
 
+if ($tariffe_sel) $tariffe_sel = "SI";
+
 
 
 if ($aggiungi and $id_utente == 1) {
@@ -2999,7 +3072,7 @@ echo "<br><big>".mex("<b style=\"color: red;\">ATTENZIONE</b>: premendo su <b>\"
 <div style=\"text-align: center;\"><form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle.php\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"cancella_anno\" value=\"$cancella_anno\">
+<input type=\"hidden\" name=\"cancella_anno\" value=\"1\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"continua\" value=\"1\">
 <button class=\"cyea\" type=\"submit\"><div>".mex("Continua",$pag)."</div></button>
@@ -3631,7 +3704,7 @@ for ($num1 = 1 ; $num1 <= $num_tariffe_mostra ; $num1++) echo "<input type=\"hid
 } # fine if ($origine == "tab_tariffe.php")
 if ($tariffe_sel) {
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
-if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"".${"tariffa_sel".$numtariffa}."\">";
+if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"SI\">";
 } # fine for $numtariffa
 } # fine if ($tariffe_sel)
 echo "<button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
@@ -3690,6 +3763,9 @@ $dati_tariffe = dati_tariffe($tablenometariffe,"","",$tableregole);
 $dati_r2 = "";
 dati_regole2($dati_r2,$app_regola2_predef,"","","",$id_periodo_corrente,$tipo_periodi,$anno,$tableregole);
 
+if ($form_tabella != "SI") $form_tabella = "";
+if ($mos_tutti_per != "SI") $mos_tutti_per = "";
+
 echo "<h3 id=\"h_rat\"><span>".mex("Tabella con periodi e relative tariffe del",$pag)." $anno.</span></h3>";
 if ($form_tabella) {
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle.php\"><div>
@@ -3700,7 +3776,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle
 <input type=\"hidden\" name=\"tariffe_sel\" value=\"$tariffe_sel\">";
 if ($tariffe_sel) {
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
-if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"".${"tariffa_sel".$numtariffa}."\">";
+if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"SI\">";
 } # fine for $numtariffa
 } # fine if ($tariffe_sel)
 } # fine if ($form_tabella)
@@ -3716,7 +3792,7 @@ else echo "<form id=\"f_tpt0\" accept-charset=\"utf-8\"><div>";
 } # fine else if ($form_tabella)
 if ($tariffe_sel) {
 $lista_tariffe_sel = "tariffe_sel=$tariffe_sel";
-for ($num1 = 1 ; $num1 <= $dati_tariffe['num'] ; $num1++) if (${"tariffa_sel".$num1}) $lista_tariffe_sel .= "&amp;tariffa_sel$num1=".${"tariffa_sel".$num1};
+for ($num1 = 1 ; $num1 <= $dati_tariffe['num'] ; $num1++) if (${"tariffa_sel".$num1}) $lista_tariffe_sel .= "&amp;tariffa_sel$num1=SI";
 } # fine if ($tariffe_sel)
 else $lista_tariffe_sel = "";
 
@@ -3950,7 +4026,7 @@ echo "<form id=\"f_tpt\" accept-charset=\"utf-8\" method=\"post\" action=\"visua
 <input type=\"hidden\" name=\"lista_sett_in_per\" value=\"".substr($lista_sett_in_per,0,-1)."\">";
 if ($tariffe_sel) {
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
-if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"".${"tariffa_sel".$numtariffa}."\">";
+if (${"tariffa_sel".$numtariffa}) echo "<input type=\"hidden\" name=\"tariffa_sel$numtariffa\" value=\"SI\">";
 } # fine for $numtariffa
 } # fine if ($tariffe_sel)
 echo "<button id=\"but_tpt\" class=\"edit\" type=\"submit\"><div>".mex("Modifica i campi della tabella",$pag)."</div></button>
@@ -4719,7 +4795,7 @@ $num_clienti = numlin_query($clienti);
 $num_clienti_mostra = esegui_query("select valpersonalizza_num from $tablepersonalizza where idpersonalizza = 'num_righe_tab_tutti_clienti' and idutente = '$id_utente'");
 $num_clienti_mostra = risul_query($num_clienti_mostra,0,'valpersonalizza_num');
 $num_pagine = ceil($num_clienti/$num_clienti_mostra);
-$pagina_clienti = $pagina_clienti + 1;
+$pagina_clienti = (int) $pagina_clienti + 1;
 $cliente_inizio = 0 + ($pagina_clienti -1)*$num_clienti_mostra;
 $cliente_fine = $num_clienti_mostra + ($pagina_clienti -1)*$num_clienti_mostra;
 if ($cliente_fine > $num_clienti) { $cliente_fine = $num_clienti; }
@@ -5823,8 +5899,11 @@ $tabelle_lock = array($tablemagazzini);
 $altre_tab_lock = array($tableutenti);
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
 if ($id_utente != 1) $n_utente_ins_mag = $id_utente;
+if (controlla_num_pos($n_utente_ins_mag) != "SI") $continua = "NO";
+else {
 $utente_esist = esegui_query("select idutenti from $tableutenti where idutenti = '".aggslashdb($n_utente_ins_mag)."' ");
 if (numlin_query($utente_esist) != 1) $continua = "NO";
+} # fine else if (controlla_num_pos($n_utente_ins_mag) != "SI")
 if (str_replace(" ","",$n_nome_mag) == "") $continua = "NO";
 if ($continua != "NO") {
 $idmag = esegui_query("select max(idmagazzini) from $tablemagazzini");
@@ -7232,8 +7311,8 @@ $nome_mese = array("",mex("Gen","inizio.php"),mex("Feb","inizio.php"),mex("Mar",
 unset($date_ins);
 $gio_mesi_sbagliati = 0;
 if (strcmp("$gio_ini_ins$mese_ini_ins","")) {
-if ($mese_ini_ins < 1 or $mese_ini_ins > 12) $gio_mesi_sbagliati = 1;
-if ($gio_ini_ins < 1 or $gio_ini_ins > 31) $gio_mesi_sbagliati = 1;
+if ($mese_ini_ins < 1 or $mese_ini_ins > 12 or controlla_num_pos($mese_ini_ins) != "SI") $gio_mesi_sbagliati = 1;
+if ($gio_ini_ins < 1 or $gio_ini_ins > 31 or controlla_num_pos($gio_ini_ins) != "SI") $gio_mesi_sbagliati = 1;
 if (!$gio_mesi_sbagliati) {
 $ts_ins = mktime(0,0,0,$mese_ini_ins,$gio_ini_ins,$anno);
 $mese_ini_ins = date("n",$ts_ins);
@@ -7241,8 +7320,8 @@ $gio_ini_ins = date("j",$ts_ins);
 } # fine if (!$gio_mesi_sbagliati)
 } # fine if (strcmp("$gio_ini_ins$mese_ini_ins",""))
 if (strcmp("$gio_fine_ins$mese_fine_ins","")) {
-if ($mese_fine_ins < 1 or $mese_fine_ins > 12) $gio_mesi_sbagliati = 1;
-if ($gio_fine_ins < 1 or $gio_fine_ins > 31) $gio_mesi_sbagliati = 1;
+if ($mese_fine_ins < 1 or $mese_fine_ins > 12 or controlla_num_pos($mese_fine_ins) != "SI") $gio_mesi_sbagliati = 1;
+if ($gio_fine_ins < 1 or $gio_fine_ins > 31 or controlla_num_pos($gio_fine_ins) != "SI") $gio_mesi_sbagliati = 1;
 if (!$gio_mesi_sbagliati) {
 $ts_ins = mktime(0,0,0,$mese_fine_ins,$gio_fine_ins,$anno);
 $mese_fine_ins = date("n",$ts_ins);
@@ -7265,6 +7344,8 @@ if ($gio_fine_ins) $date_ins['fine'] = date("-m-d",mktime(0,0,0,$mese_fine_ins,$
 else $date_ins['ini'] = "";
 
 unset($prezzi);
+if ($prezzo_comm_sel) $prezzo_comm_sel = 1;
+if ($prezzo_tasse_sel) $prezzo_tasse_sel = 1;
 if ($anno_sel != "SI" and $mese_sel != "SI") {
 $prezzo_comm_sel = 1;
 $prezzo_tasse_sel = 1;
@@ -7364,7 +7445,7 @@ echo "<input type=\"hidden\" name=\"mese_ini_ins\" value=\"$mese_ini_ins\">
 <input type=\"hidden\" name=\"gio_fine_ins\" value=\"$gio_fine_ins\">
 <input type=\"hidden\" name=\"prezzo_comm_sel\" value=\"$prezzo_comm_sel\">
 <input type=\"hidden\" name=\"prezzo_tasse_sel\" value=\"$prezzo_tasse_sel\">
-<input type=\"hidden\" name=\"tariffa_per_app\" value=\"$tariffa_per_app\">
+<input type=\"hidden\" name=\"tariffa_per_app\" value=\"".htmlspecialchars($tariffa_per_app)."\">
 ".mex("Anni",$pag).": ";
 for ($num1 = 0 ; $num1 < $num_anni ; $num1++) {
 if ($num1 >= ($num_anni - 5)) {
@@ -7391,7 +7472,7 @@ echo "<input type=\"hidden\" name=\"mese_ini_ins\" value=\"$mese_ini_ins\">
 <input type=\"hidden\" name=\"gio_fine_ins\" value=\"$gio_fine_ins\">
 <input type=\"hidden\" name=\"prezzo_comm_sel\" value=\"$prezzo_comm_sel\">
 <input type=\"hidden\" name=\"prezzo_tasse_sel\" value=\"$prezzo_tasse_sel\">
-<input type=\"hidden\" name=\"tariffa_per_app\" value=\"$tariffa_per_app\">
+<input type=\"hidden\" name=\"tariffa_per_app\" value=\"".htmlspecialchars($tariffa_per_app)."\">
 ".mex("Mesi",$pag).": ";
 for ($num1 = 1 ; $num1 <= 12 ; $num1++) {
 if (!${"mese_sel".$num1}) { $checked = ""; $b = ""; $slash_b = ""; }
@@ -7415,7 +7496,7 @@ if (${"mese_sel".$num1}) echo "<input type=\"hidden\" name=\"mese_sel$num1\" val
 } # fine for $num1
 echo "<input type=\"hidden\" name=\"prezzo_comm_sel\" value=\"$prezzo_comm_sel\">
 <input type=\"hidden\" name=\"prezzo_tasse_sel\" value=\"$prezzo_tasse_sel\">
-<input type=\"hidden\" name=\"tariffa_per_app\" value=\"$tariffa_per_app\">
+<input type=\"hidden\" name=\"tariffa_per_app\" value=\"".htmlspecialchars($tariffa_per_app)."\">
 ".ucfirst(mex("con prenotazioni inserite",$pag))." ".mex("dal",$pag)." ";
 $opt_giorni = "";
 $opt_giorno_vuoto = "<option value=\"\">--</option>";
@@ -7453,7 +7534,7 @@ echo "<input type=\"hidden\" name=\"mese_ini_ins\" value=\"$mese_ini_ins\">
 <input type=\"hidden\" name=\"mese_fine_ins\" value=\"$mese_fine_ins\">
 <input type=\"hidden\" name=\"gio_ini_ins\" value=\"$gio_ini_ins\">
 <input type=\"hidden\" name=\"gio_fine_ins\" value=\"$gio_fine_ins\">
-<input type=\"hidden\" name=\"tariffa_per_app\" value=\"$tariffa_per_app\">
+<input type=\"hidden\" name=\"tariffa_per_app\" value=\"".htmlspecialchars($tariffa_per_app)."\">
 ".mex("Prezzi con",$pag).": ";
 if (!$prezzo_comm_sel) { $checked = ""; $b = ""; $slash_b = ""; }
 else { $checked = " checked"; $b = "<b>"; $slash_b = "</b>"; }
@@ -7737,7 +7818,7 @@ $num_x = 0;
 for ($num1 = 0 ; $num1 < $num_anni ; $num1++) {
 if (${"anno_sel".$anni[$num1]}) {
 $anno_stat = $anni[$num1];
-if (@is_array(${"pagamenti".$anno_stat})) {
+if (@is_array(${"pagamenti".$anno_stat}[$anno_stat])) {
 $pagamenti_anno = ${"pagamenti".$anno_stat}[$anno_stat];
 reset($pagamenti_anno);
 foreach ($pagamenti_anno as $metodo => $val) {

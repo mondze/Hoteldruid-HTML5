@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -1371,8 +1371,11 @@ $campi_pers_cliente = explode(">",risul_query($campi_pers_cliente,0,'valpersonal
 $num_campi_pers_cliente = count($campi_pers_cliente);
 } # fine if (numlin_query($campi_pers_cliente))
 else $num_campi_pers_cliente = 0;
+include_once("./includes/funzioni_tariffe.php");
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
 $commento_personalizzato_ = mex2("commento_personalizzato")."_";
 $campo_personalizzato_ = mex2("campo_personalizzato")."_";
+$num_persone_tipo_ = mex2("num_persone_tipo")."_";
 include("./includes/variabili_contratto.php");
 $num_var_predef--;
 $num_int_contr = $num_contratto;

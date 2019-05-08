@@ -616,7 +616,7 @@ global $mostra_richiesta_via_mail,$mostra_costi_aggiuntivi,$num_colonne_costi_ag
 global $colore_sfondo_quadro_disponibilita,$colore_inizio_settimana_quadro_disponibilita,$colore_libero_quadro_disponibilita,$colore_occupato_quadro_disponibilita,$apertura_font_quadro_disponibilita,$chiusura_font_quadro_disponibilita,$apertura_tag_font,$chiusura_tag_font,$apertura_tag_font_rosse,$chiusura_tag_font_rosse,$stile_tabella_prenotazione,$m_valuta_sing,$m_valuta_plur,$frase_alternativa_regola1,$cambia_frasi,$utente_mess;
 global $orig_prenota,$num_metodi_pagamento,$num_campi_pers,$num_campi_doc_cond,$chiedi_cognome,$chiedi_nome,$chiedi_email,$chiedi_sesso,$chiedi_datanascita,$chiedi_documento,$chiedi_nazione,$chiedi_citta,$chiedi_regione,$chiedi_via,$chiedi_numcivico,$chiedi_cap,$chiedi_telefono,$chiedi_telefono2,$chiedi_telefono3,$chiedi_fax,$chiedi_codfiscale,$chiedi_partitaiva,$chiedi_commento,$chiedi_oracheckin,$chiedi_metodopagamento;
 global $mostra_bottone_paypal,$nome_modello_paypal,$mostra_calendario_scelta_date,$stile_riquadro_calendario,$stile_tabella_calendario,$stile_bottoni_calendario,$stile_bottone_apertura_calendario,$spostamento_orizzontale_calendario,$colore_data_attiva_calendario,$colore_data_selezionata_calendario,$prima_parte_html,$ultima_parte_html,$mostra_giorni_pieni,$modello_esistente;
-global $file_css_frame,$apri_nuova_finestra_da_frame,$altezza_finestra_da_frame,$larghezza_finestra_da_frame,$tema_modello,$num_codici_promo;
+global $file_css_frame,$apri_nuova_finestra_da_frame,$altezza_finestra_da_frame,$larghezza_finestra_da_frame,$tema_modello,$num_codici_promo,$parola_settimane;
 $tablenometariffe_modello = $PHPR_TAB_PRE."ntariffe".$anno_modello;
 $tableperiodi_modello = $PHPR_TAB_PRE."periodi".$anno_modello;
 $tableanni = $PHPR_TAB_PRE."anni";
@@ -736,7 +736,6 @@ $m_names = "\\\"". mex2("Gen",$pag_gm,$lingua_modello)."\\\",\\\"". mex2("Feb",$
 
 if (controlla_num_pos($sett_no_prenota) == "NO" or $sett_no_prenota < 0 or $sett_no_prenota > 365) {
 $continua = "NO";
-global $parola_settimane;
 if ($silenzio == "NO") echo mex("Numero di $parola_settimane dopo cui prendere richieste errato",$pag).".<br>";
 } # fine if (controlla_num_pos($sett_no_prenota) == "NO" or $sett_no_prenota < 1 or $sett_no_prenota > 365)
 
@@ -1463,6 +1462,7 @@ if (\$".mex("var_stile_data",$pag)." == \"".mex("usa",$pag)."\") \$stile_data = 
 if (strtoupper(\$".mex("var_anteponi_nome_valuta",$pag).") == \"".mex("SI",$pag)."\") \$anteponi_nome_valuta = \"SI\";
 else \$anteponi_nome_valuta = \"NO\";
 \$utente_liste = \$".mex("var_utente_liste",$pag).";
+\$ut_lis = \"\";
 if (strtoupper(\$".mex("var_estendi_ultima_data",$pag).") == \"".mex("SI",$pag)."\") \$estendi_ultima_data = \"SI\";
 else \$estendi_ultima_data = \"NO\";
 \$sett_no_prenota = \$".mex("var_periodi_no_richieste",$pag).";
@@ -1763,8 +1763,13 @@ if (numlin_query(\$campi_pers_cliente)) {
 \$num_campi_pers_cliente = count(\$campi_pers_cliente);
 } # fine if (numlin_query(\$campi_pers_cliente))
 else \$num_campi_pers_cliente = 0;
+\$ut_lis = esegui_query(\"select idutenti from \$PHPR_TAB_PRE\".\"utenti where nome_utente = '\".aggslashdb(\$utente_liste).\"'\");
+if (numlin_query(\$ut_lis) != 1) \$ut_lis = 1;
+else \$ut_lis = risul_query(\$ut_lis,0,'idutenti');
+\$dati_cat_pers = dati_cat_pers(\$ut_lis,\$PHPR_TAB_PRE.\"personalizza\",\$lingua_modello,\"v\",0);
 \$commento_personalizzato_ = \"commento_personalizzato_\";
 \$campo_personalizzato_ = \"campo_personalizzato_\";
+\$num_persone_tipo_ = \"num_persone_tipo_\";
 ");
 includi_file("./includes/variabili_contratto.php",$file);
 includi_file("./includes/funzioni_contratti.php",$file);

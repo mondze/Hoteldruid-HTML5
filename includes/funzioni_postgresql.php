@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -59,10 +59,11 @@ if (substr($PHPR_LOG,0,2) != "SI") {
 function esegui_query ($query,$silenzio = "",$idlog = "") {
 
 $risul = pg_exec($query);
-if (!$risul and !$silenzio) {
+if (!$risul and $silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
-} # fine (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." PGSQL ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."...");
+} # fine (!$risul and $silenzio != "totale")
 return $risul;
 
 } # fine function esegui_query
@@ -76,10 +77,11 @@ if (!function_exists("inserisci_log")) include("./includes/funzioni_log.php");
 function esegui_query ($query,$silenzio = "",$idlog = "") {
 
 $risul = pg_exec($query);
-if (!$risul and !$silenzio) {
+if (!$risul and $silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
-} # fine (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR in: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." PGSQL ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."...");
+} # fine (!$risul and $silenzio != "totale")
 
 if ($idlog != 1) inserisci_log($query,$idlog);
 

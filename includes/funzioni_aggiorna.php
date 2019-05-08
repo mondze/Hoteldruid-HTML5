@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -2692,14 +2692,16 @@ esegui_query("insert into $tableprenota select idprenota,idclienti,idappartament
 esegui_query("drop table $tableprenota_temp ");
 $prenota_tariffe_pers = esegui_query("select * from $tableprenota where tariffesettimanali $LIKE '%;%' ");
 for ($num2 = 0 ; $num2 < numlin_query($prenota_tariffe_pers) ; $num2++) {
+$numpers = risul_query($prenota_tariffe_pers,$num2,'num_persone');
+if ($numpers) {
 $idprenota = risul_query($prenota_tariffe_pers,$num2,'idprenota');
 $tariffesett_orig = risul_query($prenota_tariffe_pers,$num2,'tariffesettimanali');
 $tariffesett = explode(";",risul_query($prenota_tariffe_pers,$num2,'tariffesettimanali'));
 $tariffesett = explode(",",$tariffesett[1]);
-$numpers = risul_query($prenota_tariffe_pers,$num2,'num_persone');
 $n_tariffesett = "";
 for ($num3 = 0 ; $num3 < count($tariffesett); $num3++) $n_tariffesett .= ",".round(((double) $tariffesett[$num3] / (double) $numpers),2);
 esegui_query("update $tableprenota set tariffesettimanali = '$tariffesett_orig;".substr($n_tariffesett,1)."' where idprenota = '$idprenota' ");
+} # fine if ($numpers)
 } # fine for $num2
 $tablecostiprenota = $PHPR_TAB_PRE."costiprenota".$anno_mostra;
 $tablecostiprenota_temp = $PHPR_TAB_PRE."costipren".$anno_mostra;
@@ -2717,6 +2719,10 @@ esegui_query("update ".$PHPR_TAB_PRE."privilegi set priv_mod_pers = '$priv_mod_p
 } # fine for $num1
 } # fine if ($versione_corrente < "2.30")
 
+if ($versione_corrente < "2.31") {
+$aggiornato = "SI";
+} # fine if ($versione_corrente < "2.31")
+
 
 
 
@@ -2727,7 +2733,7 @@ if (!defined('C_NASCONDI_MARCA') or C_NASCONDI_MARCA != "SI") {
 if (@is_file("./COPYING")) $file_copying = "file <a href=\"COPYING\">COPYING</a>";
 else $file_copying = "<a href=\"http://www.gnu.org/licenses/agpl-3.0.html\">AGPLv3</a> License";
 echo "<div style=\"text-align: center;\">
-HOTELDRUID version ".C_PHPR_VERSIONE_TXT.", Copyright (C) 2001-2018 Marco M. F. De Santis<br>
+HOTELDRUID version ".C_PHPR_VERSIONE_TXT.", Copyright (C) 2001-2019 Marco M. F. De Santis<br>
 HotelDruid comes with ABSOLUTELY NO WARRANTY; <br>
 for details see the $file_copying.<br>
 This is free software, and you are welcome to redistribute it<br>

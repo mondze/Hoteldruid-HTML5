@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -68,7 +68,7 @@ break;
 if (@is_file("./COPYING")) $file_copying = "file <a href=\"COPYING\">COPYING</a>";
 else $file_copying = "<a href=\"http://www.gnu.org/licenses/agpl-3.0.html\">AGPLv3</a> License";
 echo "<div style=\"text-align: center;\"><h3>".mex("Benvenuto a HOTELDRUID",$pag).".</h3><br><br>
-HOTELDRUID version ".C_PHPR_VERSIONE_TXT.", Copyright (C) 2001-2018 Marco M. F. De Santis<br>
+HOTELDRUID version ".C_PHPR_VERSIONE_TXT.", Copyright (C) 2001-2019 Marco M. F. De Santis<br>
 HotelDruid comes with ABSOLUTELY NO WARRANTY; <br>for details see the $file_copying.<br>
 This is free software, and you are welcome to redistribute it<br>
  under certain conditions; see the $file_copying for details.<br>
@@ -261,7 +261,7 @@ else {
 $ultimo_anno = "-2";
 include_once("./includes/costanti.php");
 } # fine else if ($num_ultimi_anni)
-if ($anno == ($ultimo_anno + 1) or (!$num_ultimi_anni and C_UTILIZZA_SEMPRE_DEFAULTS == "AUTO")) {
+if ($anno == ($ultimo_anno + 1) or (!$num_ultimi_anni and defined('C_UTILIZZA_SEMPRE_DEFAULTS') and C_UTILIZZA_SEMPRE_DEFAULTS == "AUTO")) {
 if ($num_ultimi_anni) {
 $tipo_periodi_prec = risul_query($ultimi_anni,0,'tipo_periodi');
 $importa_anno_prec = "SI";
@@ -288,7 +288,7 @@ $id_utente = 1;
 crea_nuovo_anno($anno,$PHPR_TAB_PRE,$DATETIME,$tipo_periodi_prec,$giorno_ini_fine,"1",$mese_fine,$importa_anno_prec,"SI",$pag);
 $id_utente = $id_utente_orig;
 $anno_esistente = "SI";
-} # fine if ($anno == ($ultimo_anno + 1) or (!$num_ultimi_anni and C_UTILIZZA_SEMPRE_DEFAULTS == "AUTO"))
+} # fine if ($anno == ($ultimo_anno + 1) or (!$num_ultimi_anni and defined('C_UTILIZZA_SEMPRE_DEFAULTS') and C_UTILIZZA_SEMPRE_DEFAULTS == "AUTO"))
 } # fine if ($auto_crea_anno == "SI")
 } # fine if ($anno == $anno_attuale)
 } # fine if (!@is_file(C_DATI_PATH."/selectperiodi$anno.1.php") or $anno_utente_attivato != "SI")
@@ -447,6 +447,15 @@ $gt<button class=\"mess\" type=\"submit\"><div>".mex("Messaggi",$pag)."</div></b
 echo "</tr></table>";
 
 if ($priv_ins_nuove_prenota == "s" or $priv_vedi_tab_mesi != "n" or $priv_vedi_tab_prenotazioni != "n") {
+if ($numconnessione) {
+include_once("./includes/funzioni_tariffe.php");
+$tablepersonalizza = $PHPR_TAB_PRE."personalizza";
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,'s',0);
+} # fine if ($numconnessione)
+else {
+$dati_cat_pers = array();
+$dati_cat_pers['num'] = 0;
+} # fine else if ($numconnessione)
 echo "<table class=\"rbox\" style=\"margin-left: auto; margin-right: auto;\" cellspacing=0 cellpadding=0><tr><td>
 <div id=\"mm_sub4\">
 <form accept-charset=\"utf-8\" method=\"post\" action=\"disponibilita.php\"><div>
@@ -465,11 +474,17 @@ $fine_select = risul_query($date_select,0,'datafine');
 mostra_menu_date(C_DATI_PATH."/selperiodimenu$anno.$id_utente.php","inizioperiodo",$inizio_select,"","",$id_utente,$tema);
 echo " ".mex("al",$pag)." ";
 mostra_menu_date(C_DATI_PATH."/selperiodimenu$anno.$id_utente.php","fineperiodo",$fine_select,"","",$id_utente,$tema);
-echo " (".mex("per",$pag)."
- <input type=\"text\" name=\"numpersone\" size=\"2\" maxlength=\"2\">
- ".mex("persone",$pag).")
-<button class=\"chav\" type=\"submit\"><div>".ucfirst(mex("controlla",$pag))."</div></button>
-</div></form></div></td></tr></table>";
+if (!$dati_cat_pers['num']) echo " <span class=\"wsnw\">(".mex("per",$pag)." <input type=\"text\" name=\"numpersone\" size=\"2\" maxlength=\"2\"> ".mex("persone",$pag).")</span>";
+echo " <button class=\"chav\" type=\"submit\"><div>".ucfirst(mex("controlla",$pag))."</div></button>";
+if ($dati_cat_pers['num']) {
+echo "<div style=\"height: 2px;\"></div>(";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+echo "<span class=\"wsnw\">".$dati_cat_pers[$num1]['n_plur'].": <input type=\"text\" name=\"cat$num1"."_numpers\" size=\"2\" maxlength=\"2\"></span>";
+if ($num1 != ($dati_cat_pers['num'] - 1)) echo "; ";
+} # for $num1
+echo ")";
+} # fine if ($dati_cat_pers['num'])
+echo "</div></form></div></td></tr></table>";
 } # fine if ($priv_ins_nuove_prenota == "s" or $priv_vedi_tab_mesi != "n" or $priv_vedi_tab_prenotazioni != "n")
 
 echo "<hr id=\"mm_sub5\" style=\"width: 95%;\">";

@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -53,13 +53,15 @@ $tablepersonalizza = $PHPR_TAB_PRE."personalizza";
 
 #@include("./includes/costanti.php");
 #@include(C_DATI_PATH."/costanti.php");
-define('C_PHPR_VERSIONE_NUM',2.30);
-define('C_PHPR_VERSIONE_TXT',"2.3.0");
+define('C_PHPR_VERSIONE_NUM',2.31);
+define('C_PHPR_VERSIONE_TXT',"2.3.1");
 
 if (!function_exists('utf8_encode')) {
 function utf8_encode ($testo) { return ($testo); }
 function utf8_decode ($testo) { return ($testo); }
 } # fine if (!function_exists('utf8_encode'))
+
+$id_sessione = htmlspecialchars($id_sessione);
 
 # Se non si specifica nessun anno uso l'attuale
 if (@is_file(C_DATI_PATH."/versione.php")) include_once(C_DATI_PATH."/versione.php");
@@ -393,7 +395,10 @@ else $lingua_mex = "ita";
 $nome_utente_login = "";
 
 
-if (!is_file(C_DATI_PATH."/abilita_login")) $id_utente = 1;
+if (!is_file(C_DATI_PATH."/abilita_login")) {
+if ($pag == "inizio.php" or $pag == "creadb.php" or @is_file(C_DATI_PATH."/selectperiodi$anno.1.php")) $id_utente = 1;
+else echo "<br>The requested year does not exists.<br><br><a href=\"./inizio.php\">Go back</a><br>";
+} # fine if (!is_file(C_DATI_PATH."/abilita_login"))
 
 else {
 
@@ -896,6 +901,7 @@ else echo "$js += '".str_replace("\n","\\\n",$out)."';
 $last_dates_menu = $file;
 
 } # fine function mostra_menu_date
+if ($mos_tut_dat) $mos_tut_dat = "SI";
 
 
 

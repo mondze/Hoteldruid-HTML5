@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -260,6 +260,10 @@ $Euro = nome_valuta();
 $stile_soldi = stile_soldi();
 $stile_data = stile_data();
 
+$mese = htmlspecialchars($mese);
+$tipo_tabella = htmlspecialchars($tipo_tabella);
+$idprenota_origine = htmlspecialchars($idprenota_origine);
+
 for ($num_idpr = 0 ; $num_idpr < $num_id_prenota ; $num_idpr++) {
 $id_prenota = $id_prenota_idpr[$num_idpr];
 if ($priv_canc_prenotazioni == "f") {
@@ -391,7 +395,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_prenota.p
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"cambia_cliente\" value=\"SI\">
@@ -437,7 +441,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_prenota.p
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"cambia_cliente\" value=\"SI\">
@@ -520,7 +524,7 @@ echo "<br><br>
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">";
 if ($errore != "SI") echo "<button class=\"canc\" type=\"submit\"><div>".mex("Annulla",$pag)."</div></button>";
@@ -681,18 +685,18 @@ $dati_form_modifica = "<input type=\"hidden\" name=\"d_data_inserimento\" value=
 <input type=\"hidden\" name=\"n_data_stima_checkin\" value=\"$n_data_stima_checkin\">
 <input type=\"hidden\" name=\"n_ora_stima_checkin\" value=\"$n_ora_stima_checkin\">
 <input type=\"hidden\" name=\"n_min_stima_checkin\" value=\"$n_min_stima_checkin\">
-<input type=\"hidden\" name=\"sposta_appartamento\" value=\"$sposta_appartamento\">
-<input type=\"hidden\" name=\"n_appartamento\" value=\"$n_appartamento\">
+<input type=\"hidden\" name=\"sposta_appartamento\" value=\"".htmlspecialchars($sposta_appartamento)."\">
+<input type=\"hidden\" name=\"n_appartamento\" value=\"".htmlspecialchars($n_appartamento)."\">
 <input type=\"hidden\" name=\"n_mobile\" value=\"$n_mobile\">
-<input type=\"hidden\" name=\"n_lista_app\" value=\"$n_lista_app\">
-<input type=\"hidden\" name=\"n_num_piano\" value=\"$n_num_piano\">
-<input type=\"hidden\" name=\"n_num_casa\" value=\"$n_num_casa\">
-<input type=\"hidden\" name=\"n_num_persone_casa\" value=\"$n_num_persone_casa\">
+<input type=\"hidden\" name=\"n_lista_app\" value=\"".htmlspecialchars($n_lista_app)."\">
+<input type=\"hidden\" name=\"n_num_piano\" value=\"".htmlspecialchars($n_num_piano)."\">
+<input type=\"hidden\" name=\"n_num_casa\" value=\"".htmlspecialchars($n_num_casa)."\">
+<input type=\"hidden\" name=\"n_num_persone_casa\" value=\"".htmlspecialchars($n_num_persone_casa)."\">
 <input type=\"hidden\" name=\"n_numpersone\" value=\"$n_numpersone\">
 <input type=\"hidden\" name=\"tipo_commento\" value=\"$tipo_commento\">
 <input type=\"hidden\" name=\"n_commento\" value=\"$n_commento\">
 <input type=\"hidden\" name=\"n_cancella_commento\" value=\"$n_cancella_commento\">
-<input type=\"hidden\" name=\"n_nometipotariffa\" value=\"$n_nometipotariffa\">
+<input type=\"hidden\" name=\"n_nometipotariffa\" value=\"".htmlspecialchars($n_nometipotariffa)."\">
 <input type=\"hidden\" name=\"cambia_con_regola2\" value=\"$cambia_con_regola2\">
 <input type=\"hidden\" name=\"n_sconto\" value=\"$n_sconto\">
 <input type=\"hidden\" name=\"tipo_val_sconto\" value=\"$tipo_val_sconto\">
@@ -720,7 +724,7 @@ $excat_trovata = array();
 for ($num_idpr = 0 ; $num_idpr < $num_id_prenota ; $num_idpr++) {
 $id_prenota = $id_prenota_idpr[$num_idpr];
 if ($num_id_prenota > 1) {
-$dati_form_modifica .= "<input type=\"hidden\" name=\"n_nometipotariffa_$id_prenota\" value=\"".${"n_nometipotariffa_".$id_prenota}."\">
+$dati_form_modifica .= "<input type=\"hidden\" name=\"n_nometipotariffa_$id_prenota\" value=\"".htmlspecialchars(${"n_nometipotariffa_".$id_prenota})."\">
 <input type=\"hidden\" name=\"cambia_con_regola2_$id_prenota\" value=\"".${"cambia_con_regola2_".$id_prenota}."\">";
 } # fine if ($num_id_prenota > 1)
 if ($dati_cat_pers['num']) {
@@ -874,6 +878,7 @@ if ($priv_mod_num_persone != "s" or controlla_num_pos(${"n_excat$cat_pers"."_num
 
 $n_numpersone_orig = $n_numpersone;
 $n_appartamento_orig = $n_appartamento;
+$n_lista_app = htmlspecialchars($n_lista_app);
 $n_lista_app_orig = $n_lista_app;
 $sposta_appartamento_orig = $sposta_appartamento;
 $diff_pagato_tot = 0;
@@ -936,7 +941,7 @@ $n_nometipotariffa = ${"n_nometipotariffa_".$id_prenota};
 $cambia_con_regola2 = ${"cambia_con_regola2_".$id_prenota};
 } # fine if ($n_nometipotariffa_vett == "SI")
 
-$n_nometipotariffa = aggslashdb($n_nometipotariffa);
+$n_nometipotariffa = aggslashdb(str_replace("\"","",str_replace(">","",str_replace("<","",$n_nometipotariffa))));
 if ($n_nometipotariffa and (($attiva_tariffe_consentite == "s" and $tariffe_consentite_vett[substr($n_nometipotariffa,7)] != "SI") or substr($n_nometipotariffa,0,7) != "tariffa")) $inserire = "NO";
 if ($priv_mod_tariffa != "s" and $priv_mod_tariffa != "r") unset($n_nometipotariffa);
 if ($priv_mod_tariffa == "r") $cambia_con_regola2 = "S";
@@ -1029,10 +1034,6 @@ $cat_persone['num']++;
 } # fine if ($d_cat_persone[$cat_pers]['esist'] != ($num1 + 1))
 } # fine for $num1
 if ($n_numpersone == $d_num_persone) unset($n_numpersone);
-if (($n_numpersone or $d_num_persone) and !$osp_princ_trovato) {
-$inserire = "NO";
-echo "<span class=\"colred\">".mex("Si deve inserire almeno una persona che possa essere ospite principale",'clienti.php')."</span>$per_la_prenotazione.<br>";
-} # fine if (($n_numpersone or $d_num_persone) and !$osp_princ_trovato)
 } # fine if ($dati_cat_pers['num'])
 
 # per la regola di assegnazione 4
@@ -1073,7 +1074,7 @@ $frase_da .= $frase_da2;
 } # fine else if ($assegnazioneapp == "k")
 $frase_da = $frase_da . ")";
 if ($n_appartamento) {
-$n_appartamento = aggslashdb($n_appartamento);
+$n_appartamento = aggslashdb(str_replace("\"","",str_replace(">","",str_replace("<","",$n_appartamento))));
 echo mex("La prenotazione verrà spostata dall'appartamento",'unit.php')." $frase_da ".mex("al",'unit.php');
 if (substr($origine,0,13) == "tab_mese_drop") {
 echo ":<br><br>";
@@ -1122,29 +1123,30 @@ $n_assegnazioneapp = "c";
 echo mex("L'assegnazione dell'appartamento verrà cambiata dal",'unit.php')." $frase_da ".mex("ad uno tra",'unit.php');
 $frase_spostamento_idpr[$id_prenota] = 1;
 $query = "select idappartamenti from $tableappartamenti ";
+$where_immesso = "";
 if ($n_num_piano) {
-echo mex(" quelli del",'unit.php')." <b>$n_num_piano".mex("°</b> piano",$pag);
+echo mex(" quelli del",'unit.php')." <b>".str_replace("\"","",str_replace(">","",str_replace("<","",$n_num_piano))).mex("°</b> piano",$pag);
 $query = $query."where numpiano = '".aggslashdb($n_num_piano)."' ";
 $where_immesso = "SI";
 } # fine if ($n_num_piano)
 if ($n_num_casa) {
 if ($where_immesso) {
-echo " ".mex("della casa",$pag)." <b>$n_num_casa</b>";
+echo " ".mex("della casa",$pag)." <b>".str_replace("\"","",str_replace(">","",str_replace("<","",$n_num_casa)))."</b>";
 $query = $query."and numcasa = '".aggslashdb($n_num_casa)."' ";
 } # fine if ($where_immesso)
 else {
-echo " ".mex("quelli della casa",'unit.php')." <b>$n_num_casa</b>";
+echo " ".mex("quelli della casa",'unit.php')." <b>".str_replace("\"","",str_replace(">","",str_replace("<","",$n_num_casa)))."</b>";
 $query = $query."where numcasa = '".aggslashdb($n_num_casa)."' ";
 } # fine else if ($where_immesso)
 $where_immesso = "SI";
 } # fine if ($n_num_casa)
 if ($n_num_persone_casa) {
 if ($where_immesso) {
-echo " ".mex("con massimo numero di occupanti",$pag)." <b>$n_num_persone_casa</b>";
+echo " ".mex("con massimo numero di occupanti",$pag)." <b>".htmlspecialchars($n_num_persone_casa)."</b>";
 $query = $query."and maxoccupanti = '".aggslashdb($n_num_persone_casa)."' ";
 } # fine if ($where_immesso)
 else {
-echo " ".mex("quelli con massimo numero di occupanti",'unit.php')." <b>$n_num_persone_casa</b>";
+echo " ".mex("quelli con massimo numero di occupanti",'unit.php')." <b>".htmlspecialchars($n_num_persone_casa)."</b>";
 $query = $query."where maxoccupanti = '".aggslashdb($n_num_persone_casa)."' ";
 } # fine else if ($where_immesso)
 } # fine  if ($n_num_persone_casa)
@@ -1375,7 +1377,7 @@ if (empty($app_richiesti) or $app_richiesti[$sposta_appartamento] == "SI") {
 unset($app_richiesti);
 unset($n_assegnazioneapp);
 $n_appartamento = $sposta_appartamento;
-$n_appartamento = aggslashdb($n_appartamento);
+$n_appartamento = aggslashdb(str_replace("\"","",str_replace(">","",str_replace("<","",$n_appartamento))));
 echo mex("La prenotazione",$pag)." $id_prenota ".mex("verrà spostata dall'appartamento",'unit.php')." $frase_da ".mex("al",'unit.php');
 if (substr($origine,0,13) == "tab_mese_drop" and $priv_mod_assegnazione_app == "s") {
 echo ":<br><br>";
@@ -1632,6 +1634,10 @@ echo mex("Il numero di",$pag)." <em>".$d_cat_persone[$num1]['n_plur']."</em> ".m
 } # fine if ($cp_molt != $d_cat_persone[$cat_pers]['molt'])
 } # fine if ($d_cat_persone[$cat_pers]['esist'] != ($num1 + 1))
 } # fine for $num1
+if ($catpers_camb_idpr[$id_prenota] and !$osp_princ_trovato) {
+$inserire = "NO";
+echo "<span class=\"colred\">".mex("Si deve inserire almeno una persona che possa essere ospite principale",'clienti.php')."</span>$per_la_prenotazione.<br>";
+} # fine if ($catpers_camb_idpr[$id_prenota] and !$osp_princ_trovato)
 } # fine if ($dati_cat_pers['num'])
 
 
@@ -2069,7 +2075,7 @@ echo "<br><form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_preno
 <input type=\"hidden\" name=\"id_per_corr_finto\" value=\"".($inizioperiodo_min - 1)."\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"modificaprenotazione\" value=\"modifica\">";
@@ -2218,6 +2224,8 @@ $coeff_cat_persone = array();
 $coeff_cat_persone['i'] = 0;
 $coeff_cat_persone['p'] = 0;
 $d_coeff_cat_persone = 0;
+if ($catpers_camb_idpr[$id_prenota]) $cat_persone['arrotond'] = $dati_cat_pers['arrotond'];
+else $cat_persone['arrotond'] = $d_cat_persone['arrotond'];
 if ($numpersone) {
 for ($num1 = 0 ; $num1 < $cat_persone['num'] ; $num1++) {
 if ($cat_persone[$num1]['molt']) {
@@ -2225,8 +2233,6 @@ if ($cat_persone[$num1]['perc'] == "100") $coeff_cat_persone['i'] += (double) $c
 else $coeff_cat_persone['p'] += ((double) $cat_persone[$num1]['molt'] * ((double) $cat_persone[$num1]['perc'] / 100));
 } # fine if ($cat_persone[$num1]['molt'])
 } # fine for $num1
-if ($catpers_camb_idpr[$id_prenota]) $cat_persone['arrotond'] = $dati_cat_pers['arrotond'];
-else $cat_persone['arrotond'] = $d_cat_persone['arrotond'];
 for ($num1 = 0 ; $num1 < $d_cat_persone['num'] ; $num1++) {
 if ($d_cat_persone[$num1]['molt']) {
 if ($d_cat_persone[$num1]['perc'] == "100") $d_coeff_cat_persone += (double) $d_cat_persone[$num1]['molt'];
@@ -2406,7 +2412,7 @@ $tariffesettimanali = $d_tariffesettimanali;
 
 if ($n_caparra and $tipo_val_caparra == "perc_tar") {
 $caparra_arrotond = $dati_tariffe[$tipotariffa]['caparra_arrotond'];
-if (!strcmp($caparra_arrotond,"") or $caparra_arrotond == "val") $caparra_arrotond = $arrotond_predef;
+if (!strcmp($caparra_arrotond,"") or $caparra_arrotond == "val" or $caparra_arrotond == "gio") $caparra_arrotond = $arrotond_predef;
 $n_caparra = ($costo_tariffa * (double) $n_caparra) / 100;
 $n_caparra = $n_caparra / $caparra_arrotond;
 $n_caparra = floor($n_caparra);
@@ -2724,7 +2730,7 @@ if (${"id_periodi_costo".$numca2."_".$id_prenota2}) echo "<input type=\"hidden\"
 for ($numca2 = 1 ; $numca2 <= $numca ; $numca2++) echo "<input type=\"hidden\" name=\"id_periodi_costo$numca2"."_$id_prenota\" value=\"".${"id_periodi_costo".$numca2."_".$id_prenota}."\">";
 echo "<input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"modificaprenotazione\" value=\"modifica\">
@@ -3375,7 +3381,7 @@ echo "<input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"id_transazione\" value=\"$id_transazione\">
@@ -3398,7 +3404,7 @@ echo "<input type=\"hidden\" name=\"anno\" value=\"$anno\">
 elseif ($form_continua_iniziata == "SI") echo "</div></form>";
 
 
-if ($cancellata == "SI") $action = $origine;
+if ($cancellata == "SI") $action = str_replace("\"","",str_replace(">","",str_replace("<","",$origine)));
 else $action = "modifica_prenota.php";
 if (substr($origine,0,13) == "tab_mese_drop") {
 $action = explode("#",$origine);
@@ -3409,7 +3415,7 @@ echo "<br><input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
@@ -3445,13 +3451,13 @@ $n_nometipotariffa = "";
 
 
 if ($mostra_form_modifica_prenota != "SI") {
-if ($cancellata == "SI") echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>";
+if ($cancellata == "SI") echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".str_replace("\"","",str_replace(">","",str_replace("<","",$origine)))."\"><div>";
 else echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_prenota.php\"><div>";
 echo "<input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <button class=\"cont\" type=\"submit\"><div>".mex("OK",$pag)."</div></button>
@@ -3664,6 +3670,8 @@ ${"moltiplica_max_costo_agg".$numca."_".$num_ripeti} = $dati_cap[$numca]['moltip
 ${"valore_giornaliero_max_costo_agg".$numca."_".$num_ripeti} = $prezzi_giorn_costo;
 if ($dati_cap[$numca]['associasett'] == "s") ${"giorni_costo_agg".$numca."_".$num_ripeti} = $dati_cap[$numca]['settimane'];
 else ${"giorni_costo_agg".$numca."_".$num_ripeti} = "";
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num']) ${"tipo_persona_costo_agg".$numca."_".$num_ripeti} = ($dati_cap[$numca]['cat_pers']['ord'][0] + 1);
+else ${"tipo_persona_costo_agg".$numca."_".$num_ripeti} = "";
 ${"data_inserimento_costo_agg".$numca."_".$num_ripeti} = substr($dati_cap[$numca]['datainserimento'],0,10);
 ${"utente_inserimento_costo_agg".$numca."_".$num_ripeti} = $dati_cap[$numca]['utente_inserimento'];
 } # fine for $numca
@@ -4059,10 +4067,10 @@ echo "<div style=\"font-size: small;\">".mex("Altre prenotazioni dello stesso cl
 $tutte_altre_prenota = $id_prenota;
 for ($num1 = 0 ; $num1 < $num_altre_prenota ; $num1++) {
 $id_altra_prenota = risul_query($altre_prenota_cliente,$num1,'idprenota');
-echo " <a href=\"./$pag?id_prenota=$id_altra_prenota&anno=$anno&id_sessione=$id_sessione&origine=$origine\">$id_altra_prenota</a>";
+echo " <a href=\"./$pag?id_prenota=$id_altra_prenota&anno=$anno&id_sessione=$id_sessione&origine=".urlencode($origine)."\">$id_altra_prenota</a>";
 $tutte_altre_prenota .= ",$id_altra_prenota";
 } # fine for $num1
-echo " <a href=\"./$pag?id_prenota=$tutte_altre_prenota&anno=$anno&id_sessione=$id_sessione&origine=$origine\">".mex("tutte",$pag)."</a>
+echo " <a href=\"./$pag?id_prenota=$tutte_altre_prenota&anno=$anno&id_sessione=$id_sessione&origine=".urlencode($origine)."\">".mex("tutte",$pag)."</a>
 </div><hr style=\"width: 95%;\">";
 } # fine if ($num_altre_prenota)
 } # fine if ($num_id_prenota == 1)
@@ -4076,7 +4084,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_prenota.p
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"rig_cod_prenota\" value=\"SI\">";
@@ -4127,7 +4135,7 @@ echo "</td><td>
 <input type=\"hidden\" name=\"anno\" value=\"$anno_origine\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"idclienti\" value=\"$id_clienti\">
-<input type=\"hidden\" name=\"origine\" value=\"modifica_prenota.php?mese=$mese&amp;tipo_tabella=$tipo_tabella&amp;id_prenota=$idprenota_origine2&amp;origine=$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"modifica_prenota.php?mese=$mese&amp;tipo_tabella=$tipo_tabella&amp;id_prenota=$idprenota_origine2&amp;origine=".htmlspecialchars($origine)."\">
 <button class=\"mcli\" type=\"submit\"><div>".mex("Modifica i dati del cliente",$pag)."</div></button>
 </div></form>";
 } # fine if ($modifica_clienti == "SI" or...
@@ -4140,7 +4148,7 @@ echo "</td><td>
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <input type=\"hidden\" name=\"cambia_cliente\" value=\"SI\">
@@ -4157,7 +4165,7 @@ $ospiti = esegui_query("select * from $tablerclientiprenota where idprenota = '$
 $num_ospiti = numlin_query($ospiti);
 for ($num1 = 0 ; $num1 < $num_ospiti ; $num1++) {
 $id_clienti_osp = risul_query($ospiti,$num1,'idclienti');
-$url_mod_cli = "./modifica_cliente.php?mese=$mese&anno=$anno_origine&id_sessione=$id_sessione&idclienti=$id_clienti_osp&origine=".str_replace("=","%3D",str_replace("?","%3F",str_replace("&","%26","modifica_prenota.php%3Fmese%3D$mese%26tipo_tabella%3D$tipo_tabella%26id_prenota%3D$idprenota_origine2%26origine%3D$origine")));
+$url_mod_cli = "./modifica_cliente.php?mese=$mese&anno=$anno_origine&id_sessione=$id_sessione&idclienti=$id_clienti_osp&origine=".str_replace("=","%3D",str_replace("?","%3F",str_replace("&","%26","modifica_prenota.php%3Fmese%3D$mese%26tipo_tabella%3D$tipo_tabella%26id_prenota%3D$idprenota_origine2%26origine%3D".htmlspecialchars($origine)."")));
 if ($id_clienti_osp == $id_clienti) $dati_ospite = $dati_cliente;
 else $dati_ospite = esegui_query("select cognome,nome,sesso,datanascita,utente_inserimento from $tableclienti where idclienti = '$id_clienti_osp' ");
 $utente_ospite = risul_query($dati_ospite,0,'utente_inserimento');
@@ -4200,7 +4208,7 @@ echo "</td><td colspan=\"2\" valign=\"middle\">
 <form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_ospiti.php\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno_origine\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"modifica_prenota.php?mese=$mese&amp;tipo_tabella=$tipo_tabella&amp;id_prenota=$idprenota_origine2&amp;origine=$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"modifica_prenota.php?mese=$mese&amp;tipo_tabella=$tipo_tabella&amp;id_prenota=$idprenota_origine2&amp;origine=".htmlspecialchars($origine)."\">
 <button class=\"gsts\" type=\"submit\"><div>".mex("Modifica gli ospiti",$pag)."</div></button>";
 /*if ($num_id_prenota == 1) echo "<input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota\">";
 else {
@@ -4228,7 +4236,7 @@ echo "<input type=\"hidden\" name=\"anno\" value=\"".($anno - 1)."\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$id_prenota\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_prec\">
 <input class=\"sbutton\" type=\"submit\" value=\"".mex("Modifica nell'anno precedente",$pag)."\">";
@@ -4241,7 +4249,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_prenota.p
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"idprenota_origine\" value=\"$idprenota_origine\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota_int\">
 <table class=\"modres floatleft\">";
@@ -4393,7 +4401,7 @@ $condizione_beni_propri .= " )";
 else $condizione_beni_propri = "";
 $inv_mancante = esegui_query("select distinct $tablerelinventario.quantita from $tablerelinventario inner join $tablebeniinventario on $tablerelinventario.idbeneinventario = $tablebeniinventario.idbeniinventario where $tablerelinventario.idappartamento = '".aggslashdb($d_appartamento)."' and $tablerelinventario.quantita < $tablerelinventario.quantita_min_predef $condizione_beni_propri ");
 if (numlin_query($inv_mancante)) {
-$inv = " <a style=\"text-decoration: none; color: red;\" href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=modifica_prenota.php?id_prenota=$id_prenota_int&amp;idmag=a".htmlspecialchars($d_appartamento)."&amp;origine_vecchia=$origine\">".mex("<b><big>i</big></b>",$pag)."</a> ";
+$inv = " <a style=\"text-decoration: none; color: red;\" href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=modifica_prenota.php?id_prenota=$id_prenota_int&amp;idmag=a".htmlspecialchars($d_appartamento)."&amp;origine_vecchia=".urlencode($origine)."\">".mex("<b><big>i</big></b>",$pag)."</a> ";
 } # fine if (numlin_query($inv_mancante))
 } # fine if ($priv_vedi_beni_inv != "n" and $priv_vedi_inv_app != "n" and...
 
@@ -4486,7 +4494,7 @@ for ($num1 = 0 ; $num1 < numlin_query($appart) ; $num1++) {
 $idapp = risul_query($appart,$num1,'idappartamenti');
 if ($sposta_appartamento == $idapp) $sel = " selected";
 else $sel = "";
-if ((!$d_app_assegnabili or str_replace(",$idapp,","",",".$d_app_assegnabili.",") != ",".$d_app_assegnabili.",") and $idapp != $d_appartamento) echo "<option value=\"$idapp\"$sel>$idapp</option>";
+if ((!$d_app_assegnabili or str_replace(",$idapp,","",",".$d_app_assegnabili.",") != ",".$d_app_assegnabili.",") and $idapp != $d_appartamento) echo "<option value=\"".htmlspecialchars($idapp)."\"$sel>$idapp</option>";
 } # fine for $num1
 echo "</select><br>";
 } # fine if ($d_assegnazione_app != "k" and...
@@ -4504,7 +4512,7 @@ for ($num1 = 0 ; $num1 < numlin_query($appart) ; $num1++) {
 $idapp = risul_query($appart,$num1,'idappartamenti');
 if ($n_appartamento == $idapp) $sel = " selected";
 else $sel = "";
-echo "<option value=\"$idapp\"$sel>$idapp</option>";
+echo "<option value=\"".htmlspecialchars($idapp)."\"$sel>$idapp</option>";
 } # fine for $num1
 echo "</select><br>";
 if ($n_mobile == "SI") $checked = " checked";
@@ -4517,7 +4525,7 @@ echo "<script type=\"text/javascript\">
 function cp_lisapp () {
 var tbox = document.getElementById('list_ap');
 if (tbox.value == '') {
-tbox.value = '".togli_acapo(str_replace("'","\\'",$d_app_assegnabili))."';
+tbox.value = '".togli_acapo(str_replace("'","\\'",str_replace("&lt;","<",str_replace("&gt;",">",str_replace("&amp;","&",$d_app_assegnabili)))))."';
 }
 } // fine function cp_lisapp
 -->
@@ -4564,7 +4572,7 @@ if ($piano != $ultimopiano) {
 $ultimopiano = $piano;
 if ($n_num_piano == $piano) $sel = " selected";
 else $sel = "";
-echo "<option value=\"$piano\"$sel>$piano</option>";
+echo "<option value=\"".htmlspecialchars($piano)."\"$sel>$piano</option>";
 } # fine if ($piano != $ultimopiano)
 } # fine for $num1
 if ($n_num_casa == "") $sel = " selected";
@@ -4579,7 +4587,7 @@ if ($casa != $ultimacasa) {
 $ultimacasa = $casa;
 if ($n_num_casa == $casa) $sel = " selected";
 else $sel = "";
-echo "<option value=\"$casa\"$sel>$casa</option>";
+echo "<option value=\"".htmlspecialchars($casa)."\"$sel>$casa</option>";
 } # fine if ($piano != $ultimopiano)
 } # fine for $num1
 if ($n_num_persone_casa == "") $sel = " selected";
@@ -4612,7 +4620,7 @@ $prenota_comp = $d_prenota_comp[$num1];
 if ($num1) echo ", ";
 if ($priv_mod_prenota_comp != "n" and $prenota_comp != "~~~~") echo "<input type=\"checkbox\" name=\"n_prenota_comp$num1\" value=\"$prenota_comp\" checked>";
 if ($id_prenota_prec or $prenota_comp == "~~~~") echo "$prenota_comp";
-else echo "<a href=\"./$pag?id_prenota=$prenota_comp&anno=$anno&id_sessione=$id_sessione&origine=$origine\">$prenota_comp</a>";
+else echo "<a href=\"./$pag?id_prenota=$prenota_comp&anno=$anno&id_sessione=$id_sessione&origine=".urlencode($origine)."\">$prenota_comp</a>";
 } # fine for $num1
 echo "<input type=\"hidden\" name=\"num_prenota_comp\" value=\"$num_prenota_comp\">";
 } # fine if ($d_prenota_comp)
@@ -4840,7 +4848,7 @@ echo "</td></tr>";
 } # fine if ($priv_mod_sconto != "n")
 
 if ($priv_mod_caparra != "n") {
-if ($d_costo_tot_registrato == "~~~~" or $d_caparra == "~~~~") $resto_caparra = "~~~~";
+if ((string) $d_costo_tot_registrato == "~~~~" or (string) $d_caparra == "~~~~") $resto_caparra = "~~~~";
 else $resto_caparra = $d_costo_tot_registrato - $d_caparra;
 $d_caparra_p =  virgola_in_num($d_caparra,$stile_soldi);
 $resto_caparra_p =  virgola_in_num($resto_caparra,$stile_soldi);
@@ -4890,7 +4898,7 @@ echo "</td></tr>";
 } # fine if ($d_met_paga_caparra or ($metodi_pagamento and $priv_mod_caparra == "s"))
 } # fine if ($mostra_met_paga_caparra == "SI")
 
-if ($d_costo_tot_registrato == "~~~~" or $d_commissioni == "~~~~") $resto_commissioni = "~~~~";
+if ((string) $d_costo_tot_registrato == "~~~~" or (string) $d_commissioni == "~~~~") $resto_commissioni = "~~~~";
 else $resto_commissioni = $d_costo_tot_registrato - $d_commissioni;
 $d_commissioni_p =  virgola_in_num($d_commissioni,$stile_soldi);
 $resto_commissioni_p =  virgola_in_num($resto_commissioni,$stile_soldi);
@@ -5100,6 +5108,8 @@ $maxmolt_costo_stampa[$numca] = $dati_cap[$numca]['moltiplica_costo'];
 $valgiornmax_costo_stampa[$numca] = $prezzi_giorn_costo;
 if ($dati_cap[$numca]['associasett'] == "s") $giorni_costo_stampa[$numca] = $dati_cap[$numca]['settimane'];
 else $giorni_costo_stampa[$numca] = "";
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num']) $catpers_costo_stampa[$numca] = ($dati_cap[$numca]['cat_pers']['ord'][0] + 1);
+else $catpers_costo_stampa[$numca] = "";
 $datains_costo_stampa[$numca] = substr($dati_cap[$numca]['datainserimento'],0,10);
 $utenteins_costo_stampa[$numca] = $dati_cap[$numca]['utente_inserimento'];
 } # fine for $numca
@@ -5566,6 +5576,11 @@ if ($priv_mod_caparra != "n") echo "<input type=\"hidden\" name=\"caparra_1\" va
 echo "<input type=\"hidden\" name=\"num_persone_1\" value=\"$d_num_persone\">
 <input type=\"hidden\" name=\"unita_occupata_1\" value=\"$d_appartamento\">
 <input type=\"hidden\" name=\"unita_assegnabili_1\" value=\"$d_app_assegnabili\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if ($d_cat_persone[$num1]['esist']) $cat_pers_corr = $d_cat_persone[$d_cat_persone[$num1]['ncp']]['molt'];
+else $cat_pers_corr = 0;
+echo "<input type=\"hidden\" name=\"num_persone_tipo_".($num1 + 1)."_1\" value=\"$cat_pers_corr\">";
+} # fine for $num2
 if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i") echo "<input type=\"hidden\" name=\"pagato_1\" value=\"$d_pagato\">
 <input type=\"hidden\" name=\"costo_tot_1\" value=\"$d_costo_tot\">";
 echo "<input type=\"hidden\" name=\"n_letti_agg_1\" value=\"$n_letti_agg\">
@@ -5588,6 +5603,7 @@ for ($numca = 0 ; $numca < $dati_cap['num'] ; $numca++) {
 echo "<input type=\"hidden\" name=\"nome_costo_agg$numca"."_1\" value=\"".$nome_costo_stampa[$numca]."\">
 <input type=\"hidden\" name=\"moltiplica_max_costo_agg$numca"."_1\" value=\"".$maxmolt_costo_stampa[$numca]."\">
 <input type=\"hidden\" name=\"giorni_costo_agg$numca"."_1\" value=\"".$giorni_costo_stampa[$numca]."\">
+<input type=\"hidden\" name=\"tipo_persona_costo_agg$numca"."_1\" value=\"".$catpers_costo_stampa[$numca]."\">
 <input type=\"hidden\" name=\"data_inserimento_costo_agg$numca"."_1\" value=\"".$datains_costo_stampa[$numca]."\">
 <input type=\"hidden\" name=\"utente_inserimento_costo_agg$numca"."_1\" value=\"".$utenteins_costo_stampa[$numca]."\">";
 if ($priv_mod_costi_agg != "p") {
@@ -5657,7 +5673,7 @@ echo "</div></form>
 
 if (!$tipo_tabella) $tipo_tabella = "prenotazioni";
 echo "<table><tr><td style=\"height: 6px;\"></td></tr></table>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".str_replace("\"","",str_replace(">","",str_replace("<","",$origine)))."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno_origine\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">

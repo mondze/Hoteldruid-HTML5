@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -194,6 +194,10 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$azione\"><div>
 if ($id_utente == 1) {
 
 
+if ($fonte_dati_conn != "nuovi") $fonte_dati_conn = "attuali";
+if (controlla_anno($anno_modello) != "SI" or !@is_file(C_DATI_PATH."/selectperiodi$anno_modello.1.php")) $anno_modello = $anno;
+
+
 if ($form_modello_disponibilita) {
 $mostra_form_creazione = "NO";
 include("./includes/templates/frasi_mod_disp.php");
@@ -219,17 +223,17 @@ echo "<form id=\"fcrmod\" accept-charset=\"utf-8\" method=\"post\" action=\"crea
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"crea_modello\" value=\"SI\">
 <input type=\"hidden\" name=\"fonte_dati_conn\" value=\"$fonte_dati_conn\">
-<input type=\"hidden\" name=\"T_PHPR_DB_TYPE\" value=\"$T_PHPR_DB_TYPE\">
-<input type=\"hidden\" name=\"T_PHPR_DB_NAME\" value=\"$T_PHPR_DB_NAME\">
-<input type=\"hidden\" name=\"T_PHPR_DB_HOST\" value=\"$T_PHPR_DB_HOST\">
-<input type=\"hidden\" name=\"T_PHPR_DB_PORT\" value=\"$T_PHPR_DB_PORT\">
-<input type=\"hidden\" name=\"T_PHPR_DB_USER\" value=\"$T_PHPR_DB_USER\">
-<input type=\"hidden\" name=\"T_PHPR_DB_PASS\" value=\"$T_PHPR_DB_PASS\">
-<input type=\"hidden\" name=\"T_PHPR_LOAD_EXT\" value=\"$T_PHPR_LOAD_EXT\">
-<input type=\"hidden\" name=\"T_PHPR_TAB_PRE\" value=\"$T_PHPR_TAB_PRE\">
+<input type=\"hidden\" name=\"T_PHPR_DB_TYPE\" value=\"".htmlspecialchars($T_PHPR_DB_TYPE)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_NAME\" value=\"".htmlspecialchars($T_PHPR_DB_NAME)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_HOST\" value=\"".htmlspecialchars($T_PHPR_DB_HOST)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_PORT\" value=\"".htmlspecialchars($T_PHPR_DB_PORT)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_USER\" value=\"".htmlspecialchars($T_PHPR_DB_USER)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_PASS\" value=\"".htmlspecialchars($T_PHPR_DB_PASS)."\">
+<input type=\"hidden\" name=\"T_PHPR_LOAD_EXT\" value=\"".htmlspecialchars($T_PHPR_LOAD_EXT)."\">
+<input type=\"hidden\" name=\"T_PHPR_TAB_PRE\" value=\"".htmlspecialchars($T_PHPR_TAB_PRE)."\">
 <input type=\"hidden\" name=\"anno_modello\" value=\"$anno_modello\">
 <input type=\"hidden\" name=\"lingua_modello\" value=\"$lingua_modello\">
-<input type=\"hidden\" name=\"perc_cart_mod_sel\" value=\"$perc_cart_mod_sel\">
+<input type=\"hidden\" name=\"perc_cart_mod_sel\" value=\"".htmlspecialchars($perc_cart_mod_sel)."\">
 
 <div style=\"height: 4px;\"></div>
 <h5 id=\"h_chav\"><span>".mex("Pagina per controllare la disponibilità",$pag)."</span></h5><br><br>
@@ -248,7 +252,7 @@ echo " ".mex("al",$pag)." ";
 mostra_menu_date(C_DATI_PATH."/selectperiodi$anno_modello.1.php","fineperiodo$num1",$fineper,"","",$id_utente,$tema);
 if (!${"intervalloperiodo".$num1}) ${"intervalloperiodo".$num1} = 1;
 echo ",&nbsp;".str_replace(" ","&nbsp;",mex("$parola_settimane di intervallo",$pag)).":&nbsp;
-<input type=\"text\" name=\"intervalloperiodo$num1\" value=\"".${"intervalloperiodo".$num1}."\" size=\"2\" maxlength=\"2\"><br>";
+<input type=\"text\" name=\"intervalloperiodo$num1\" value=\"".htmlspecialchars(${"intervalloperiodo".$num1})."\" size=\"2\" maxlength=\"2\"><br>";
 } # fine for $num1
 if (!$estendi_ultima_data or strtoupper($estendi_ultima_data) == $SI or $estendi_ultima_data == "SI") { $sel_SI = " selected"; $sel_NO = ""; }
 else { $sel_NO = " selected"; $sel_SI = ""; }
@@ -331,7 +335,7 @@ $num_utenti[$nome_utente] = $num_utente;
 } # fine for $num1
 if (!strcmp($utente_lis,"")) $utente_lis = $utente_liste;
 echo "<tr><td colspan=5>
-".mex("Utilizzare le liste di nazioni, regioni, etc. dell'utente",$pag)."
+".mex("Utilizzare le personalizzazioni (tipi di persone, liste di nazioni, regioni, ecc.) dell'utente",$pag)."
 <select name=\"utente_lis\">
 ".str_replace("\"$utente_lis\">","\"$utente_lis\" selected>",$option_utenti)."
 </select></td></tr></table><br>";
@@ -534,7 +538,7 @@ if (!${"tipo_codice_promo".$num1}) ${"tipo_codice_promo".$num1} = substr($costi_
 if (${"tipo_codice_promo".$num1} != "-") ${"tipo_codice_promo".$num1} = "+";
 if (${"tipo_codice_promo".$num1} == "+") { $sel_agg = " selected"; $sel_rim = ""; }
 else { $sel_agg = ""; $sel_rim = " selected"; }
-echo "$num1".". ".mex("Il codice",$pag)." <input type=\"text\" name=\"codice_promo$num1\" value=\"".${"codice_promo".$num1}."\" size=\"12\">
+echo "$num1".". ".mex("Il codice",$pag)." <input type=\"text\" name=\"codice_promo$num1\" value=\"".htmlspecialchars(${"codice_promo".$num1})."\" size=\"12\">
  <select name=\"tipo_codice_promo$num1\">
 <option value=\"+\"$sel_agg>".mex("aggiunge",$pag)."</option>
 <option value=\"-\"$sel_rim>".mex("rimuove",$pag)."</option>
@@ -685,7 +689,7 @@ echo "</select></td></tr></table>";
 } # fine if ($origini_prenota)
 
 echo "".mex("Indirizzo email a cui inviare le richieste di prenotazione",$pag).":
- <input type=\"text\"$readonly name=\"ind_email\" value=\"$ind_email\" size=\"25\"><br>";
+ <input type=\"text\"$readonly name=\"ind_email\" value=\"".htmlspecialchars($ind_email)."\" size=\"25\"><br>";
 if (strtoupper($manda_copia_richiesta_email) == $SI) { $sel_NO = ""; $sel_SI = " selected"; }
 else { $sel_SI = ""; $sel_NO = " selected"; }
 echo "".mex("Inviare una copia della email di richiesta prenotazione al richiedente?",$pag)."
@@ -1022,7 +1026,7 @@ if (!${"chiedi_campo_pers".$num1}) ${"chiedi_campo_pers".$num1} = $chiedi_campi_
 if (${"chiedi_campo_pers".$num1} == "SI") ${"chiedi_campo_pers".$num1} = $SI;
 if (${"chiedi_campo_pers".$num1} == $SI) { $sel_SI = " selected"; $sel_opz = ""; }
 else { $sel_SI = ""; $sel_opz = " selected"; }
-echo "$num1".". <input type=\"text\" name=\"campo_pers$num1\" value=\"".${"campo_pers".$num1}."\" size=\"25\">
+echo "$num1".". <input type=\"text\" name=\"campo_pers$num1\" value=\"".htmlspecialchars(${"campo_pers".$num1})."\" size=\"25\">
  <select name=\"chiedi_campo_pers$num1\">
 <option value=\"SI\"$sel_SI>$f_necessario</option>
 <option value=\"opzionale\"$sel_opz>$f_opzionale</option>
@@ -1332,7 +1336,9 @@ $js_opz_tema .= "<\/td><\/tr><\/table>';
 } # fine for $num1
 echo "</select><div id=\"opz_tema\"></div>";
 
-$valori_tema = $template_theme_values[$tema_sel];
+$valori_tema = array();
+$colori_tema = array();
+if ($tema_sel) $valori_tema = $template_theme_values[$tema_sel];
 $num_valori = count($valori_tema);
 for ($num1 = 1 ; $num1 <= $num_valori ; $num1++) {
 if (!strcmp(${"valore_tema_".$num1},"")) ${"valore_tema_".$num1} = $valori_tema[$num1]['default'];
@@ -1342,7 +1348,7 @@ elseif (strcmp($valori_tema[$num1]['replace'],"")) $valore_sost = str_replace("[
 $template_theme_html_pre[$tema_sel] = str_replace("[theme_value_$num1]",$valore_sost,$template_theme_html_pre[$tema_sel]);
 $template_theme_html_post[$tema_sel] = str_replace("[theme_value_$num1]",$valore_sost,$template_theme_html_post[$tema_sel]);
 } # fine for $num1
-$colori_tema = $template_theme_colors[$tema_sel];
+if ($tema_sel) $colori_tema = $template_theme_colors[$tema_sel];
 $num_colori = count($colori_tema);
 for ($num1 = 1 ; $num1 <= $num_colori ; $num1++) {
 if (!${"colore_tema_".$num1}) ${"colore_tema_".$num1} = $colori_tema[$num1]['default'];

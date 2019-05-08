@@ -214,8 +214,11 @@ $campi_pers_cliente = explode(">",risul_query($campi_pers_cliente,0,'valpersonal
 $num_campi_pers_cliente = count($campi_pers_cliente);
 } # fine if (numlin_query($campi_pers_cliente))
 else $num_campi_pers_cliente = 0;
+include_once("./includes/funzioni_tariffe.php");
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
 $commento_personalizzato_ = "commento_personalizzato_";
 $campo_personalizzato_ = "campo_personalizzato_";
+$num_persone_tipo_ = "num_persone_tipo_";
 include("./includes/variabili_contratto.php");
 
 $tableprenota = $PHPR_TAB_PRE."prenota".$anno;
@@ -240,6 +243,7 @@ if ($res_to == "yesterday") $res_to = date("Y-m-d",($sec_oggi - 86400));
 if (!$res_from or !$res_to or $res_from <= $res_to) {
 $primo_periodo = 1;
 if ($res_from and preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$res_from)) {
+$data_inizio_selezione = $res_from;
 $primo_periodo = esegui_query("select idperiodi from $tableperiodi where datainizio >= '$res_from' order by idperiodi ");
 if (numlin_query($primo_periodo)) $primo_periodo = risul_query($primo_periodo,0,'idperiodi');
 else $primo_periodo = "";
@@ -247,6 +251,7 @@ else $primo_periodo = "";
 if ($primo_periodo) {
 $ultimo_periodo = "";
 if ($res_to and preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$res_to)) {
+$data_fine_selezione = $res_to;
 $ultimo_periodo = esegui_query("select idperiodi from $tableperiodi where datainizio < '$res_to' order by idperiodi desc ");
 if (numlin_query($ultimo_periodo)) $ultimo_periodo = risul_query($ultimo_periodo,0,'idperiodi');
 else $ultimo_periodo = -1;
@@ -327,6 +332,8 @@ if ($res_arr == "yesterday") $res_arr = date("Y-m-d",($sec_oggi - 86400));
 if (preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$res_arr)) {
 $arrivo = esegui_query("select idperiodi from $tableperiodi where datainizio = '$res_arr' ");
 if (numlin_query($arrivo)) {
+$data_inizio_selezione = $res_arr;
+$data_fine_selezione = date("Y-m-d",mktime(0,0,0,substr($res_arr,5,2),(substr($res_arr,8,2) + 1),substr($res_arr,0,4)));
 $arrivo = risul_query($arrivo,0,'idperiodi');
 $query_prenota = "select idprenota from $tableprenota where iddatainizio = '$arrivo' ";
 } # fine if (numlin_query($arrivo))
@@ -341,6 +348,8 @@ if ($res_dep == "yesterday") $res_dep = date("Y-m-d",($sec_oggi - 86400));
 if (preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$res_dep)) {
 $partenza = esegui_query("select idperiodi from $tableperiodi where datafine = '$res_dep' ");
 if (numlin_query($partenza)) {
+$data_inizio_selezione = $res_dep;
+$data_fine_selezione = date("Y-m-d",mktime(0,0,0,substr($res_dep,5,2),(substr($res_dep,8,2) + 1),substr($res_dep,0,4)));
 $partenza = risul_query($partenza,0,'idperiodi');
 $query_prenota = "select idprenota from $tableprenota where iddatafine = '$partenza' ";
 } # fine if (numlin_query())
@@ -508,7 +517,10 @@ $cli_pass = 0;
 $cli_presfut = 0;
 # Non fare lock in scrittura sulle stesse tabelle dalle funzioni delle interconnessioni, altrimenti si blocca quando si attiva cc_hd_token
 if ($tweb) $tabelle_lock = array($tabletransazioniweb);
+else {
+if (strstr($cli_id,",")) $tabelle_lock = array($tablesessioni,$tabletransazioni);
 else $tabelle_lock = array($tablesessioni);
+} # fine else if ($tweb)
 if (($cli_id == "pass" or $cli_id == "pres_fut") and !$tweb) {
 $anni_esist = esegui_query("select * from $tableanni order by idanni");
 $num_anni = numlin_query($anni_esist);
@@ -548,11 +560,8 @@ $num_lock++;
 $altre_tab_lock[$num_lock] = $tablerelgruppi;
 } # fine if (($cli_id == "pass" or $cli_id == "pres_fut") and !$tweb)
 else {
-if (strstr($cli_id,",")) $altre_tab_lock = array($tableclienti,$tablepersonalizza,$tableprivilegi,$tablerelgruppi,$tabletransazioni);
-else {
 if ($cli_id or $priv_r) $altre_tab_lock = array($tableclienti,$tablepersonalizza,$tableprivilegi,$tablerelgruppi);
 else $altre_tab_lock = array($tablepersonalizza);
-} # fine else if (strstr($cli_id,","))
 } # fine else if (($cli_id == "pass" or $cli_id == "pres_fut") and !$tweb)
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
 $sessione_trovata = 0;

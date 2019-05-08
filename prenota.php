@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -263,6 +263,7 @@ for ($numca = 1 ; $numca <= $numcostiagg ; $numca++) {
 ${"costoagg".$numca."_".$n_t} = ${"costoagg".$numca."_".$num_tipologie};
 ${"numsettimane".$numca."_".$n_t} = ${"numsettimane".$numca."_".$num_tipologie};
 ${"nummoltiplica_ca".$numca."_".$n_t} = ${"nummoltiplica_ca".$numca."_".$num_tipologie};
+${"catpers_ca".$numca."_".$n_t} = ${"catpers_ca".$numca."_".$num_tipologie};
 } # fine for $numca
 } # fine for $n_t
 $num_tipologie = $num_tipologie + $num_tipologie_da_aggiungere;
@@ -635,8 +636,8 @@ else {
 
 ${"assegnazioneapp".$n_t} = "v";
 ${"lista_app".$n_t} = "";
-include("./includes/liberasettimane.php");
-include("./includes/spezzaprenota.php");
+include_once("./includes/liberasettimane.php");
+include_once("./includes/spezzaprenota.php");
 
 $tabelle_lock = array("$tableprenota","$tabletransazioni");
 $altre_tab_lock = array("$tableappartamenti","$tableperiodi","$tableregole","$tablepersonalizza");
@@ -890,6 +891,8 @@ $data_fine = esegui_query("select * from  $tableperiodi where idperiodi = '$fine
 $data_fine = risul_query($data_fine,0,'datafine');
 $data_fine_f[$n_t] = formatta_data($data_fine,$stile_data);
 $lunghezza_periodo = $fineperiodo - $inizioperiodo + 1;
+if (${"diff_persone".$n_t} and ($num1 + ${"diff_persone".$n_t}) > $n_tronchi) $numpersone_corr = $numpersone - 1;
+else $numpersone_corr = $numpersone;
 
 if ($id_prenota_temp[$n_t][$num1]) {
 $prenota_temp_esistente = esegui_query("select idappartamenti from $tableprenota where idprenota = '".$id_prenota_temp[$n_t][$num1]."' and idclienti = '0' and assegnazioneapp = '".aggslashdb(${"assegnazioneapp".$n_t})."' ");
@@ -1060,7 +1063,7 @@ if (controlla_num_pos(${"catpers_ca".$numca."_".$n_t}) == "NO" or ${"catpers_ca"
 } # fine if ($numca <= $numcostiagg)
 else ${"catpers_ca".$numca."_".$n_t} = "";
 } # fine if ($dati_ca[$num_costo]['letto'] == "s" and $dati_cat_pers['num'])
-aggiorna_letti_agg_in_periodi($dati_ca,$num_costo,$num_letti_agg,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,"",$nummoltiplica_ca_aux,$numpersone);
+aggiorna_letti_agg_in_periodi($dati_ca,$num_costo,$num_letti_agg,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,"",$nummoltiplica_ca_aux,$numpersone_corr);
 } # fine if ($$costoagg == "SI")
 } # fine for $numca
 
@@ -1070,7 +1073,7 @@ $idcostoagg = "idcostoagg".$numca;
 $num_costo = $dati_ca['id'][$$idcostoagg];
 $settimane_costo_aux = ${"settimane_costo".$numca."_".$n_t."t".$num1};
 $nummoltiplica_ca_aux = ${"nummoltiplica_ca".$numca};
-calcola_moltiplica_costo($dati_ca,$num_costo,$moltiplica_aux,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,$nummoltiplica_ca_aux,$numpersone,$num_letti_agg);
+calcola_moltiplica_costo($dati_ca,$num_costo,$moltiplica_aux,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,$nummoltiplica_ca_aux,$numpersone_corr,$num_letti_agg);
 if (controlla_num_limite_costo($tablecostiprenota,$tableprenota,$dati_ca,$num_costo,$num_costi_presenti,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,$moltiplica_aux) == "NO") $costi_aggiuntivi_sbagliati = "SI";
 if (str_replace(",$appartamento,","",",".$dati_ca[$num_costo]['appincompatibili'].",") != ",".$dati_ca[$num_costo]['appincompatibili'].",") $costi_aggiuntivi_sbagliati = "SI";
 if ($dati_ca[$num_costo]['tipo_beniinv']) {
@@ -1082,7 +1085,7 @@ if ($risul != "SI") $costi_aggiuntivi_sbagliati = "SI";
 if ($dati_ca[$num_costo]['moltiplica'] == "c" and $dati_ca[$num_costo]['molt_max'] != "x") {
 $num_max = 0;
 if ($dati_ca[$num_costo]['molt_max'] == "n") $num_max = $dati_ca[$num_costo]['molt_max_num'];
-if ($dati_ca[$num_costo]['molt_max'] != "n" and $numpersone) $num_max = $numpersone;
+if ($dati_ca[$num_costo]['molt_max'] != "n" and $numpersone_corr) $num_max = $numpersone_corr;
 if ($dati_ca[$num_costo]['molt_max'] == "t" and $num_letti_agg['max']) $num_max += $num_letti_agg['max'];
 if ($num_max) {
 if ($dati_ca[$num_costo]['molt_max'] != "n" and $dati_ca[$num_costo]['molt_max_num']) $num_max = $num_max - $dati_ca[$num_costo]['molt_max_num'];
@@ -1102,8 +1105,8 @@ $continuare = "NO";
 
 else {
 
-if (!$numpersone) $numpersone_costi_poss = 0;
-else $numpersone_costi_poss = $numpersone;
+if (!$numpersone_corr) $numpersone_costi_poss = 0;
+else $numpersone_costi_poss = $numpersone_corr;
 $oggi_costo = date("Ymd",(time() + (C_DIFF_ORE * 3600)));
 if ($idmessaggi) {
 $dati_mess = esegui_query("select datainserimento from $tablemessaggi where tipo_messaggio = 'rprenota' and idutenti $LIKE '%,$id_utente,%' and idmessaggi = '".aggslashdb($idmessaggi)."' and dati_messaggio1 = 'da_inserire' ");
@@ -1142,7 +1145,7 @@ if (${"costoagg".$numca."_".$n_t."t".$num1} == "SI") {
 $num_costo2 = $dati_ca['id'][${"idcostoagg".$numca}];
 $settimane_costo_aux = ${"settimane_costo".$numca."_".$n_t."t".$num1};
 if ($dati_ca[$num_costo2]['moltiplica'] != "t") $moltiplica_copia[$numca] = ${"moltiplica".$numca."_".$n_t."t".$num1};
-else calcola_moltiplica_costo($dati_ca,$num_costo2,$moltiplica_copia[$numca],$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,"",$numpersone,$num_letti_agg_copia);
+else calcola_moltiplica_costo($dati_ca,$num_costo2,$moltiplica_copia[$numca],$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,"",$numpersone_corr,$num_letti_agg_copia);
 if (controlla_num_limite_costo($tablecostiprenota,$tableprenota,$dati_ca,$num_costo2,$num_costi_presenti_copia,$idinizioperiodo,$idfineperiodo,$settimane_costo_aux,$moltiplica_copia[$numca]) == "NO") $associa_costo = "NO";
 if ($dati_ca[$num_costo2]['moltiplica'] == "t") {
 $nrc_aux = ${"num_ripetizioni_costo".$numca."_".$n_t."t".$num1};
@@ -1405,7 +1408,7 @@ if ($priv_ins_caparra != "s" or controlla_soldi($caparra,"pos") == "NO") unset($
 if (!$caparra) $caparra = calcola_caparra($dati_tariffe,$nometipotariffa,$inizioperiodo,$fineperiodo,$costo_tariffa_tot,$lista_tariffe_sett);
 elseif ($tipo_val_caparra == "tar") {
 $caparra_arrotond = $dati_tariffe[$nometipotariffa]['caparra_arrotond'];
-if (!strcmp($caparra_arrotond,"") or $caparra_arrotond == "val") $caparra_arrotond = $arrotond_predef;
+if (!strcmp($caparra_arrotond,"") or $caparra_arrotond == "val" or $caparra_arrotond == "gio") $caparra_arrotond = $arrotond_predef;
 $caparra = ($costo_tariffa_tot * (double) $caparra) / 100;
 $caparra = $caparra / $caparra_arrotond;
 $caparra = floor($caparra);
@@ -1493,10 +1496,8 @@ echo " (".mex("moltiplicato per",$pag)." $valnummoltiplica_ca";
 if (strcmp($cat_pers_ca,"")) echo " ".$dati_cat_pers[$cat_pers_ca]['n_plur'];
 echo ")";
 } # fine if ($valnummoltiplica_ca != 1)
-else {
-if (strcmp($cat_pers_ca,"")) echo " (".$dati_cat_pers[$cat_pers_ca]['n_sing'].")";
+elseif (strcmp($cat_pers_ca,"")) echo " (".$dati_cat_pers[$cat_pers_ca]['n_sing'].")";
 echo "<br>";
-} # fine else if ($valnummoltiplica_ca != 1)
 $costo_tariffa_tot = (double) $costo_tariffa_tot + (double) $prezzo_costo_tot;
 if ($dati_ca[$num_costo]['escludi_tot_perc'] == "s") $costo_escludi_perc = (double) $costo_escludi_perc + (double) $prezzo_costo_tot;
 } # fine else if ($dati_ca[$num_costo]['tipo_val'] == "r" or $dati_ca[$num_costo]['tipo_val'] == "t")
@@ -1921,6 +1922,8 @@ if (@get_magic_quotes_gpc()) {
 $cognome = stripslashes($cognome);
 $nome = stripslashes($nome);
 } # fine if (@get_magic_quotes_gpc())
+$cognome = htmlspecialchars($cognome);
+$nome = htmlspecialchars($nome);
 
 # Form per nuova prenotazione.
 echo "<br>
@@ -2102,7 +2105,7 @@ echo "<td style=\"width: 30px;\"></td><td><select name=\"tipo_sconto$n_t\" id=\"
 <option value=\"tot_sett\"$sel_tot_sett>".mex("prezzo totale $parola_settimanale",$pag)."</option>
 <option value=\"tar\"$sel_tar>".mex("prezzo tariffa",$pag)."</option>
 <option value=\"tar_sett\"$sel_tar_sett>".mex("prezzo tariffa $parola_settimanale",$pag)."</option>
-</select>: <span class=\"wsnw\"><input type=\"text\" name=\"sconto$n_t\" size=\"7\" value =\"".${"sconto".$n_t}."\">";
+</select>: <span class=\"wsnw\"><input type=\"text\" name=\"sconto$n_t\" size=\"7\" value =\"".htmlspecialchars(${"sconto".$n_t})."\">";
 $sel_val = "";
 $sel_tot = "";
 $sel_tar = "";
@@ -2117,8 +2120,14 @@ echo " <select name=\"tipo_val_sconto$n_t\" id=\"tvsc$n_t\">
 } # fine if ($priv_ins_sconto == "s")
 echo "</tr><tr><td>";
 if ($priv_ins_num_persone == "s") {
-if ($dati_cat_pers['num']) echo " ".ucfirst($dati_cat_pers[0]['n_plur']).": <input type=\"text\" name=\"cat0_numpers$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"cat0_numpers".$n_t}."\">";
-else echo " ".mex("nº di persone",$pag).": <input type=\"text\" name=\"numpersone$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"numpersone".$n_t}."\">";
+if ($dati_cat_pers['num']) {
+if (${"cat0_numpers".$n_t} and controlla_num_pos(${"cat0_numpers".$n_t}) != "SI") ${"cat0_numpers".$n_t} = "";
+echo " ".ucfirst($dati_cat_pers[0]['n_plur']).": <input type=\"text\" name=\"cat0_numpers$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"cat0_numpers".$n_t}."\">";
+} # fine if ($dati_cat_pers['num'])
+else {
+if (${"numpersone".$n_t} and controlla_num_pos(${"numpersone".$n_t}) != "SI") ${"numpersone".$n_t} = "";
+echo " ".mex("nº di persone",$pag).": <input type=\"text\" name=\"numpersone$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"numpersone".$n_t}."\">";
+} # fine else if ($dati_cat_pers['num'])
 $punto = ".";
 } # fine if ($priv_ins_num_persone == "s")
 if ($priv_ins_caparra == "s") {
@@ -2126,7 +2135,7 @@ $sel_val = "";
 $sel_tar = "";
 if (!${"tipo_val_caparra".$n_t}) $sel_val = " selected";
 if (${"tipo_val_caparra".$n_t} == "tar") $sel_tar = " selected";
-echo ";</td><td style=\"width: 30px;\"></td><td>".mex("caparra",$pag).": <input type=\"text\" name=\"caparra$n_t\" size=\"7\" value =\"".${"caparra".$n_t}."\">
+echo ";</td><td style=\"width: 30px;\"></td><td>".mex("caparra",$pag).": <input type=\"text\" name=\"caparra$n_t\" size=\"7\" value =\"".htmlspecialchars(${"caparra".$n_t})."\">
 <select name=\"tipo_val_caparra$n_t\">
 <option value=\"\"$sel_val>$Euro</option>
 <option value=\"tar\"$sel_tar>".mex("% della tariffa",$pag)."</option>
@@ -2136,6 +2145,7 @@ echo "$punto</td></tr></table>";
 if ($dati_cat_pers['num'] and $priv_ins_num_persone == "s") {
 echo "<table id=\"cat_p\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td>";
 for ($num1 = 1 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if (${"cat$num1"."_numpers$n_t"} and controlla_num_pos(${"cat$num1"."_numpers$n_t"}) != "SI") ${"cat$num1"."_numpers$n_t"} = "";
 echo ucfirst($dati_cat_pers[$num1]['n_plur']).": <input type=\"text\" name=\"cat$num1"."_numpers$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"cat$num1"."_numpers$n_t"}."\">";
 if ($num1 != ($dati_cat_pers['num'] - 1)) echo ";</td><td style=\"width: 20px;\"></td><td>";
 } # for $num1
@@ -2171,10 +2181,13 @@ if ((!$assegnazioneapp or $assegnazioneapp == "k") and $idapp == ${"appartamento
 else $sel = "";
 echo "<option value=\"$idapp\"$sel>$idapp</option>";
 } # fine for $num1
-if (${"lista_app".$n_t} and ${"nometipotariffa".$n_t}) {
+if (${"lista_app".$n_t}) {
+${"lista_app".$n_t} = htmlspecialchars(${"lista_app".$n_t});
+if (${"nometipotariffa".$n_t}) {
 $regola2_sel = esegui_query("select * from $tableregole where tariffa_per_app = '".aggslashdb(${"nometipotariffa".$n_t})."'");
 if (numlin_query($regola2_sel) == 1) if (${"lista_app".$n_t} == risul_query($regola2_sel,0,'motivazione')) ${"lista_app".$n_t} = "";
-} # fine if (${"lista_app".$n_t} and ${"nometipotariffa".$n_t})
+} # fine if (${"nometipotariffa".$n_t})
+} # fine if (${"lista_app".$n_t})
 echo "</select><br>
 ·".mex("Lista di appartamenti",'unit.php').":
 <input type=\"text\" id=\"list_ap$n_t\" name=\"lista_app$n_t\" size=\"30\" value =\"".${"lista_app".$n_t}."\"> ";
@@ -2313,7 +2326,7 @@ if (!${"tipo_val_commissioni".$n_t}) $sel_val = " selected";
 if (${"tipo_val_commissioni".$n_t} == "tar") $sel_tar = " selected";
 if (${"tipo_val_commissioni".$n_t} == "ts") $sel_ts = " selected";
 if (${"tipo_val_commissioni".$n_t} == "tsc") $sel_tsc = " selected";
-echo "".mex("Commissioni",$pag).": <span class=\"wsnw\"><input type=\"text\" name=\"commissioni$n_t\" size=\"5\" value =\"".${"commissioni".$n_t}."\">
+echo "".mex("Commissioni",$pag).": <span class=\"wsnw\"><input type=\"text\" name=\"commissioni$n_t\" size=\"5\" value =\"".htmlspecialchars(${"commissioni".$n_t})."\">
 <select name=\"tipo_val_commissioni$n_t\">
 <option value=\"\"$sel_val>$Euro</option>
 <option value=\"tar\"$sel_tar>".mex("% della tariffa",$pag)."</option>
@@ -2325,7 +2338,7 @@ if ($origini_prenota) echo "</td></tr></table>";
 echo "</div>";
 if ($priv_ins_multiple != "n") {
 echo "<table class=\"nomob\"><tr><td>".mex("Nº di prenotazioni di questa tipologia",$pag).":";
-if (!${"num_app_richiesti".$n_t}) ${"num_app_richiesti".$n_t} = 1;
+if (!${"num_app_richiesti".$n_t} or controlla_num_pos(${"num_app_richiesti".$n_t}) != "SI") ${"num_app_richiesti".$n_t} = 1;
 echo "<input type=\"text\" name=\"num_app_richiesti$n_t\" size=\"2\" maxlength=\"3\" value =\"".${"num_app_richiesti".$n_t}."\">.";
 if ($num_tipologie == $n_t and $num_tipologie < 999) echo "</td><td style=\"width: 80px;\"></td><td><button class=\"plum\" type=\"submit\" name=\"aggiungi_tipologie\" value =\"1\"><div>".mex("Aggiungi altre tipologie",$pag)."</div></button>";
 echo "</td></tr></table>";
@@ -2444,6 +2457,7 @@ if (${"gr_idcostoagg".$id_costi_vett[$num1]."_$n_t"} == "SI") {
 ${"costoagg".$numcostiagg."_".$n_t} = "SI";
 ${"nummoltiplica_ca".$numcostiagg."_".$n_t} = ${"gr_nummoltiplica_ca".$id_costi_vett[$num1]."_$n_t"};
 ${"numsettimane".$numcostiagg."_".$n_t} = ${"gr_numsettimane".$id_costi_vett[$num1]."_$n_t"};
+${"catpers_ca".$numcostiagg."_".$n_t} = ${"gr_catpers_ca".$id_costi_vett[$num1]."_$n_t"};
 break;
 } # fine if (${"gr_idcostoagg".$id_costi_vett[$num1]."_$n_t"} == "SI")
 } # fine for $num1

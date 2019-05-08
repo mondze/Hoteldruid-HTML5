@@ -110,6 +110,9 @@ else include("./includes/head.php");
 $stile_soldi = stile_soldi();
 $stile_data = stile_data();
 
+if ($senza_colori) $senza_colori = "SI";
+if ($pagina_prenota and controlla_num_pos($pagina_prenota) != "SI") $pagina_prenota = "";
+
 
 if ($azzera_soldi == "SI" and $id_utente == 1) {
 if (!$continua) {
@@ -174,7 +177,7 @@ echo "<table class=\"buttonbar\"><tr><td align=\"left\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"senza_colori\" value=\"$senza_colori\">
-<input type=\"hidden\" name=\"metodo_selezionato\" value=\"$metodo_selezionato\">
+<input type=\"hidden\" name=\"metodo_selezionato\" value=\"".htmlspecialchars($metodo_selezionato)."\">
 <input class=\"sbutton\" type=\"submit\" name=\"cerca_prenota\" value=\"".mex("Vedi le modifiche",$pag)."\">
  ".mex("dal",$pag)." <select name=\"cerca_inizioperiodo\">
 <option value=\"\">----</option>";
@@ -231,7 +234,7 @@ echo "<td align=\"right\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"pagina_prenota\" value=\"$pagina_prenota\">
-<input type=\"hidden\" name=\"metodo_selezionato\" value=\"$metodo_selezionato\">";
+<input type=\"hidden\" name=\"metodo_selezionato\" value=\"".htmlspecialchars($metodo_selezionato)."\">";
 if (!$senza_colori) {
 echo "<input type=\"hidden\" name=\"senza_colori\" value=\"SI\">
 <input class=\"sbutton\" type=\"submit\" name=\"cambia_colori\" value=\"".mex("Senza colori",$pag)."\">";
@@ -298,7 +301,10 @@ $cond_metodo = "and metodo_pagamento = '".aggslashdb($metodo_selezionato)."'";
 } # fine if ($metodo_selezionato)
 
 echo "<h3 id=\"h_resp\"><span>".mex("Storia delle entate e uscite delle prenotazioni inserite nel",$pag)." $anno$frase_periodo</span></h3>";
-if ($metodo_selezionato) echo "<div style=\"text-align: center;\">($metodo_selezionato)</div>";
+if ($metodo_selezionato) {
+if (function_exists('htmlspecialchars_decode')) $metodo_selezionato = htmlspecialchars_decode($metodo_selezionato);
+echo "<div style=\"text-align: center;\">(".htmlspecialchars($metodo_selezionato).")</div>";
+} # fine if ($metodo_selezionato)
 echo "<br>";
 
 $storia_soldi_prenota = esegui_query("select * from $tablesoldi where saldo_prenota is not NULL$periodo_query $cond_metodo $condizione_variazioni_proprie order by idsoldi");

@@ -267,7 +267,6 @@ $appartamenti_consentiti_regola2 = array();
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
 if ($tariffe_mostra[$numtariffa] == "SI") {
 if (!$dati_r2["tariffa$numtariffa"]) {
-echo "$numtariffa QUI<br>";
 $tutti_consentiti = "SI";
 break;
 } # fine if (!$dati_r2["tariffa$numtariffa"])

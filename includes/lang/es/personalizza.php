@@ -423,6 +423,7 @@ case "I dati inseriti non sono corretti":  	$messaggio = "Los datos insertados n
 case "Le tipologie di persone sono state modificate":	$messaggio = "Los tipos de personas han sido modificados"; break;
 case "Cambia per tutti gli utenti":  		$messaggio = "Cambiar para todos los usuarios"; break;
 case "Modifica le tipologie di persone per tutti gli utenti":	$messaggio = "Modificar los tipos de personas para todos los usuarios"; break;
+case "tipi di persona":  			$messaggio = "tipos de persona"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 

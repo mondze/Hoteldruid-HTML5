@@ -1214,7 +1214,7 @@ $appartamento_vett[$app_richiesti_vett['id']] = $app_prenota_id[$id_prenota_lib]
 $app_prenota_id[$id_prenota_lib] = "";
 } # fine if ($fatto == "SI")
 else {
-$appartamento_vett[$app_richiesti_vett['id']] = "";
+if (@is_array($appartamento_vett)) $appartamento_vett[$app_richiesti_vett['id']] = "";
 aggiorna_app_aggiunti($limiti_var,$limiti_var_orig,$app_orig_prenota_id,$app_prenota_id,$inizio_prenota_id,$fine_prenota_id,$prenota_in_app_sett);
 } # fine else if ($fatto == "SI")
 $inizio_prenota_id[$id_prenota_lib] = "";

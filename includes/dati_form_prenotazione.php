@@ -22,39 +22,39 @@
 
 $mess_dati_form = "";
 if ($manda_cognome != "NO") {
-$mess_dati_form .= "<input type=\"hidden\" name=\"cognome\" value=\"$cognome\">
-<input type=\"hidden\" name=\"nome\" value=\"$nome\">";
+$mess_dati_form .= "<input type=\"hidden\" name=\"cognome\" value=\"".htmlspecialchars($cognome)."\">
+<input type=\"hidden\" name=\"nome\" value=\"".htmlspecialchars($nome)."\">";
 } # fine if ($manda_cognome != "NO")
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
 if ($manda_dati_assegnazione != "NO") {
 $mess_dati_form .= "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"".${"inizioperiodo".$n_t}."\">
 <input type=\"hidden\" name=\"fineperiodo$n_t\" value=\"".${"fineperiodo".$n_t}."\">
-<input type=\"hidden\" name=\"appartamento$n_t\" value=\"".${"appartamento".$n_t}."\">
-<input type=\"hidden\" name=\"nometipotariffa$n_t\" value=\"".${"nometipotariffa".$n_t}."\">
-<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".${"numpersone".$n_t}."\">
-<input type=\"hidden\" name=\"assegnazioneapp$n_t\" value=\"".${"assegnazioneapp".$n_t}."\">
-<input type=\"hidden\" name=\"num_app_richiesti$n_t\" value=\"".${"num_app_richiesti".$n_t}."\">
-<input type=\"hidden\" name=\"lista_app$n_t\" value=\"".${"lista_app".$n_t}."\">
-<input type=\"hidden\" name=\"prenota_vicine$n_t\" value=\"".${"prenota_vicine".$n_t}."\">
-<input type=\"hidden\" name=\"spezzetta$n_t\" value=\"".${"spezzetta".$n_t}."\">";
+<input type=\"hidden\" name=\"appartamento$n_t\" value=\"".htmlspecialchars(${"appartamento".$n_t})."\">
+<input type=\"hidden\" name=\"nometipotariffa$n_t\" value=\"".htmlspecialchars(${"nometipotariffa".$n_t})."\">
+<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".htmlspecialchars(${"numpersone".$n_t})."\">
+<input type=\"hidden\" name=\"assegnazioneapp$n_t\" value=\"".htmlspecialchars(${"assegnazioneapp".$n_t})."\">
+<input type=\"hidden\" name=\"num_app_richiesti$n_t\" value=\"".htmlspecialchars(${"num_app_richiesti".$n_t})."\">
+<input type=\"hidden\" name=\"lista_app$n_t\" value=\"".htmlspecialchars(${"lista_app".$n_t})."\">
+<input type=\"hidden\" name=\"prenota_vicine$n_t\" value=\"".htmlspecialchars(${"prenota_vicine".$n_t})."\">
+<input type=\"hidden\" name=\"spezzetta$n_t\" value=\"".htmlspecialchars(${"spezzetta".$n_t})."\">";
 } # fine if ($manda_dati_assegnazione != "NO")
 for ($num_catp = 0 ; $num_catp < $num_categorie_persone ; $num_catp++) {
-$mess_dati_form .= "<input type=\"hidden\" name=\"cat$num_catp"."_numpers$n_t\" value=\"".${"cat$num_catp"."_numpers".$n_t}."\">";
+$mess_dati_form .= "<input type=\"hidden\" name=\"cat$num_catp"."_numpers$n_t\" value=\"".htmlspecialchars(${"cat$num_catp"."_numpers".$n_t})."\">";
 } # fine $num_catp
-$mess_dati_form .= "<input type=\"hidden\" name=\"tipo_sconto$n_t\" value=\"".${"tipo_sconto".$n_t}."\">
-<input type=\"hidden\" name=\"sconto$n_t\" value=\"".${"sconto".$n_t}."\">
-<input type=\"hidden\" name=\"tipo_val_sconto$n_t\" value=\"".${"tipo_val_sconto".$n_t}."\">
-<input type=\"hidden\" name=\"conferma_prenota$n_t\" value=\"".${"conferma_prenota".$n_t}."\">
-<input type=\"hidden\" name=\"caparra$n_t\" value=\"".${"caparra".$n_t}."\">
-<input type=\"hidden\" name=\"tipo_val_caparra$n_t\" value=\"".${"tipo_val_caparra".$n_t}."\">
-<input type=\"hidden\" name=\"commissioni$n_t\" value=\"".${"commissioni".$n_t}."\">
-<input type=\"hidden\" name=\"tipo_val_commissioni$n_t\" value=\"".${"tipo_val_commissioni".$n_t}."\">
-<input type=\"hidden\" name=\"giorno_stima_checkin$n_t\" value=\"".${"giorno_stima_checkin".$n_t}."\">
-<input type=\"hidden\" name=\"ora_stima_checkin$n_t\" value=\"".${"ora_stima_checkin".$n_t}."\">
-<input type=\"hidden\" name=\"min_stima_checkin$n_t\" value=\"".${"min_stima_checkin".$n_t}."\">
-<input type=\"hidden\" name=\"num_commenti$n_t\" value=\"".${"num_commenti".$n_t}."\">";
+$mess_dati_form .= "<input type=\"hidden\" name=\"tipo_sconto$n_t\" value=\"".htmlspecialchars(${"tipo_sconto".$n_t})."\">
+<input type=\"hidden\" name=\"sconto$n_t\" value=\"".htmlspecialchars(${"sconto".$n_t})."\">
+<input type=\"hidden\" name=\"tipo_val_sconto$n_t\" value=\"".htmlspecialchars(${"tipo_val_sconto".$n_t})."\">
+<input type=\"hidden\" name=\"conferma_prenota$n_t\" value=\"".htmlspecialchars(${"conferma_prenota".$n_t})."\">
+<input type=\"hidden\" name=\"caparra$n_t\" value=\"".htmlspecialchars(${"caparra".$n_t})."\">
+<input type=\"hidden\" name=\"tipo_val_caparra$n_t\" value=\"".htmlspecialchars(${"tipo_val_caparra".$n_t})."\">
+<input type=\"hidden\" name=\"commissioni$n_t\" value=\"".htmlspecialchars(${"commissioni".$n_t})."\">
+<input type=\"hidden\" name=\"tipo_val_commissioni$n_t\" value=\"".htmlspecialchars(${"tipo_val_commissioni".$n_t})."\">
+<input type=\"hidden\" name=\"giorno_stima_checkin$n_t\" value=\"".htmlspecialchars(${"giorno_stima_checkin".$n_t})."\">
+<input type=\"hidden\" name=\"ora_stima_checkin$n_t\" value=\"".htmlspecialchars(${"ora_stima_checkin".$n_t})."\">
+<input type=\"hidden\" name=\"min_stima_checkin$n_t\" value=\"".htmlspecialchars(${"min_stima_checkin".$n_t})."\">
+<input type=\"hidden\" name=\"num_commenti$n_t\" value=\"".htmlspecialchars(${"num_commenti".$n_t})."\">";
 for ($num_comm = 1 ; $num_comm <= ${"num_commenti".$n_t} ; $num_comm++) {
-$mess_dati_form .= "<input type=\"hidden\" name=\"tipo_commento$num_comm"."_$n_t\" value=\"".${"tipo_commento".$num_comm."_".$n_t}."\">";
+$mess_dati_form .= "<input type=\"hidden\" name=\"tipo_commento$num_comm"."_$n_t\" value=\"".htmlspecialchars(${"tipo_commento".$num_comm."_".$n_t})."\">";
 if (!@get_magic_quotes_gpc()) $mess_dati_form .= "<input type=\"hidden\" name=\"commento$num_comm"."_$n_t\" value=\"".htmlspecialchars(${"commento".$num_comm."_".$n_t})."\">";
 else $mess_dati_form .= "<input type=\"hidden\" name=\"commento$num_comm"."_$n_t\" value=\"".htmlspecialchars(stripslashes(${"commento".$num_comm."_".$n_t}))."\">";
 } # fine for $num_comm
@@ -69,22 +69,22 @@ $numsettimane = "numsettimane".$numca."_".$n_t;
 $nummoltiplica_ca = "nummoltiplica_ca".$numca."_".$n_t;
 $id_periodi_costo = "id_periodi_costo".$numca."_".$n_t;
 $catpers_ca = "catpers_ca".$numca."_".$n_t;
-$mess_dati_form .= "<input type=\"hidden\" name=\"$idcostoagg\" value=\"".$$idcostoagg."\">
-<input type=\"hidden\" name=\"$costoagg\" value=\"".$$costoagg."\">
-<input type=\"hidden\" name=\"$numsettimane\" value=\"".$$numsettimane."\">
-<input type=\"hidden\" name=\"$nummoltiplica_ca\" value=\"".$$nummoltiplica_ca."\">";
-if ($$id_periodi_costo) $mess_dati_form .= "<input type=\"hidden\" name=\"$id_periodi_costo\" value=\"".$$id_periodi_costo."\">";
-if (strcmp($$catpers_ca,"")) $mess_dati_form .= "<input type=\"hidden\" name=\"$catpers_ca\" value=\"".$$catpers_ca."\">";
+$mess_dati_form .= "<input type=\"hidden\" name=\"$idcostoagg\" value=\"".htmlspecialchars($$idcostoagg)."\">
+<input type=\"hidden\" name=\"$costoagg\" value=\"".htmlspecialchars($$costoagg)."\">
+<input type=\"hidden\" name=\"$numsettimane\" value=\"".htmlspecialchars($$numsettimane)."\">
+<input type=\"hidden\" name=\"$nummoltiplica_ca\" value=\"".htmlspecialchars($$nummoltiplica_ca)."\">";
+if ($$id_periodi_costo) $mess_dati_form .= "<input type=\"hidden\" name=\"$id_periodi_costo\" value=\"".htmlspecialchars($$id_periodi_costo)."\">";
+if (strcmp($$catpers_ca,"")) $mess_dati_form .= "<input type=\"hidden\" name=\"$catpers_ca\" value=\"".htmlspecialchars($$catpers_ca)."\">";
 } # fine for $numca
 } # fine for $n_t
-$mess_dati_form .= "<input type=\"hidden\" name=\"numcostiagg\" value=\"$numcostiagg\">
+$mess_dati_form .= "<input type=\"hidden\" name=\"numcostiagg\" value=\"".htmlspecialchars($numcostiagg)."\">
 <input type=\"hidden\" name=\"id_utente_ins\" value=\"$id_utente_ins\">
 <input type=\"hidden\" name=\"mos_tut_dat\" value=\"$mos_tut_dat\">
 <input type=\"hidden\" name=\"num_tipologie\" value=\"$num_tipologie\">";
-if ($manda_dati_assegnazione != "NO") $mess_dati_form .= "<input type=\"hidden\" name=\"prenota_vicine\" value=\"$prenota_vicine\">";
+if ($manda_dati_assegnazione != "NO") $mess_dati_form .= "<input type=\"hidden\" name=\"prenota_vicine\" value=\"".htmlspecialchars($prenota_vicine)."\">";
 else $mess_dati_form .= "<input type=\"hidden\" name=\"id_transazione\" value=\"$id_transazione\">";
-if ($idmessaggi) $mess_dati_form .= "<input type=\"hidden\" name=\"idmessaggi\" value=\"$idmessaggi\">";
-if ($num_categorie_persone > 1) echo "<input type=\"hidden\" name=\"num_categorie_persone\" value=\"$num_categorie_persone\">";
+if ($idmessaggi) $mess_dati_form .= "<input type=\"hidden\" name=\"idmessaggi\" value=\"".htmlspecialchars($idmessaggi)."\">";
+if ($num_categorie_persone > 1) echo "<input type=\"hidden\" name=\"num_categorie_persone\" value=\"".htmlspecialchars($num_categorie_persone)."\">";
 
 if ($echo_dati_form != "NO") echo $mess_dati_form;
 

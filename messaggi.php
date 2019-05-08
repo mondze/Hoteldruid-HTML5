@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -822,6 +822,8 @@ if (strlen($testo) > 3000) $testo = "<small>$testo</small>";
 unset($costo_presente);
 unset($numsettimane);
 unset($nummoltiplica_ca);
+unset($catpers_ca);
+$cat_numpers = array();
 $stato_prenota = risul_query($messaggi,$num1,'dati_messaggio1');
 $num_tipologie = risul_query($messaggi,$num1,'dati_messaggio3');
 $inizioperiodo_dt = explode(",",risul_query($messaggi,$num1,'dati_messaggio4'));
@@ -835,12 +837,14 @@ $costoagg_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio11'));
 $numsettimane_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio12'));
 $nummoltiplica_ca_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio13'));
 $id_periodi_costo_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio14'));
+$catpers_ca_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio21'));
 $dati_calcolati_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio16'));
 $anno_prenota_dt = risul_query($messaggi,$num1,'dati_messaggio18');
 $origine_prenota_dt = explode(">",risul_query($messaggi,$num1,'dati_messaggio19'));
 $prenota_vicine_dt = $origine_prenota_dt[1];
 $origine_prenota_dt = $origine_prenota_dt[0];
 $aggiunta_testo_dt = risul_query($messaggi,$num1,'dati_messaggio20');
+$cat_numpers_dt = explode(";",risul_query($messaggi,$num1,'dati_messaggio22'));
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
 $inizioperiodo[$n_t] = aggslashdb($inizioperiodo_dt[($n_t - 1)]);
 $idinizioperiodo[$n_t] = esegui_query("select idperiodi from $tableperiodi where datainizio = '".$inizioperiodo[$n_t]."'");
@@ -875,13 +879,16 @@ $costoagg_dt2 = explode(",",$costoagg_dt[($n_t - 1)]);
 $numsettimane_dt2 = explode(",",$numsettimane_dt[($n_t - 1)]);
 $nummoltiplica_ca_dt2 = explode(",",$nummoltiplica_ca_dt[($n_t - 1)]);
 $id_periodi_costo_dt2 = explode(":",$id_periodi_costo_dt[($n_t - 1)]);
+$catpers_ca_dt2 = explode(",",$catpers_ca_dt[($n_t - 1)]);
 for ($numca = 1 ; $numca <= $numcostiagg[$n_t] ; $numca++) {
 if ($costoagg_dt2[($numca - 1)] == "SI") {
 $costo_presente[$n_t][$idcostoagg_dt2[($numca - 1)]] = "SI";
 $numsettimane[$n_t][$idcostoagg_dt2[($numca - 1)]] = $numsettimane_dt2[($numca - 1)];
 $nummoltiplica_ca[$n_t][$idcostoagg_dt2[($numca - 1)]] = $nummoltiplica_ca_dt2[($numca - 1)];
+$catpers_ca[$n_t][$idcostoagg_dt2[($numca - 1)]] = $catpers_ca_dt2[($numca - 1)];
 } # fine if ($costoagg_dt2[($numca - 1)] == "SI")
 } # fine for $numca
+$cat_numpers[$n_t] = explode(",",$cat_numpers_dt[($n_t - 1)]);
 } # fine for $n_t
 $dati_richiedente_dt = explode("<d>",risul_query($messaggi,$num1,'dati_messaggio15'));
 $cognome_richiedente = $dati_richiedente_dt[0];
@@ -932,8 +939,9 @@ $tasto_prenota .= "<input type=\"hidden\" name=\"mos_tut_dat\" value=\"SI\">
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
 $tasto_prenota .= "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"".$idinizioperiodo[$n_t]."\">
 <input type=\"hidden\" name=\"fineperiodo$n_t\" value=\"".$idfineperiodo[$n_t]."\">
-<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".$numpersone[$n_t]."\">
-<input type=\"hidden\" name=\"num_app_richiesti$n_t\" value=\"".$num_app_tipo_richiesti[$n_t]."\">
+<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".$numpersone[$n_t]."\">";
+for ($num2 = 0 ; $num2 < count($cat_numpers[$n_t]) ; $num2++) if ($cat_numpers[$n_t][$num2]) $tasto_prenota .= "<input type=\"hidden\" name=\"cat$num2"."_numpers$n_t\" value=\"".$cat_numpers[$n_t][$num2]."\">";
+$tasto_prenota .= "<input type=\"hidden\" name=\"num_app_richiesti$n_t\" value=\"".$num_app_tipo_richiesti[$n_t]."\">
 <input type=\"hidden\" name=\"nometipotariffa$n_t\" value=\"tariffa".$numero_tariffa[$n_t]."\">
 <input type=\"hidden\" name=\"met_paga_caparra$n_t\" value=\"$metodo_pagamento\">
 <input type=\"hidden\" name=\"origine_prenota$n_t\" value=\"$origine_prenota_dt\">
@@ -970,14 +978,16 @@ $ncostiagg++;
 if ($costo_presente[$n_t][$dati_ca[$num2]['id']] == "SI") {
 $tasto_prenota .= "<input type=\"hidden\" name=\"costoagg$ncostiagg"."_$n_t\" value=\"SI\">
 <input type=\"hidden\" name=\"numsettimane$ncostiagg"."_$n_t\" value=\"".$numsettimane[$n_t][$dati_ca[$num2]['id']]."\">
-<input type=\"hidden\" name=\"nummoltiplica_ca$ncostiagg"."_$n_t\" value=\"".$nummoltiplica_ca[$n_t][$dati_ca[$num2]['id']]."\">";
+<input type=\"hidden\" name=\"nummoltiplica_ca$ncostiagg"."_$n_t\" value=\"".$nummoltiplica_ca[$n_t][$dati_ca[$num2]['id']]."\">
+<input type=\"hidden\" name=\"catpers_ca$ncostiagg"."_$n_t\" value=\"".$catpers_ca[$n_t][$dati_ca[$num2]['id']]."\">";
 } # fine if ($costo_presente[$dati_ca[$num2]['id']] == "SI")
 } # fine if ($dati_ca[$num2]['combina'] != "s" and $dati_ca[$num2]['raggruppa'] != "s")
 else {
 if ($costo_presente[$n_t][$dati_ca[$num2]['id']] == "SI") {
 $tasto_prenota .= "<input type=\"hidden\" name=\"gr_idcostoagg".$dati_ca[$num2]['id']."_$n_t\" value=\"SI\">
 <input type=\"hidden\" name=\"gr_numsettimane".$dati_ca[$num2]['id']."_$n_t\" value=\"".$numsettimane[$n_t][$dati_ca[$num2]['id']]."\">
-<input type=\"hidden\" name=\"gr_nummoltiplica_ca".$dati_ca[$num2]['id']."_$n_t\" value=\"".$nummoltiplica_ca[$n_t][$dati_ca[$num2]['id']]."\">";
+<input type=\"hidden\" name=\"gr_nummoltiplica_ca".$dati_ca[$num2]['id']."_$n_t\" value=\"".$nummoltiplica_ca[$n_t][$dati_ca[$num2]['id']]."\">
+<input type=\"hidden\" name=\"gr_catpers_ca".$dati_ca[$num2]['id']."_$n_t\" value=\"".$catpers_ca[$n_t][$dati_ca[$num2]['id']]."\">";
 } # fine if ($costo_presente[$dati_ca[$num2]['id']] == "SI")
 } # fine else if ($dati_ca[$num2]['combina'] != "s" and $dati_ca[$num2]['raggruppa'] != "s")
 } # fine if ($attiva_costi_agg_consentiti == "n" or...

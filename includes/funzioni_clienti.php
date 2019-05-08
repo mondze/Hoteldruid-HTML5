@@ -248,7 +248,7 @@ if ($max_num_ordine) esegui_query("update $tableclienti set max_num_ordine = '".
 for ($num1 = 0 ; $num1 < $num_campi_pers ; $num1++) {
 if (strcmp($campi_pers_vett['val'][$num1],"")) {
 $datainserimento = date("Y-m-d H:i:s",(time() + (C_DIFF_ORE * 3600)));
-esegui_query("insert into $tablerelclienti (idclienti,numero,tipo,testo1,testo2,testo3,datainserimento,hostinserimento,utente_inserimento) values ('$idclienti','1','campo_pers','".$campi_pers_vett[$num1]."','".$campi_pers_vett['tipo'][$num1]."','".$campi_pers_vett['val'][$num1]."','$datainserimento','$HOSTNAME','$id_utente_ins') ");
+esegui_query("insert into $tablerelclienti (idclienti,numero,tipo,testo1,testo2,testo3,datainserimento,hostinserimento,utente_inserimento) values ('$idclienti','1','campo_pers','".$campi_pers_vett[$num1]."','".$campi_pers_vett['tipo'][$num1]."','".aggslashdb($campi_pers_vett['val'][$num1])."','$datainserimento','$HOSTNAME','$id_utente_ins') ");
 } # fine if (strcmp($campi_pers_vett['val'][$num1],""))
 } # fine for $num1
 

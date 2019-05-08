@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -198,10 +198,10 @@ $nome_file_contr = unserialize(risul_query($dati_transazione,0,'dati_transazione
 $tipo_contratto = risul_query($dati_transazione,0,'dati_transazione3');
 $origine = risul_query($dati_transazione,0,'dati_transazione4');
 $origine_vecchia = risul_query($dati_transazione,0,'dati_transazione5');
+$num_file_salva = count($nome_file_contr);
 if ($cancella == "SI" and $priv_cancella_contratti != "n") {
 $mostra_contratto = "NO";
 $mostra_torna_indietro = "SI";
-$num_file_salva = count($nome_file_contr);
 for ($num1 = 1 ; $num1 <= $num_file_salva ; $num1++) {
 if (@is_file($dir_salvato."/".$nome_file_contr[$num1])) unlink($dir_salvato."/".$nome_file_contr[$num1]);
 if ($tema[$id_utente] and $tema[$id_utente] != "base" and @is_dir("./themes/".$tema[$id_utente]."/php")) include("./themes/".$tema[$id_utente]."/php/head.php");
@@ -210,6 +210,7 @@ $mostra_foot = "SI";
 echo "".mex("Il documento",$pag)." <b>".$nome_file_contr[$num1]."</b> ".mex("è stato <b style=\"font-weight: normal; color: blue;\">cancellato</b>",$pag).".<br>";
 } # fine for $num1
 } # fine if ($cancella == "SI" and $priv_cancella_contratti != "n")
+elseif ($n_file < 1 or $n_file > $num_file_salva or controlla_num_pos($n_file) != "SI") $n_file = 1;
 } # fine else if ($tipo_transazione != "con_s")
 } # fine elseif ($id_transazione)
 
@@ -369,8 +370,11 @@ $campi_pers_cliente = explode(">",risul_query($campi_pers_cliente,0,'valpersonal
 $num_campi_pers_cliente = count($campi_pers_cliente);
 } # fine if (numlin_query($campi_pers_cliente))
 else $num_campi_pers_cliente = 0;
+include_once("./includes/funzioni_tariffe.php");
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
 $commento_personalizzato_ = "commento_personalizzato_";
 $campo_personalizzato_ = "campo_personalizzato_";
+$num_persone_tipo_ = "num_persone_tipo_";
 include("./includes/variabili_contratto.php");
 
 if (!$num_ripeti or controlla_num_pos($num_ripeti) == "NO") $num_ripeti = 1;

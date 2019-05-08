@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -52,17 +52,17 @@ echo "<form method=\"post\" action=\"crea_modelli.php\"><div>
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"crea_modello\" value=\"SI\">
 <input type=\"hidden\" name=\"fonte_dati_conn\" value=\"$fonte_dati_conn\">
-<input type=\"hidden\" name=\"T_PHPR_DB_TYPE\" value=\"$T_PHPR_DB_TYPE\">
-<input type=\"hidden\" name=\"T_PHPR_DB_NAME\" value=\"$T_PHPR_DB_NAME\">
-<input type=\"hidden\" name=\"T_PHPR_DB_HOST\" value=\"$T_PHPR_DB_HOST\">
-<input type=\"hidden\" name=\"T_PHPR_DB_PORT\" value=\"$T_PHPR_DB_PORT\">
-<input type=\"hidden\" name=\"T_PHPR_DB_USER\" value=\"$T_PHPR_DB_USER\">
-<input type=\"hidden\" name=\"T_PHPR_DB_PASS\" value=\"$T_PHPR_DB_PASS\">
-<input type=\"hidden\" name=\"T_PHPR_LOAD_EXT\" value=\"$T_PHPR_LOAD_EXT\">
-<input type=\"hidden\" name=\"T_PHPR_TAB_PRE\" value=\"$T_PHPR_TAB_PRE\">
+<input type=\"hidden\" name=\"T_PHPR_DB_TYPE\" value=\"".htmlspecialchars($T_PHPR_DB_TYPE)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_NAME\" value=\"".htmlspecialchars($T_PHPR_DB_NAME)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_HOST\" value=\"".htmlspecialchars($T_PHPR_DB_HOST)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_PORT\" value=\"".htmlspecialchars($T_PHPR_DB_PORT)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_USER\" value=\"".htmlspecialchars($T_PHPR_DB_USER)."\">
+<input type=\"hidden\" name=\"T_PHPR_DB_PASS\" value=\"".htmlspecialchars($T_PHPR_DB_PASS)."\">
+<input type=\"hidden\" name=\"T_PHPR_LOAD_EXT\" value=\"".htmlspecialchars($T_PHPR_LOAD_EXT)."\">
+<input type=\"hidden\" name=\"T_PHPR_TAB_PRE\" value=\"".htmlspecialchars($T_PHPR_TAB_PRE)."\">
 <input type=\"hidden\" name=\"anno_modello\" value=\"$anno_modello\">
 <input type=\"hidden\" name=\"lingua_modello\" value=\"$lingua_modello\">
-<input type=\"hidden\" name=\"perc_cart_mod_sel\" value=\"$perc_cart_mod_sel\">
+<input type=\"hidden\" name=\"perc_cart_mod_sel\" value=\"".htmlspecialchars($perc_cart_mod_sel)."\">
 
 <div style=\"height: 4px;\"></div>
 <h5 id=\"h_rat\"><span>".mext_rat("Pagina della tabella con le tariffe",$pag)."</span></h5><br><br>
@@ -78,7 +78,7 @@ echo " ".mex("al",$pag)." ";
 mostra_menu_date(C_DATI_PATH."/selectperiodi$anno_modello.1.php","fineperiodo$num1",${"fineperiodo".$num1},"","",$id_utente,$tema);
 if (!${"intervalloperiodo".$num1}) ${"intervalloperiodo".$num1} = 1;
 echo ",&nbsp;".str_replace(" ","&nbsp;",mex("$parola_settimane di intervallo",$pag)).":&nbsp;
-<input type=\"text\" name=\"intervalloperiodo$num1\" value=\"".${"intervalloperiodo".$num1}."\" size=\"2\" maxlength=\"2\"><br>";
+<input type=\"text\" name=\"intervalloperiodo$num1\" value=\"".htmlspecialchars(${"intervalloperiodo".$num1})."\" size=\"2\" maxlength=\"2\"><br>";
 } # fine for $num1
 if (!$estendi_ultima_data or strtoupper($estendi_ultima_data) == $SI or $estendi_ultima_data == "SI") { $sel_SI = " selected"; $sel_NO = ""; }
 else { $sel_NO = " selected"; $sel_SI = ""; }
@@ -287,7 +287,9 @@ $js_opz_tema .= "<\/td><\/tr><\/table>';
 } # fine for $num1
 echo "</select><div id=\"opz_tema\"></div>";
 
-$valori_tema = $template_theme_values[$tema_sel];
+$valori_tema = array();
+$colori_tema = array();
+if ($tema_sel) $valori_tema = $template_theme_values[$tema_sel];
 $num_valori = count($valori_tema);
 for ($num1 = 1 ; $num1 <= $num_valori ; $num1++) {
 if (!strcmp(${"valore_tema_".$num1},"")) ${"valore_tema_".$num1} = $valori_tema[$num1]['default'];
@@ -297,7 +299,7 @@ elseif (strcmp($valori_tema[$num1]['replace'],"")) $valore_sost = str_replace("[
 $template_theme_html_pre[$tema_sel] = str_replace("[theme_value_$num1]",$valore_sost,$template_theme_html_pre[$tema_sel]);
 $template_theme_html_post[$tema_sel] = str_replace("[theme_value_$num1]",$valore_sost,$template_theme_html_post[$tema_sel]);
 } # fine for $num1
-$colori_tema = $template_theme_colors[$tema_sel];
+if ($tema_sel) $colori_tema = $template_theme_colors[$tema_sel];
 $num_colori = count($colori_tema);
 for ($num1 = 1 ; $num1 <= $num_colori ; $num1++) {
 if (!${"colore_tema_".$num1}) ${"colore_tema_".$num1} = $colori_tema[$num1]['default'];

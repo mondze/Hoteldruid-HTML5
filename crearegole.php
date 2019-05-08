@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -460,6 +460,7 @@ echo "<br><h4 id=\"h_irul\"><span>".mex("Inserisci le regole di assegnazione per
 </span></h4><br><hr style=\"width: 95%\">";
 
 $mostra_solo_regola = 0;
+$origine = htmlspecialchars($origine);
 if ($origine == "tab_reg2") {
 $mostra_solo_regola = 2;
 $origine = "visualizza_tabelle.php?tipo_tabella=regole#hreg2";
@@ -467,7 +468,7 @@ $origine = "visualizza_tabelle.php?tipo_tabella=regole#hreg2";
 if ($origine == "tab_tariffa") {
 if ($tipotariffa_regola2) $mostra_solo_regola = 2;
 if ($tipotariffa_regola4) $mostra_solo_regola = 4;
-$origine = "tab_tariffe.php?numtariffa1=".substr($tipotariffa_regola2.$tipotariffa_regola4,7);
+$origine = "tab_tariffe.php?numtariffa1=".htmlspecialchars(substr($tipotariffa_regola2.$tipotariffa_regola4,7));
 } # fine if ($origine == "tab_tariffa")
 if (substr($origine,0,3) == "ic_") {
 $orig = explode("_",$origine);

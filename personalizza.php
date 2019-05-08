@@ -88,7 +88,7 @@ $priv_crea_backup = "s";
 $priv_crea_interconnessioni = "s";
 $anno_utente_attivato = "SI";
 } # fine else if ($id_utente != 1)
-$id_utente_mod = aggslashdb($id_utente_mod);
+$id_utente_mod = aggslashdb(htmlspecialchars($id_utente_mod));
 if ($id_utente != 1 or !$id_utente_mod) $id_utente_mod = $id_utente;
 if ($id_utente_mod != 1 and $id_utente_mod != "tutti" and substr($id_utente_mod,0,2) != "gr") {
 $tableprivilegi = $PHPR_TAB_PRE."privilegi";
@@ -2616,7 +2616,8 @@ if ($colonna_nometariffa == "SI") $col_tab_tutte_prenota .= "nt#@&";
 if ($colonna_appartamento == "SI") $col_tab_tutte_prenota .= "ap#@&";
 if ($colonna_piano == "SI") $col_tab_tutte_prenota .= "pi#@&";
 if ($colonna_casa == "SI") $col_tab_tutte_prenota .= "ka#@&";
-if ($colonna_persone == "SI") $col_tab_tutte_prenota .= "pe#@&";
+if ($colonna_persone == "SI" or $colonna_catpersone == "SI") $col_tab_tutte_prenota .= "pe#@&";
+if ($colonna_catpersone == "SI") $col_tab_tutte_prenota .= "tp#@&";
 if ($colonna_commento == "SI") $col_tab_tutte_prenota .= "co#@&";
 if ($colonna_origine_prenota == "SI") $col_tab_tutte_prenota .= "or#@&";
 if ($colonna_docsalvati == "SI") $col_tab_tutte_prenota .= "ds#@&";
@@ -2678,6 +2679,7 @@ if ($colonna_appartamento == "SI") $col_gruppo .= "ap#?&";
 if ($colonna_piano == "SI") $col_gruppo .= "pi#?&";
 if ($colonna_casa == "SI") $col_gruppo .= "ka#?&";
 if ($colonna_persone == "SI") $col_gruppo .= "pe#?&";
+if ($colonna_catpersone == "SI") $col_gruppo .= "tp#?&";
 if ($colonna_commento == "SI") $col_gruppo .= "co#?&";
 if ($colonna_origine_prenota == "SI") $col_gruppo .= "or#?&";
 if ($colonna_docsalvati == "SI") $col_gruppo .= "ds#?&";
@@ -4529,6 +4531,7 @@ if ($colonna_selezionata[0] == "ap") $appartamento_check = " checked";
 if ($colonna_selezionata[0] == "pi") $piano_check = " checked";
 if ($colonna_selezionata[0] == "ka") $casa_check = " checked";
 if ($colonna_selezionata[0] == "pe") $persone_check = " checked";
+if ($colonna_selezionata[0] == "tp") $catpersone_check = " checked";
 if ($colonna_selezionata[0] == "co") $commento_check = " checked";
 if ($colonna_selezionata[0] == "or") $origine_prenota_check = " checked";
 if ($colonna_selezionata[0] == "ds") $docsalvati_check = " checked";
@@ -4554,7 +4557,8 @@ echo "
  <label><input type=\"checkbox\" name=\"colonna_appartamento\" value=\"SI\"$appartamento_check> ".mex("n° di appartamento",'unit.php')."</label>;
  <label><input type=\"checkbox\" name=\"colonna_piano\" value=\"SI\"$piano_check> ".mex("piano",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_casa\" value=\"SI\"$casa_check> ".mex("casa",$pag)."</label>;
- <label><input type=\"checkbox\" name=\"colonna_persone\" value=\"SI\"$persone_check> ".mex("n° di persone",$pag)."</label>;
+ <label><input type=\"checkbox\" id=\"cl_pe\" name=\"colonna_persone\" onchange=\"if (!document.getElementById('cl_pe').checked) document.getElementById('cl_tp').checked=0;\" value=\"SI\"$persone_check> ".mex("n° di persone",$pag)."</label>
+ (<label><input type=\"checkbox\" id=\"cl_tp\" name=\"colonna_catpersone\" onchange=\"if (document.getElementById('cl_tp').checked) document.getElementById('cl_pe').checked='1';\" value=\"SI\"$catpersone_check> ".mex("tipi di persona",$pag)."</label>);
  <label><input type=\"checkbox\" name=\"colonna_commento\" value=\"SI\"$commento_check> ".mex("commento",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_origine_prenota\" value=\"SI\"$origine_prenota_check> ".mex("origine",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_docsalvati\" value=\"SI\"$docsalvati_check> ".mex("documenti salvati",$pag)."</label>;
@@ -4641,6 +4645,7 @@ echo ".<br>
  <label><input type=\"checkbox\" name=\"colonna_piano\" value=\"SI\"> ".mex("piano",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_casa\" value=\"SI\"> ".mex("casa",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_persone\" value=\"SI\"> ".mex("n° di persone",$pag)."</label>;
+ <label><input type=\"checkbox\" name=\"colonna_catpersone\" value=\"SI\"> ".mex("tipi di persona",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_commento\" value=\"SI\"> ".mex("commento",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_origine_prenota\" value=\"SI\"> ".mex("origine",$pag)."</label>;
  <label><input type=\"checkbox\" name=\"colonna_docsalvati\" value=\"SI\"> ".mex("documenti salvati",$pag)."</label>;

@@ -262,7 +262,7 @@ case "eventuali pagine già presenti nella cartella":	$messaggio = "eventuales p
 case "verranno <b style=\"font-weight: normal; color: red;\">sovrascritte</b>":	$messaggio = "serán <b style=\"font-weight: normal; color: red;\">sobreescritas</b>"; break;
 case "Pagine importate":  			$messaggio = "Páginas importadas"; break;
 case "con i servizi opzionali selezionati":  	$messaggio = "con los servicios opcionales seleccionados"; break;
-case "Utilizzare le liste di nazioni, regioni, etc. dell'utente":	$messaggio = "Utilizar listas de naciones, regiones, etc. del usuario"; break;
+case "Utilizzare le personalizzazioni (tipi di persone, liste di nazioni, regioni, ecc.) dell'utente":	$messaggio = "Utilizar las personalizaciones (tipos de personas, listas de naciones, regiones, etc.) del usuario"; break;
 case "Url del file css per la modalità frame":	$messaggio = "Url del archivo css para la modalidad frame"; break;
 case "Utilizza per l'aspetto della pagina":  	$messaggio = "Utilizar para el aspecto de la página"; break;
 case "html personalizzato":  			$messaggio = "html personalizado"; break;
@@ -320,6 +320,7 @@ case "non sono associati a tariffe, alcune loro caratteristiche potrebbero venir
 case "Mostrare le date passate?":  		$messaggio = "Enseñar las fechas pasadas?"; break;
 case "titolo html":  				$messaggio = "Título html"; break;
 case "titolo":  				$messaggio = "Título"; break;
+case "Si deve inserire almeno una persona che possa essere legalmente responsabile":	$messaggio = "Hay que incluir al menos una persona que pueda ser legalmente responsable"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 
@@ -333,9 +334,9 @@ case "mdl_disponibilita":  			$messaggio = "mdl_disponibilidad"; break;
 else {
 switch ($messaggio) {
 
-# NAMES OF VARIABLES: for translation leave the beginning as var_ and use only a-z, A-Z, 
-# 0-9 and _ (underscore). No spaces, no accents! There must not be 2 with the same name.
-# NOTE: names of variables are only shown when editing files, actually they don't need to be translated
+# NAMES OF VARIABLES: for translation leave the beginning as var_ and use only ASCII a-z, A-Z, 0-9 
+# and _ (underscore). No spaces, no accents! No special characters! There must not be 2 with the same name.
+# NOTE: names of variables are only shown when editing files, actually *they don't need to be translated*
 case "var_nome_pagina":  			$messaggio = "var_nombre_pagina"; break;
 case "var_anno":  				$messaggio = "var_agno"; break;
 case "var_tipo_db":  				$messaggio = "var_tipo_db"; break;
@@ -592,6 +593,7 @@ case "var_fr_posizioni_vicine":  		$messaggio = "var_fr_posiciones_cercanas"; br
 case "var_fr_con_posizioni_vicine":  		$messaggio = "var_fr_con_posiciones_cercanas"; break;
 case "var_fr_Codice_promozionale":  		$messaggio = "var_fr_Codigo_promocional"; break;
 case "var_fr_Codice_promozionale_applicato":  	$messaggio = "var_fr_Codigo_promocional_aplicado"; break;
+case "var_fr_Si_deve_inserire_almeno_una_persona_che_possa_ecc":	$messaggio = "var_fr_Hay_que_incluir_al_menos_una_persona_que_pueda_etc"; break;
 case "var_":  		$messaggio = "var_"; break;
 case "var_":  		$messaggio = "var_"; break;
 

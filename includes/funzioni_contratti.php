@@ -359,8 +359,8 @@ return $val;
 function crea_contratto ($numero_contratto,&$tipo_contratto,$id_utente,$id_sessione,$origine,$origine_vecchia,$trad_var_vett=array(),$set_glob="") {
 
 global $var_predef,$num_var_predef,$num_var_predef_ripeti,$num_ripeti,$tariffa_selezionata,$num_costo_agg_sel,$anno,$pag,$lingua_mex,$LIKE,$ILIKE,$modifica_pers,$vedi_clienti,$dir_salva,$nome_file_contr,$utenti_gruppi;
-global $tablecontratti,$tableclienti,$tablerclientiprenota,$tablepersonalizza,$tableutenti,$tablerelutenti,$tablenazioni,$tableregioni,$tablecitta,$tabledocumentiid,$tableparentele,$tableappartamenti,$tableperiodi;
-global $data_inizio_selezione,$data_fine_selezione,$var_riserv,$var_predef_data,$messaggio_di_errore,$testo_email_richiesta,$num_commenti_pers,$numero_ins_comm_pers,$num_campi_pers_cliente,$numero_inserimento_pers;
+global $tablecontratti,$tableclienti,$tablerclientiprenota,$tablepersonalizza,$tableutenti,$tablerelutenti,$tablenazioni,$tableregioni,$tablecitta,$tabledocumentiid,$tableparentele,$tableappartamenti,$tableperiodi,$dati_cat_pers;
+global $data_inizio_selezione,$data_fine_selezione,$var_riserv,$var_predef_data,$messaggio_di_errore,$testo_email_richiesta,$num_commenti_pers,$numero_ins_comm_pers,$num_campi_pers_cliente,$numero_inserimento_pers,$numero_ins_cat_pers;
 
 $n_utenti = esegui_query("select idutenti,nome_utente from $tableutenti ");
 for ($num1 = 0 ; $num1 < numlin_query($n_utenti) ; $num1++) $n_utente_contr[risul_query($n_utenti,$num1,'idutenti')] = risul_query($n_utenti,$num1,'nome_utente');
@@ -951,6 +951,12 @@ $var_trad_ita = $var_predef[($numero_inserimento_pers + $num1)];
 $trad_var_vett[$var_trad_ext."_".substr($var_trad_ita,21)] = $var_trad_ita;
 } # fine for $num1
 } # fine if ($var_trad_ita == "campo_personalizzato")
+if ($var_trad_ita == "num_persone_tipo") {
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$var_trad_ita = $var_predef[($numero_ins_cat_pers + $num1)];
+$trad_var_vett[$var_trad_ext."_".substr($var_trad_ita,17)] = $var_trad_ita;
+} # fine for $num1
+} # fine if ($var_trad_ita == "num_persone_tipo")
 } # fine foreach ($trad_var_vett as $var_trad_ext => $var_trad_ita)
 for ($num_mln = 0 ; $num_mln < $num_contr_mln ; $num_mln++) {
 if ($contr_multilingua) $contratto_orig = $contratti_orig_mln[$lingue_contr[$num_mln]];
@@ -1886,6 +1892,11 @@ if ($$n_letti_agg_tariffa_selez) $n_letti_agg = $$n_letti_agg_tariffa_selez;
 $numpers_tariffa_selez = "numpers_tariffa_selez".$tariffa_selezionata."_".$n_r;
 global $$numpers_tariffa_selez;
 if ($$numpers_tariffa_selez) $num_persone = $$numpers_tariffa_selez;
+for ($num1 = 1 ; $num1 <= $dati_cat_pers['num'] ; $num1++) {
+$numpers_tipo_tariffa_selez = "numpers_tipo_$num1"."_tariffa_selez".$tariffa_selezionata."_".$n_r;
+global $$numpers_tipo_tariffa_selez;
+if (strcmp($$numpers_tipo_tariffa_selez,"")) ${"num_persone_tipo_$num1"} = $$numpers_tipo_tariffa_selez;
+} # fine for $num1
 $num_costi_aggiuntivi_tsel = "num_costi_aggiuntivi_tsel".$tariffa_selezionata."_".$n_r;
 global $$num_costi_aggiuntivi_tsel;
 if ($$num_costi_aggiuntivi_tsel) {
@@ -1897,13 +1908,15 @@ $perc_tasse_costo_agg_tsel = "percentuale_tasse_costo_agg".$numca."_tsel".$tarif
 $molt_max_costo_agg_tsel = "moltiplica_max_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
 $val_giorn_max_costo_agg_tsel = "valore_giornaliero_max_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
 $giorni_costo_agg_tsel = "giorni_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
-global $$nome_costo_agg_tsel,$$val_costo_agg_tsel,$$perc_tasse_costo_agg_tsel,$$molt_max_costo_agg_tsel,$$val_giorn_max_costo_agg_tsel,$$giorni_costo_agg_tsel;
+$tipo_persona_costo_agg_tsel = "tipo_persona_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
+global $$nome_costo_agg_tsel,$$val_costo_agg_tsel,$$perc_tasse_costo_agg_tsel,$$molt_max_costo_agg_tsel,$$val_giorn_max_costo_agg_tsel,$$giorni_costo_agg_tsel,$$tipo_persona_costo_agg_tsel;
 ${"nome_costo_agg".$numca."_".$n_r} = $$nome_costo_agg_tsel;
 ${"val_costo_agg".$numca."_".$n_r} = $$val_costo_agg_tsel;
 ${"percentuale_tasse_costo_agg".$numca."_".$n_r} = $$perc_tasse_costo_agg_tsel;
 ${"moltiplica_max_costo_agg".$numca."_".$n_r} = $$molt_max_costo_agg_tsel;
 ${"valore_giornaliero_max_costo_agg".$numca."_".$n_r} = $$val_giorn_max_costo_agg_tsel;
 ${"giorni_costo_agg".$numca."_".$n_r} = trasforma_id_in_date($$giorni_costo_agg_tsel,$date_id,$tableperiodi);
+${"tipo_persona_costo_agg".$numca."_".$n_r} = $$tipo_persona_costo_agg_tsel;
 } # fine for $numca
 } # fine if ($$num_costi_aggiuntivi_tsel)
 } # fine if ($tariffa_selezionata)
@@ -1936,6 +1949,7 @@ $percentuale_tasse_costo_agg = "percentuale_tasse_costo_agg".$numca."_".$n_r;
 $moltiplica_max_costo_agg = "moltiplica_max_costo_agg".$numca."_".$n_r;
 $valore_giornaliero_max_costo_agg = "valore_giornaliero_max_costo_agg".$numca."_".$n_r;
 $giorni_costo_agg = "giorni_costo_agg".$numca."_".$n_r;
+$tipo_persona_costo_agg = "tipo_persona_costo_agg".$numca."_".$n_r;
 $data_inserimento_costo_agg = "data_inserimento_costo_agg".$numca."_".$n_r;
 $utente_inserimento_costo_agg = "utente_inserimento_costo_agg".$numca."_".$n_r;
 if (!strcmp($$nome_costo_agg,"") and !strcmp($$val_costo_agg,"")) {
@@ -1945,6 +1959,7 @@ $$percentuale_tasse_costo_agg = $GLOBALS[$percentuale_tasse_costo_agg];
 $$moltiplica_max_costo_agg = $GLOBALS[$moltiplica_max_costo_agg];
 $$valore_giornaliero_max_costo_agg = $GLOBALS[$valore_giornaliero_max_costo_agg];
 $$giorni_costo_agg = $GLOBALS[$giorni_costo_agg];
+$$tipo_persona_costo_agg = $GLOBALS[$tipo_persona_costo_agg];
 $$data_inserimento_costo_agg = $GLOBALS[$data_inserimento_costo_agg];
 $$utente_inserimento_costo_agg = $n_utente_contr[$GLOBALS[$utente_inserimento_costo_agg]];
 if ($unset_glob) {
@@ -1954,6 +1969,7 @@ unset($GLOBALS[$percentuale_tasse_costo_agg]);
 unset($GLOBALS[$moltiplica_max_costo_agg]);
 unset($GLOBALS[$valore_giornaliero_max_costo_agg]);
 unset($GLOBALS[$giorni_costo_agg]);
+unset($GLOBALS[$tipo_persona_costo_agg]);
 unset($GLOBALS[$data_inserimento_costo_agg]);
 unset($GLOBALS[$utente_inserimento_costo_agg]);
 } # fine if ($unset_glob)
@@ -1965,6 +1981,7 @@ $moltiplica_max_costo_agg = $$moltiplica_max_costo_agg;
 $valore_giornaliero_max_costo_agg = $$valore_giornaliero_max_costo_agg;
 $$giorni_costo_agg = trasforma_id_in_date($$giorni_costo_agg,$date_id,$tableperiodi);
 $giorni_costo_agg = $$giorni_costo_agg;
+$tipo_persona_costo_agg = $$tipo_persona_costo_agg;
 $data_inserimento_costo_agg = $$data_inserimento_costo_agg;
 $utente_inserimento_costo_agg = $$utente_inserimento_costo_agg;
 $val_costo_agg_p = punti_in_num($val_costo_agg,$stile_soldi);
@@ -2349,6 +2366,7 @@ $percentuale_tasse_costo_agg = "percentuale_tasse_costo_agg".$numca."_".$n_r;
 $moltiplica_max_costo_agg = "moltiplica_max_costo_agg".$numca."_".$n_r;
 $valore_giornaliero_max_costo_agg = "valore_giornaliero_max_costo_agg".$numca."_".$n_r;
 $giorni_costo_agg = "giorni_costo_agg".$numca."_".$n_r;
+$tipo_persona_costo_agg = "tipo_persona_costo_agg".$numca."_".$n_r;
 $data_inserimento_costo_agg = "data_inserimento_costo_agg".$numca."_".$n_r;
 $utente_inserimento_costo_agg = "utente_inserimento_costo_agg".$numca."_".$n_r;
 $nome_costo_agg = $$nome_costo_agg;
@@ -2358,6 +2376,7 @@ $moltiplica_max_costo_agg = $$moltiplica_max_costo_agg;
 $valore_giornaliero_max_costo_agg = $$valore_giornaliero_max_costo_agg;
 $giorni_costo_agg = $$giorni_costo_agg;
 if ($ripeti_prenota_data and $giorni_costo_agg and !strstr($giorni_costo_agg,",$ripeti_prenota_data,")) $mostra_ripetizione = 0;
+$tipo_persona_costo_agg = $$tipo_persona_costo_agg;
 $data_inserimento_costo_agg = $$data_inserimento_costo_agg;
 $utente_inserimento_costo_agg = $$utente_inserimento_costo_agg;
 $valore_costo_agg_p = punti_in_num($valore_costo_agg,$stile_soldi);
@@ -2436,6 +2455,7 @@ $moltiplica_max_costo_agg = 0;
 $valore_giornaliero_max_costo_agg = 0;
 $valore_giornaliero_max_costo_agg_p = 0;
 $giorni_costo_agg = "";
+$tipo_persona_costo_agg = "";
 $data_inserimento_costo_agg = "";
 $utente_inserimento_costo_agg = "";
 } # fine else if ($tipo_parte2[$n_p2] == 3)
@@ -2528,6 +2548,7 @@ $moltiplica_max_costo_agg = 0;
 $valore_giornaliero_max_costo_agg = 0;
 $valore_giornaliero_max_costo_agg_p = 0;
 $giorni_costo_agg = "";
+$tipo_persona_costo_agg = "";
 $data_inserimento_costo_agg = "";
 $utente_inserimento_costo_agg = "";
 $numero_ospite = 0;

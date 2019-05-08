@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -210,6 +210,7 @@ $fax = htmlspecialchars($fax);
 $email = htmlspecialchars($email);
 $cod_fiscale = htmlspecialchars($cod_fiscale);
 $partita_iva = htmlspecialchars($partita_iva);
+$origine = htmlspecialchars($origine);
 for ($num1 = 0 ; $num1 < $num_campi_pers ; $num1++) ${"campo_pers".$num1} = htmlspecialchars(${"campo_pers".$num1});
 
 $stile_data = stile_data();
@@ -254,9 +255,9 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
-echo "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".${"num_piano".$n_t}."\">
-<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".${"num_casa".$n_t}."\">
-<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".${"num_persone_casa".$n_t}."\">";
+echo "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".htmlspecialchars(${"num_piano".$n_t})."\">
+<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".htmlspecialchars(${"num_casa".$n_t})."\">
+<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".htmlspecialchars(${"num_persone_casa".$n_t})."\">";
 $idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb(${"inizioperiodo".$n_t})."' ");
 if (numlin_query($idinizioperiodo) == 1) ${"inizioperiodo".$n_t} = risul_query($idinizioperiodo,0,'idperiodi');
 $idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".aggslashdb(${"fineperiodo".$n_t})."' ");
@@ -272,9 +273,9 @@ echo "<input type=\"text\" name=\"num_tipologie_da_aggiungere\" size=\"2\" maxle
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
-echo "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".${"num_piano".$n_t}."\">
-<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".${"num_casa".$n_t}."\">
-<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".${"num_persone_casa".$n_t}."\">";
+echo "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".htmlspecialchars(${"num_piano".$n_t})."\">
+<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".htmlspecialchars(${"num_casa".$n_t})."\">
+<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".htmlspecialchars(${"num_persone_casa".$n_t})."\">";
 } # fine for $n_t
 include("./includes/dati_form_prenotazione.php");
 echo "<button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
@@ -352,9 +353,9 @@ esegui_query("update $tableprenota set idprenota_compagna = '$idprenota_vicine' 
 $form_orig = "";
 $manda_dati_assegnazione = "SI";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
-$form_orig .=  "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".${"num_piano".$n_t}."\">
-<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".${"num_casa".$n_t}."\">
-<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".${"num_persone_casa".$n_t}."\">";
+$form_orig .=  "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".htmlspecialchars(${"num_piano".$n_t})."\">
+<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".htmlspecialchars(${"num_casa".$n_t})."\">
+<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".htmlspecialchars(${"num_persone_casa".$n_t})."\">";
 } # fine for $n_t
 $echo_dati_form = "NO";
 include("./includes/dati_form_prenotazione.php");
@@ -392,9 +393,9 @@ if ($prenota_vicine == "SI") {
 $manda_dati_assegnazione = "SI";
 $form_riprova_no_vicini = "";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
-$form_riprova_no_vicini .=  "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".${"num_piano".$n_t}."\">
-<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".${"num_casa".$n_t}."\">
-<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".${"num_persone_casa".$n_t}."\">";
+$form_riprova_no_vicini .=  "<input type=\"hidden\" name=\"num_piano$n_t\" value=\"".htmlspecialchars(${"num_piano".$n_t})."\">
+<input type=\"hidden\" name=\"num_casa$n_t\" value=\"".htmlspecialchars(${"num_casa".$n_t})."\">
+<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"".htmlspecialchars(${"num_persone_casa".$n_t})."\">";
 } # fine for $n_t
 $prenota_vicine = "";
 $echo_dati_form = "NO";
@@ -512,7 +513,8 @@ ${"costoagg".$numcostiagg."_".$n_t} = ${"costoagg".$numca."_".$n_t};
 ${"idcostoagg".$numcostiagg."_".$n_t} = $dati_ca[$num1]['id'];
 ${"numsettimane".$numcostiagg."_".$n_t} = ${"numsettimane".$numca."_".$n_t};
 ${"nummoltiplica_ca".$numcostiagg."_".$n_t} = ${"nummoltiplica_ca".$numca."_".$n_t};
-} # fine else if ($num_in_cat == 1)
+${"catpers_ca".$numcostiagg."_".$n_t} = ${"catpers_ca".$numca."_".$n_t};
+} # fine else if ($num_in_cat != 1)
 else ${"idcostoagg".$numca."_".$n_t} = $dati_ca[$num1]['id'];
 } # fine if ($dati_ca[$num1]['mostra'] == "s" and $dati_ca[$num1]['combina'] == "s" and...
 } # fine for $num1

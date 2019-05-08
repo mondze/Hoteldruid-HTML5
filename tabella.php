@@ -549,13 +549,26 @@ $txt_cli = preg_replace("/<[^<]*>/","",$txt_cli);
 $dati_xml .= "$id_prn - ".$txt_cli." ";
 } # fine else if (($vedi_clienti == "PROPRI" and $utente_inserimento != $id_utente) or...
 $num_persone = risul_query($dati_prn,0,'num_persone');
+include_once("./includes/funzioni_tariffe.php");
 include_once("./includes/funzioni_costi_agg.php");
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prn);
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",0,1);
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prn,$dati_cat_pers);
 unset($num_letti_agg);
-for ($numca = 0 ; $numca < $dati_cap['num'] ; $numca++) aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$iddatainizio,$iddatafine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","");
+for ($numca = 0 ; $numca < $dati_cap['num'] ; $numca++) aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$iddatainizio,$iddatafine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","",$dati_cat_pers);
 if ($num_persone or $num_letti_agg['max']) {
 $dati_xml .= "\n-".mex("Nº di persone",$pag).": $num_persone ";
 if ($num_letti_agg['max']) $dati_xml .= "+ ".$num_letti_agg['max']." ";
+if ($dati_cat_pers['num']) {
+$d_cat_persone = dati_cat_pers_p($dati_prn,0,$dati_cat_pers,$num_persone,$lingua_mex,0);
+if ($d_cat_persone['num'] > 1 or ($d_cat_persone['num'] and $num_letti_agg['max'])) $dati_xml .= "\n ";
+$dati_xml .= "(";
+for ($num1 = 0 ; $num1 < $d_cat_persone['num'] ; $num1++) {
+if ($num1 > 0) $dati_xml .= ", ";
+$dati_xml .= $d_cat_persone[$num1]['molt']." ".$d_cat_persone[$num1]['n_corr'];
+} # fine for $num1
+if ($num_letti_agg['max']) $dati_xml .= $num_letti_agg['catp'][$num_letti_agg['sett_max']];
+$dati_xml .= ") ";
+} # fine if ($dati_cat_pers['num'])
 } # fine if ($num_persone or $num_letti_agg['max'])
 $tariffa = risul_query($dati_prn,0,'tariffa');
 if ($tariffa and $priv_mod_tariffa != "n") {

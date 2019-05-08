@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -484,7 +484,7 @@ return $dati_cat_pers;
 
 
 
-function dati_cat_pers_p (&$query_prenota,$ord_prenota,$dati_cat_pers,$num_persone,$dati_perc=1) {
+function dati_cat_pers_p (&$query_prenota,$ord_prenota,$dati_cat_pers,$num_persone,$lingua_mex="",$dati_perc=1) {
 
 $dati_cat_pers_p = array();
 $dati_cat_pers_p['num'] = 0;
@@ -505,7 +505,17 @@ $dati_cat_pers_p[$num1]['n_sing'] = $cat_pers_corr[5];
 $dati_cat_pers_p[$num1]['n_plur'] = $cat_pers_corr[6];
 $dati_cat_pers_p[$num1]['n_sing_orig'] = $cat_pers_corr[5];
 $dati_cat_pers_p[$num1]['n_plur_orig'] = $cat_pers_corr[6];
-if ($dati_cat_pers[$cat_pers]['langs'][$cat_pers_corr[4]]['n_p'] == $cat_pers_corr[6]) $esist = 1;
+if ($lingua_mex) {
+if ($cat_pers_corr[1] > 1) $dati_cat_pers_p[$num1]['n_corr'] = $cat_pers_corr[6];
+else $dati_cat_pers_p[$num1]['n_corr'] = $cat_pers_corr[5];
+} # fine if ($lingua_mex)
+if ($dati_cat_pers[$cat_pers]['langs'][$cat_pers_corr[4]]['n_p'] == $cat_pers_corr[6]) {
+$esist = 1;
+if ($lingua_mex and $lingua_mex != $cat_pers_corr[4]) {
+if ($cat_pers_corr[1] > 1) $dati_cat_pers_p[$num1]['n_corr'] = $dati_cat_pers[$cat_pers]['langs'][$lingua_mex]['n_p'];
+else $dati_cat_pers_p[$num1]['n_corr'] = $dati_cat_pers[$cat_pers]['langs'][$lingua_mex]['n_s'];
+} # fine if ($lingua_mex and $lingua_mex != $cat_pers_corr[4])
+} # fine if ($dati_cat_pers[$cat_pers]['langs'][$cat_pers_corr[4]]['n_p'] == $cat_pers_corr[6])
 else $esist = 0;
 if ($dati_perc) {
 $dati_cat_pers_p[$num1]['osp_princ'] = $cat_pers_corr[2];
@@ -514,16 +524,21 @@ if ($esist and strcmp($dati_cat_pers[$cat_pers]['perc'],"") and $dati_cat_pers[$
 $esist = 0;
 $dati_cat_pers_p[$num1]['n_sing'] .= " (".$cat_pers_corr[3]."%)";
 $dati_cat_pers_p[$num1]['n_plur'] .= " (".$cat_pers_corr[3]."%)";
+if ($lingua_mex) $dati_cat_pers_p[$num1]['n_corr'] .= " (".$cat_pers_corr[3]."%)";
 } # fine if ($esist and strcmp($dati_cat_pers[$cat_pers]['perc'],"") and...
 } # fine if ($dati_perc)
 else $dati_cat_pers_p['int'] .= "<".$cat_pers.">".$cat_pers_corr[1].">".$cat_pers_corr[4].">".$cat_pers_corr[5].">".$cat_pers_corr[6];
-if ($esist and !$dati_cat_pers_p[$cat_pers]['esist']) {
+if ($esist) {
+$dati_cat_pers_p['esist'][$num1] = 1;
+if (!$dati_cat_pers_p[$cat_pers]['esist']) {
 $dati_cat_pers_p[$cat_pers]['esist'] = ($num1 + 1);
 $dati_cat_pers_p[$cat_pers]['ncp'] = $num1;
-} # fine if ($esist and !$dati_cat_pers_p[$cat_pers]['esist'])
+} # fine if (!$dati_cat_pers_p[$cat_pers]['esist'])
+} # fine if ($esist)
 } # fine for $num1
 } # fine if ($dati_cat_pers_p['int'])
-elseif ($dati_cat_pers['num'] and $num_persone) {
+else {
+if ($dati_cat_pers['num'] and $num_persone) {
 $dati_cat_pers_p['num'] = 1;
 $dati_cat_pers_p['ord'][0] = 0;
 $dati_cat_pers_p[0]['molt'] = $num_persone;
@@ -532,6 +547,10 @@ $dati_cat_pers_p[0]['n_sing'] = $dati_cat_pers[0]['n_sing'];
 $dati_cat_pers_p[0]['n_plur'] = $dati_cat_pers[0]['n_plur'];
 $dati_cat_pers_p[0]['n_sing_orig'] = $dati_cat_pers[0]['n_sing'];
 $dati_cat_pers_p[0]['n_plur_orig'] = $dati_cat_pers[0]['n_plur'];
+if ($lingua_mex) {
+if ($num_persone > 1) $dati_cat_pers_p[0]['n_corr'] = $dati_cat_pers[0]['n_plur'];
+else $dati_cat_pers_p[0]['n_corr'] = $dati_cat_pers[0]['n_sing'];
+} # fine if ($lingua_mex)
 if (!$dati_perc) $dati_cat_pers_p['int'] = "<0>$num_persone>".$dati_cat_pers['lang'].">".$dati_cat_pers[0]['n_sing'].">".$dati_cat_pers[0]['n_plur'];
 else {
 $dati_cat_pers_p['int'] = $dati_cat_pers['arrotond']."<0>$num_persone>s>100>".$dati_cat_pers['lang'].">".$dati_cat_pers[0]['n_sing'].">".$dati_cat_pers[0]['n_plur'];
@@ -540,7 +559,11 @@ $dati_cat_pers_p[0]['osp_princ'] = "s";
 $dati_cat_pers_p[0]['perc'] = 100;
 } # fine else if (!$dati_perc)
 $dati_cat_pers_p[0]['esist'] = 1;
+$dati_cat_pers_p[0]['ncp'] = 0;
+$dati_cat_pers_p['esist'][0] = 1;
 } # fine elseif ($dati_cat_pers['num'] and $num_persone)
+else $dati_cat_pers_p['arrotond'] = $dati_cat_pers['arrotond'];
+} # fine if else ($dati_cat_pers_p['int'])
 
 return $dati_cat_pers_p;
 

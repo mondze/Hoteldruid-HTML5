@@ -3,7 +3,7 @@
 switch ($messaggio) {
 
 case "Inserimento dei dati permanenti":  	$messaggio = "Inserción de los datos permanentes."; break;
-case "Inserisci questi dati per poi creare il database":	$messaggio = "Inserta estos datos para crear la base de datos"; break;
+case "Inserisci questi dati per poi creare il database":	$messaggio = "Insertar estos datos para crear la base de datos"; break;
 case "Nome del database da utilizzare":		$messaggio = "Nombre de la base de datos a utilizar"; break;
 case "Nome del computer a cui collegarsi":  	$messaggio = "Nombre del ordenador al que conectarse"; break;
 case "Numero della porta a cui collegarsi":  	$messaggio = "Número de la puerta a la que conectarse"; break;
@@ -15,12 +15,12 @@ case "Si":  					$messaggio = "Si"; break;
 case "scegliere si se non viene caricata automaticamente da php":	$messaggio = "escoger si si no es cargada automaticamente por php"; break;
 case "Nome del database a cui collegarsi temporaneamente":	$messaggio = "Nombre de la base de datos a la que conectarse temporaneamente"; break;
 case "Numero di unità da gestire":  		$messaggio = "Número de unidades a gestionar"; break;
-case "Crea il database":  			$messaggio = "Crea la base de datos"; break;
+case "Crea il database":  			$messaggio = "Crear la base de datos"; break;
 case "Database creato":  			$messaggio = "Base de datos creada"; break;
 case "Massimo numero di occupanti":  		$messaggio = "Máximo número de personas que puede acoger"; break;
 case "Numero (o nome) piano":  				$messaggio = "Número (o nombre) de piso"; break;
 case "Numero (o nome) casa":  				$messaggio = "Número (o nombre) de casa"; break;
-case "Non è stato possibile creare il database, controllare i privilegi dell' utente, il nome del database o se esiste già un database chiamato": 						$messaggio = "No ha sido posible crear la base de datos, controlar los privilegios del usuario, el nombre de la base de datos o si ya existe una base de datos llamada"; break;
+case "Non è stato possibile creare il database, controllare i privilegi dell' utente, il nome del database o se esiste già un database chiamato":	$messaggio = "No ha sido posible crear la base de datos, controlar los privilegios del usuario, el nombre de la base de datos o si ya existe una base de datos llamada"; break;
 case "I dati inseriti per il collegamento al database non sono esatti o il database non è in ascolto":	$messaggio = "Los datos insertados para la conexión a la base de datos no son exactos o la base de datos no está a la escucha"; break;
 case "se postgres assicurarsi che venga avviato con -i e di avere i permessi giusti in pg_hba.conf":	$messaggio = "si es postgresql asegurarse que sea arrancado con -i y tener los permisos necesarios en pg_hba.conf"; break;
 case "Torna indietro":  			$messaggio = "Vuelve atrás"; break;

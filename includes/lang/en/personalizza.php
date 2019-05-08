@@ -423,6 +423,7 @@ case "I dati inseriti non sono corretti":  	$messaggio = "Inserted data are inco
 case "Le tipologie di persone sono state modificate":	$messaggio = "The people types have been modified"; break;
 case "Cambia per tutti gli utenti":  		$messaggio = "Change for all users"; break;
 case "Modifica le tipologie di persone per tutti gli utenti":	$messaggio = "Modify people types for all users"; break;
+case "tipi di persona":  			$messaggio = "person types"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 

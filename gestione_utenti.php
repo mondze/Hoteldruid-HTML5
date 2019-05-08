@@ -381,9 +381,12 @@ $nuovo_gruppo = elimina_caratteri_slash($nuovo_gruppo);
 $tabelle_lock = array("$tableutenti","$tablegruppi","$tablerelgruppi");
 $altre_tab_lock = "";
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
+if (controlla_num_pos($id_utente_mod) != "SI") $continua = "NO";
+else {
 $dati_utente = esegui_query("select * from $tableutenti where idutenti = '".aggslashdb($id_utente_mod)."' ");
 if (numlin_query($dati_utente) != 1) $continua = "NO";
 else $nome_utente = risul_query($dati_utente,0,"nome_utente");
+} # fine else if (controlla_num_pos($id_utente_mod) != "SI")
 unset($nome_gruppo);
 $lista_gruppi = esegui_query("select idgruppi,nome_gruppo from $tablegruppi order by idgruppi");
 $num_lista_gruppi = numlin_query($lista_gruppi);

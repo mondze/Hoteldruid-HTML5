@@ -215,6 +215,7 @@ $parola_mag = "magazzino";
 $priv_ins_beni = $priv_ins_beni_in_mag;
 $priv_mod_beni = $priv_mod_beni_in_mag;
 } # fine else if (substr($idmag,0,1) == "a")
+$tipo_tabella = htmlspecialchars($tipo_tabella);
 
 $id_esist = esegui_query("select * from $tablemag where $tipoidmag = '$idmag' ");
 if (numlin_query($id_esist) and (($tipoid == "idappartamento" and $priv_vedi_inv_app != "n") or ($tipoid == "idmagazzino" and $priv_vedi_inv_mag != "n"))) {
@@ -313,8 +314,8 @@ echo "<br>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$pag#tab_inventario\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <input type=\"hidden\" name=\"aggiorna_inventario\" value=\"SI\">
@@ -352,8 +353,8 @@ echo "<div style=\"height: 5px;\"></div>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$pag#tab_inventario\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
@@ -521,8 +522,8 @@ mancanti_elem.innerHTML = mancanti_val;
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$pag\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <input type=\"hidden\" name=\"aggiorna_inventario\" value=\"SI\">
@@ -579,8 +580,8 @@ echo "</div></form><br><hr style=\"width: 350px; margin-left: 0; text-align: lef
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$pag\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
@@ -650,8 +651,8 @@ $mostra_form_inventario = "NO";
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$pag\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <input type=\"hidden\" name=\"aggiorna_inventario\" value=\"SI\">
@@ -704,8 +705,8 @@ for (var n1 = 0; n1 < simb_nq.length; n1++) simb_nq[n1].innerHTML = n_simb;
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$pag#tab_inventario\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
-<input type=\"hidden\" name=\"origine_vecchia\" value=\"$origine_vecchia\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
+<input type=\"hidden\" name=\"origine_vecchia\" value=\"".htmlspecialchars($origine_vecchia)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"idmag\" value=\"$idmag_orig\">
 <input type=\"hidden\" name=\"aggiorna_inventario\" value=\"SI\">
@@ -787,9 +788,9 @@ if ($richiesto_checkin == "s") echo "<td>".ucfirst(mex("si",$pag))."</td>";
 else echo "<td>".ucfirst(mex("no",$pag))."</td>";
 } # fine if ($attiva_checkin == "SI")
 echo "<td>";
-if ($priv_mod_beni != "n" and $num_diff < 0) echo "<a href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=$origine&amp;tipo_tabella=$tipo_tabella&amp;idmag=$idmag_orig&amp;aggiorna_inventario=SI&amp;id_bene=$id_bene_in_mag&amp;ricarica=SI\">".mex("ricarica",$pag)."</a>";
+if ($priv_mod_beni != "n" and $num_diff < 0) echo "<a href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=".urlencode($origine)."&amp;tipo_tabella=$tipo_tabella&amp;idmag=$idmag_orig&amp;aggiorna_inventario=SI&amp;id_bene=$id_bene_in_mag&amp;ricarica=SI\">".mex("ricarica",$pag)."</a>";
 if ($priv_mod_beni != "n" and $num_diff < 0 and $priv_ins_beni != "n") echo "<br>";
-if ($priv_ins_beni != "n") echo "<a href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=$origine&amp;tipo_tabella=$tipo_tabella&amp;idmag=$idmag_orig&amp;aggiorna_inventario=SI&amp;id_bene=$id_bene_in_mag&amp;elimina=SI\">".mex("cancella",$pag)."</a>";
+if ($priv_ins_beni != "n") echo "<a href=\"inventario.php?anno=$anno&amp;id_sessione=$id_sessione&amp;origine=".urlencode($origine)."&amp;tipo_tabella=$tipo_tabella&amp;idmag=$idmag_orig&amp;aggiorna_inventario=SI&amp;id_bene=$id_bene_in_mag&amp;elimina=SI\">".mex("cancella",$pag)."</a>";
 if ($priv_ins_beni == "n" and ($num_diff >= 0 or $priv_mod_beni == "n")) echo "&nbsp;";
 echo "</td>";
 } # fine if ($priv_ins_beni != "n" or $priv_mod_beni != "n")
@@ -842,11 +843,11 @@ $frase_modifica<br>";
 
 
 echo "<hr style=\"width: 95%\"><br><div style=\"text-align: center;\">
-<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".str_replace("\"","",str_replace(">","",$origine))."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">";
-if ($origine_vecchia) echo "<input type=\"hidden\" name=\"origine\" value=\"$origine_vecchia\">";
+if ($origine_vecchia) echo "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine_vecchia)."\">";
 echo "<button$id_indi class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>
 </div></form><br></div>";
 

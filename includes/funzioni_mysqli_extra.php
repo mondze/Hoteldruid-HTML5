@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2018-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -30,10 +30,11 @@ global $link_mysqli;
 $risul[-1] = mysqli_query($link_mysqli,$query,MYSQLI_USE_RESULT);
 $risul[-2] = -1;
 $risul[-3] = $query;
-if (!$risul[-1] and !$silenzio) {
+if (!$risul[-1] and $silenzio != "totale") {
 global $PHPR_TAB_PRE;
-echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
-} # fine if (!$risul and !$silenzio)
+if (!$silenzio) echo "<br>ERROR IN: ".str_replace(" ".$PHPR_TAB_PRE," ",$query)." <br>".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli)."<br>";
+error_log("IN ".$_SERVER['PHP_SELF']." MYSQL ERROR: ".substr(str_replace(" ".$PHPR_TAB_PRE," ",$query),0,25)."... - ".mysqli_errno($link_mysqli).": ".mysqli_error($link_mysqli));
+} # fine if (!$risul and $silenzio != "totale")
 
 return $risul;
 

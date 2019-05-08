@@ -202,9 +202,34 @@ echo mex("Le date sono sbagliate",$pag).". <br>";
 } # fine if ($idfineperiodo < $idinizioperiodo)
 
 $dati_tariffe = dati_tariffe($tablenometariffe);
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex);
 $dati_ca = dati_costi_agg_ntariffe($tablenometariffe,$dati_tariffe['num'],"NO","",$tableappartamenti);
 $dati_r2 = "";
 dati_regole2($dati_r2,$app_regola2_predef,"","","",$id_periodo_corrente,$tipo_periodi,$anno,$tableregole);
+
+unset($cat_persone_tariffa);
+unset($cat_persone_invia);
+if ($dati_cat_pers['num']) {
+if ($numpersone and !$cat0_numpers) $cat0_numpers = $numpersone;
+$numpersone = 0;
+$osp_princ_trovato = 0;
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if (${"cat$num1"."_numpers"}) {
+if (controlla_num_pos(${"cat$num1"."_numpers"}) == "NO") ${"cat$num1"."_numpers"} = "";
+else {
+$numpersone += ${"cat$num1"."_numpers"};
+if ($dati_cat_pers[$num1]['osp_princ'] == "s") $osp_princ_trovato = 1;
+$cat_persone_invia[1][$num1] = ${"cat$num1"."_numpers"};
+} # fine else if (controlla_num_pos(${"cat$num1"."_numpers"}) == "NO")
+} # fine if (${"cat$num1"."_numpers"})
+} # fine for $num1
+if ($numpersone and !$osp_princ_trovato) {
+$verificare = "NO";
+echo mex("Si deve inserire almeno una persona che possa essere ospite principale",'clienti.php').".<br>";
+} # fine if ($numpersone and !$osp_princ_trovato)
+for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) $cat_persone_tariffa[$numtariffa] = $cat_persone_invia[1];
+} # fine elseif ($dati_cat_pers['num'])
+if (controlla_num_pos($numpersone) == "NO") $numpersone = "";
 
 $dati_email = "";
 if ($cognome_1) {
@@ -232,6 +257,7 @@ ${"costoagg".$numcostiagg} = ${"costoagg".$numca};
 ${"idcostoagg".$numcostiagg} = $dati_ca[$num1]['id'];
 ${"numsettimane".$numcostiagg} = ${"numsettimane".$numca};
 ${"nummoltiplica_ca".$numcostiagg} = ${"nummoltiplica_ca".$numca};
+${"catpers_ca".$numcostiagg} = ${"catpers_ca".$numca};
 } # fine else if ($num_in_cat == 1)
 else ${"idcostoagg".$numca} = $dati_ca[$num1]['id'];
 } # fine if ($dati_ca[$num1]['mostra'] == "s" and $dati_ca[$num1]['combina'] == "s" and...
@@ -239,6 +265,8 @@ else ${"idcostoagg".$numca} = $dati_ca[$num1]['id'];
 if (!$num_in_cat) $verificare = "NO";
 } # fine if (substr(${"idcostoagg".$numca},0,1) == "c")
 } # fine for $numca
+
+if ($numpersone or $num_persone_casa) unset($controlla_tariffe);
 
 $max_maxoccupanti = 0;
 for ($num1 = 0 ; $num1 < $numappartamenti ; $num1++) {
@@ -277,6 +305,37 @@ $num_aggiungi_letti = $numpersone_max - $max_maxoccupanti;
 if ($dati_ca[$numca]['molt_max'] == "n" and $num_aggiungi_letti > $dati_ca[$numca]['molt_max_num']) $num_aggiungi_letti = $dati_ca[$numca]['molt_max_num'];
 } # fine if ($dati_ca[$numca]['moltiplica'] == "c" and $max_maxoccupanti and $numpersone_max > $max_maxoccupanti)
 if ($dati_ca[$numca]['numlimite'] and $num_aggiungi_letti > $dati_ca[$numca]['numlimite']) $num_aggiungi_letti = $dati_ca[$numca]['numlimite'];
+# Se ci sono categorie di persone controllo che ci sia almeno una categoria da cui si possa
+# sottrarre il numero di letti aggiuntivi, altrimenti ne diminuisco il numero
+if ($dati_cat_pers['num'] and !$controlla_tariffe) {
+$cat_pers_letto = "";
+$perc_cat_pers_letto = "";
+$diminuiti_lettiagg_per_catpers = 0;
+while (!strcmp($cat_pers_letto,"") and $num_aggiungi_letti > 0) {
+for ($num2 = ($dati_cat_pers['num'] - 1) ; $num2 >= 0 ; $num2--) {
+# Se c'è anche una regola2 multipla allora applico il costo 
+#if (${"numpersone_orig"}) $num_aggiungi_letti_corr = ($num_aggiungi_letti * $dati_r2['napp'][$tipotariffa]);
+#else $num_aggiungi_letti_corr = $num_aggiungi_letti;
+if ((${"cat$num2"."_numpers"} >= $num_aggiungi_letti) and (!$perc_cat_pers_letto or $perc_cat_pers_letto > $dati_cat_pers[$num2]['perc'])) {
+$osp_princ_trovato = 0;
+for ($num3 = 0 ; $num3 < $dati_cat_pers['num'] ; $num3++) {
+if ($dati_cat_pers[$num3]['osp_princ'] == "s") {
+if (($num2 != $num3 and ${"cat$num3"."_numpers"} > 0) or ($num2 == $num3 and (${"cat$num2"."_numpers"} - $num_aggiungi_letti) > 0)) $osp_princ_trovato = 1;
+if ($osp_princ_trovato) break;
+} # fine if ($dati_cat_pers[$num3]['osp_princ'] == "s")
+} # fine for $num3
+if ($osp_princ_trovato) {
+$cat_pers_letto = $num2;
+$perc_cat_pers_letto = $dati_cat_pers[$num2]['perc'];
+} # fine if ($osp_princ_trovato)
+} # fine if ((${"cat$num2"."_numpers"} >= $num_aggiungi_letti) and (!$perc_cat_pers_letto or $perc_cat_pers_letto > $dati_cat_pers[$num2]['perc']))
+} # fine for $num2
+if (!strcmp($cat_pers_letto,"")) {
+if (!$diminuiti_lettiagg_per_catpers) $diminuiti_lettiagg_per_catpers = $num_aggiungi_letti;
+$num_aggiungi_letti--;
+} # fine if (!strcmp($cat_pers_letto,""))
+} # fine while (!strcmp($cat_pers_letto,"") and $num_aggiungi_letti > 0)
+} # fine if ($dati_cat_pers['num'] and !$controlla_tariffe)
 $settimane_costo_cal = calcola_settimane_costo($tableperiodi,$dati_ca,$numca,$idinizioperiodo,$idfineperiodo,"",($idfineperiodo - $idinizioperiodo + 1));
 calcola_moltiplica_costo($dati_ca,$numca,$moltiplica_costo_cal,$idinizioperiodo,$idfineperiodo,$settimane_costo_cal,$num_aggiungi_letti,"","");
 unset($num_costi_presenti);
@@ -321,7 +380,6 @@ $minoccupanti_con_cal_vett = array();
 
 if ($numpersone) {
 unset($num_persone_casa);
-unset($controlla_tariffe);
 $posto = 0;
 $posto_r2 = 0;
 $posto_senza_cal_r2 = array();
@@ -413,7 +471,6 @@ $idfineperiodo_vett[$app_richiesti[',numero,']] = $idfineperiodo;
 
 
 if ($num_persone_casa) {
-unset($controlla_tariffe);
 $posto = "NO";
 for ($num1 = 0 ; $num1 < $numappartamenti ; $num1 = $num1 + 1) {
 $idapp = risul_query($appartamenti,$num1,'idappartamenti');
@@ -466,6 +523,7 @@ $num_tipologie = 0;
 unset($app_richiesti);
 unset($idinizioperiodo_vett);
 unset($idfineperiodo_vett);
+unset($cat_pers_letto_tariffa);
 if ($prenota_vicine != "SI") {
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) if (${"reg2_tariffa".$numtariffa} == "SI" and $dati_r2['napp']['v']["tariffa".$numtariffa]) $app_richiesti[',vicini,'] = "SI";
 } # fine if ($prenota_vicine != "SI")
@@ -475,10 +533,38 @@ if ($attiva_tariffe_consentite == "n" or $tariffe_consentite_vett[$numtariffa] =
 $tariffa = "tariffa".$numtariffa;
 $appartamenti_regola2 = dati_regole2($dati_r2,$app_regola2_predef,$tariffa,$idinizioperiodo,$idfineperiodo,$id_periodo_corrente,$tipo_periodi,$anno,$tableregole);
 if ($appartamenti_regola2) {
+
+$cat_persone_tariffa_orig = array();
+if ($dati_cat_pers['num']) {
+${"pers_reg2_tariffa".$numtariffa} = 0;
+$osp_princ_trovato = 0;
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if (${"cat$num1"."_pers_reg2_tariffa$numtariffa"}) {
+if (controlla_num_pos(${"cat$num1"."_pers_reg2_tariffa$numtariffa"}) == "NO") ${"cat$num1"."_pers_reg2_tariffa$numtariffa"} = "";
+else {
+${"pers_reg2_tariffa".$numtariffa} += ${"cat$num1"."_pers_reg2_tariffa$numtariffa"};
+if ($dati_cat_pers[$num1]['osp_princ'] == "s") $osp_princ_trovato = 1;
+$cat_persone_tariffa[$numtariffa][$num1] = ${"cat$num1"."_pers_reg2_tariffa$numtariffa"};
+} # fine else if (controlla_num_pos(${"cat$num1"."_pers_reg2_tariffa$numtariffa"}) == "NO")
+} # fine if (${"cat$num1"."_pers_reg2_tariffa$numtariffa"})
+} # fine for $num1
+if (${"pers_reg2_tariffa".$numtariffa} and !$osp_princ_trovato) {
+$verificare = "NO";
+echo mex("Si deve inserire almeno una persona che possa essere ospite principale",'clienti.php').".<br>";
+} # fine if (${"pers_reg2_tariffa".$numtariffa} and !$osp_princ_trovato)
+$cat_persone_tariffa_orig = $cat_persone_tariffa[$numtariffa];
+} # fine ($dati_cat_pers['num'])
+
 $numpersone_corr = ${"pers_reg2_tariffa".$numtariffa};
 if (!$numpersone_corr) {
 $regola4 = esegui_query("select * from $tableregole where tariffa_per_persone = '$tariffa'");
-if (numlin_query($regola4) == 1) $numpersone_corr = risul_query($regola4,0,'iddatainizio');
+if (numlin_query($regola4) == 1) {
+$numpersone_corr = risul_query($regola4,0,'iddatainizio');
+if ($dati_cat_pers['num']) {
+${"cat0_pers_reg2_tariffa".$numtariffa} = $numpersone_corr;
+$cat_persone_tariffa[$numtariffa][0] = $numpersone_corr;
+} # fine if ($dati_cat_pers['num'])
+} # fine if (numlin_query($regola4) == 1) 
 } # fine if (!$numpersone_corr)
 $molt_tipologia = ${"molt_reg2_tariffa".$numtariffa};
 $numpersone_tot = $numpersone_corr;
@@ -500,10 +586,42 @@ $appartamenti_regola2 = substr(str_replace(",$idapp,",",",",".$appartamenti_rego
 if ($app_regola2_predef_orig) $app_regola2_predef = substr(str_replace(",$idapp,",",",",".$app_regola2_predef.","),1,-1);
 } # fine if ($maxoccupanti and $maxoccupanti < $numpersone_corr)
 } # fine for $num1
+
 if ((!$appartamenti_regola2 or ($app_regola2_predef_orig and !$app_regola2_predef)) and $costo_aggiungi_letti and $dati_ca[$numca_cal]["incomp_tariffa".$numtariffa] != "i") {
 $appartamenti_regola2 = $appartamenti_regola2_orig;
 $app_regola2_predef = $app_regola2_predef_orig;
-$numpersone_corr = $numpersone_corr - $num_aggiungi_letti;
+$num_aggiungi_letti_r2 = $num_aggiungi_letti;
+if ($dati_cat_pers['num']) {
+$cat_pers_letto_tariffa[$numtariffa] = "";
+$perc_cat_pers_letto = "";
+$diminuiti_lettiagg_per_catpers = 0;
+while (!strcmp($cat_pers_letto_tariffa[$numtariffa],"") and $num_aggiungi_letti_r2 > 0) {
+for ($num2 = ($dati_cat_pers['num'] - 1) ; $num2 >= 0 ; $num2--) {
+# Se c'è anche una regola2 multipla allora applico il costo 
+#if (${"numpersone_orig"}) $num_aggiungi_letti_corr = ($num_aggiungi_letti_r2 * $dati_r2['napp'][$tipotariffa]);
+#else $num_aggiungi_letti_corr = $num_aggiungi_letti_r2;
+if ((${"cat$num2"."_pers_reg2_tariffa$numtariffa"} >= $num_aggiungi_letti_r2) and (!$perc_cat_pers_letto or $perc_cat_pers_letto > $dati_cat_pers[$num2]['perc'])) {
+$osp_princ_trovato = 0;
+for ($num3 = 0 ; $num3 < $dati_cat_pers['num'] ; $num3++) {
+if ($dati_cat_pers[$num3]['osp_princ'] == "s") {
+if (($num2 != $num3 and ${"cat$num3"."_pers_reg2_tariffa$numtariffa"} > 0) or ($num2 == $num3 and (${"cat$num2"."_pers_reg2_tariffa$numtariffa"} - $num_aggiungi_letti_r2) > 0)) $osp_princ_trovato = 1;
+if ($osp_princ_trovato) break;
+} # fine if ($dati_cat_pers[$num3]['osp_princ'] == "s")
+} # fine for $num3
+if ($osp_princ_trovato) {
+$cat_pers_letto_tariffa[$numtariffa] = $num2;
+$perc_cat_pers_letto = $dati_cat_pers[$num2]['perc'];
+} # fine if ($osp_princ_trovato)
+} # fine if ((${"cat$num2"."_pers_reg2_tariffa$numtariffa"} >= $num_aggiungi_letti_r2) and (!$perc_cat_pers_letto or $perc_cat_pers_letto > $dati_cat_pers[$num2]['perc']))
+} # fine for $num2
+if (!strcmp($cat_pers_letto_tariffa[$numtariffa],"")) {
+if (!$diminuiti_lettiagg_per_catpers) $diminuiti_lettiagg_per_catpers = $num_aggiungi_letti_r2;
+$num_aggiungi_letti_r2--;
+} # fine if (!strcmp($cat_pers_letto_tariffa[$numtariffa],""))
+} # fine while (!strcmp($cat_pers_letto_tariffa[$numtariffa],"") and $num_aggiungi_letti_r2 > 0)
+if ($cat_pers_letto_tariffa[$numtariffa]) $cat_persone_tariffa[$numtariffa][$cat_pers_letto_tariffa[$numtariffa]] = $cat_persone_tariffa[$numtariffa][$cat_pers_letto_tariffa[$numtariffa]] - $num_aggiungi_letti_r2;
+} # fine if ($dati_cat_pers['num'])
+$numpersone_corr = $numpersone_corr - $num_aggiungi_letti_r2;
 $costo_agg_letti_vett[$numtariffa] = $costo_aggiungi_letti;
 if ($app_beniinv_cal) $nrc = "";
 for ($num1 = 0 ; $num1 < $numappartamenti ; $num1++) {
@@ -518,6 +636,7 @@ if ($app_regola2_predef_orig) $app_regola2_predef = substr(str_replace(",$idapp,
 elseif ((strstr(",$appartamenti_regola2,",",$idapp,") or ($app_regola2_predef_orig and strstr(",$app_regola2_predef,",",$idapp,"))) and (!$minoccupanti_con_cal_vett[$numtariffa] or $minoccupanti_con_cal_vett[$numtariffa] > $maxoccupanti)) $minoccupanti_con_cal_vett[$numtariffa] = $maxoccupanti;
 } # fine for $num1
 } # fine if ((!$appartamenti_regola2 or ($app_regola2_predef_orig and !$app_regola2_predef)) and...
+
 if ($app_regola2_predef_orig and !$app_regola2_predef) $appartamenti_regola2 = $app_regola2_predef;
 } # fine if ($numpersone_corr)
 $num_ripeti = 0;
@@ -546,6 +665,7 @@ $tariffa_invia[$num_tipologie] = $tariffa;
 $num_app_richiesti_invia[$num_tipologie] = ${"molt_reg2_tariffa".$numtariffa};
 $num_app_richiesti_invia[0][$num_tipologie] = $molt_tipologia;
 $num_persone_invia[$num_tipologie] = $numpersone_orig_nt[$numtariffa];
+$cat_persone_invia[$num_tipologie] = $cat_persone_tariffa_orig;
 } # fine if ($appartamenti_regola2)
 } # fine if ($attiva_tariffe_consentite == "n" or $tariffe_consentite_vett[$numtariffa] == "SI")
 } # fine if (${"reg2_tariffa".$numtariffa} == "SI")
@@ -751,8 +871,9 @@ echo "<br><form accept-charset=\"utf-8\" method=\"post\" action=\"disponibilita.
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inizioperiodo\" value=\"$data_inizioperiodo\">
 <input type=\"hidden\" name=\"fineperiodo\" value=\"$data_fineperiodo\">
-<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">
-<input type=\"hidden\" name=\"mostra_non_disp\" value=\"1\">
+<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if (strcmp(${"cat$num1"."_numpers"},"")) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers\" value=\"".${"cat$num1"."_numpers"}."\">";
+echo "<input type=\"hidden\" name=\"mostra_non_disp\" value=\"1\">
 $dati_email
 <button class=\"xavl\" type=\"submit\"><div>".mex("Mostra le tariffe non disponibili",$pag)."</div></button>
 </div></form><br>";
@@ -982,7 +1103,18 @@ unset($prenota_in_app_sett2);
 $liberato = "SI";
 if ($fatto_libera == "SI") {
 echo mex("<b>C'è</b> ancora disponibilità nel periodo richiesto",$pag);
-if ($numpersone) echo mex(" in un appartamento da <b>almeno",'unit.php')." $numpersone ".mex("persone",$pag)."</b>";
+if ($numpersone) {
+echo mex(" in un appartamento da <b>almeno",'unit.php')." $numpersone ".mex("persone",$pag)."</b>";
+if ($dati_cat_pers['num']) {
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if (${"cat$num1"."_numpers"}) {
+if (${"cat$num1"."_numpers"} == 1) $frase_cat_persone .= "<em>1</em> ".$dati_cat_pers[$num1]['n_sing'].", ";
+else $frase_cat_persone .= "<em>".${"cat$num1"."_numpers"}."</em> ".$dati_cat_pers[$num1]['n_plur'].", ";
+} # fine if (${"cat$num1"."_numpers"})
+} # fine for $num1
+echo " (".substr($frase_cat_persone,0,-2).")";
+} # fine if ($dati_cat_pers['num'])
+} # fine if ($numpersone)
 if ($num_persone_casa) {
 if ($app_richiesti[',numero,'] == 1) echo mex(" in un appartamento da",'unit.php')." <b>$num_persone_casa ".mex("persone",$pag)."</b>";
 else echo mex(" in",'unit.php')." <b>".$app_richiesti[',numero,']."</b> ".mex("appartamenti da",'unit.php')." <b>$num_persone_casa ".mex("persone",$pag)."</b>";
@@ -1053,13 +1185,15 @@ echo mex("appartamenti vicini delle <b>tariffe selezionate</b>",'unit.php').".<b
 <input type=\"hidden\" name=\"fineperiodo\" value=\"$data_fineperiodo\">
 <input type=\"hidden\" name=\"num_persone_casa\" value=\"$num_persone_casa\">
 <input type=\"hidden\" name=\"molt_app_persone_casa\" value=\"$molt_app_persone_casa\">
-<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">
-<input type=\"hidden\" name=\"controlla_tariffe\" value=\"$controlla_tariffe\">
+<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if (strcmp(${"cat$num1"."_numpers"},"")) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers\" value=\"".${"cat$num1"."_numpers"}."\">";
+echo "<input type=\"hidden\" name=\"controlla_tariffe\" value=\"$controlla_tariffe\">
 $dati_email";
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
 echo "<input type=\"hidden\" name=\"reg2_tariffa$numtariffa\" value=\"".${"reg2_tariffa".$numtariffa}."\">
 <input type=\"hidden\" name=\"molt_reg2_tariffa$numtariffa\" value=\"".${"molt_reg2_tariffa".$numtariffa}."\">
 <input type=\"hidden\" name=\"pers_reg2_tariffa$numtariffa\" value=\"".${"pers_reg2_tariffa".$numtariffa}."\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[$numtariffa][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_pers_reg2_tariffa$numtariffa\" value=\"".$cat_persone_invia[$numtariffa][$num1]."\">";
 } # fine for $numtariffa
 echo "<button class=\"xavl\" type=\"submit\"><div>".mex("Riprova senza cercare appartamenti vicini",'unit.php')."</div></button>
 </div></form>";
@@ -1074,8 +1208,9 @@ echo "<br><form accept-charset=\"utf-8\" method=\"post\" action=\"disponibilita.
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inizioperiodo\" value=\"$data_inizioperiodo\">
 <input type=\"hidden\" name=\"fineperiodo\" value=\"$data_fineperiodo\">
-<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">
-<input type=\"hidden\" name=\"mostra_non_disp\" value=\"1\">
+<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if (strcmp(${"cat$num1"."_numpers"},"")) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers\" value=\"".${"cat$num1"."_numpers"}."\">";
+echo "<input type=\"hidden\" name=\"mostra_non_disp\" value=\"1\">
 $dati_email
 <button class=\"xavl\" type=\"submit\"><div>".mex("Mostra le tariffe non disponibili",$pag)."</div></button>
 </div></form><br>";
@@ -1141,6 +1276,7 @@ $tariffesettimanali_nr = array();
 $tariffesettimanalip_nr = array();
 $caparra_nr = array();
 $commissioni_nr = array();
+$cat_persone_nr = array();
 for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
 $tariffa = "tariffa".$numtariffa;
 if ($attiva_tariffe_consentite != "n" and $tariffe_consentite_vett[$numtariffa] != "SI") $continuare_vett[$numtariffa] = "NO";
@@ -1171,6 +1307,7 @@ $regola4 = esegui_query("select * from $tableregole where tariffa_per_persone = 
 if (numlin_query($regola4) == 1) {
 $numpersone = risul_query($regola4,0,'iddatainizio');
 $num_pers_regola4[$numtariffa] = $numpersone;
+$cat0_numpers = $numpersone;
 for ($num1 = 0 ; $num1 < $dati_app['totapp'] ; $num1++) {
 $numapp = $dati_app['posizione'][$num1];
 if ($dati_app['maxocc'][$numapp] and $dati_app['maxocc'][$numapp] < $num_pers_regola4[$numtariffa]) $app_richiesti_corr[$numapp] = "NO";
@@ -1181,6 +1318,7 @@ if ($controllato_con_costo_letto and !$persone_tariffa_r2[$numtariffa]) {
 $costo_agg_letti_vett[$numtariffa] = $costo_aggiungi_letti;
 $numpersone = $numpersone - $num_aggiungi_letti;
 $persone_tariffa[$numtariffa] = $numpersone;
+$cat_persone_tariffa[$numtariffa][$cat_pers_letto] = $cat_persone_tariffa[$numtariffa][$cat_pers_letto] - $num_aggiungi_letti;
 } # fine if ($controllato_con_costo_letto and !$persone_tariffa_r2[$numtariffa])
 
 if (!$controlla_tariffe or $mostra_quadro_disp == "reg2") {
@@ -1201,6 +1339,7 @@ if ((($controlla_con_costo_letto and !$persone_tariffa_r2[$numtariffa]) or $cont
 $costo_agg_letti_vett[$numtariffa] = $costo_aggiungi_letti;
 $numpersone = $numpersone - $num_aggiungi_letti;
 $persone_tariffa[$numtariffa] = $numpersone;
+$cat_persone_tariffa[$numtariffa][$cat_pers_letto] = $cat_persone_tariffa[$numtariffa][$cat_pers_letto] - $num_aggiungi_letti;
 if ($app_beniinv_cal) $nrc = "";
 for ($num1 = 0 ; $num1 < count($app_regola2_predef) ; $num1++) {
 $numapp = $app_regola2_predef[$num1];
@@ -1240,6 +1379,7 @@ if (!$costo_agg_letti_vett[$numtariffa]) {
 $costo_agg_letti_vett[$numtariffa] = $costo_aggiungi_letti;
 $numpersone = $numpersone - $num_aggiungi_letti;
 $persone_tariffa[$numtariffa] = $numpersone;
+$cat_persone_tariffa[$numtariffa][$cat_pers_letto] = $cat_persone_tariffa[$numtariffa][$cat_pers_letto] - $num_aggiungi_letti;
 } # fine if (!$costo_agg_letti_vett[$numtariffa])
 $app_regola2_vett[$numtariffa] = $app_regola2_orig[$numtariffa];
 $num_app_reg2_vett[$numtariffa] = count($appartamenti_regola2);
@@ -1265,6 +1405,35 @@ $app_regola2_orig['napp'][$numtariffa] = $dati_r2['napp']["tariffa".$numtariffa]
 
 } # fine if (!$controlla_tariffe or $mostra_quadro_disp == "reg2")
 
+$coeff_cat_persone = array();
+$coeff_cat_persone['i'] = 0;
+$coeff_cat_persone['p'] = 0;
+$frase_cat_persone = "";
+if ($numpersone and $dati_cat_pers['num']) {
+if ($dati_r2['napp']["tariffa".$numtariffa] <= 1) {
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if ($cat_persone_tariffa[$numtariffa][$num1]) {
+if ($dati_cat_pers[$num1]['perc'] == "100") $coeff_cat_persone['i'] += (double) $cat_persone_tariffa[$numtariffa][$num1];
+else $coeff_cat_persone['p'] += ((double) $cat_persone_tariffa[$numtariffa][$num1] * ((double) $dati_cat_pers[$num1]['perc'] / 100));
+} # fine if ($cat_persone_tariffa[$numtariffa][$num1])
+} # fine for $num1
+} # fine if ($dati_r2['napp']["tariffa".$numtariffa] <= 1)
+else {
+$cat_persone_tariffa_cp = $cat_persone_tariffa;
+$numpersone_cp = $numpersone;
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if ($cat_persone_tariffa_cp[$numtariffa][$num1] and $numpersone_cp) {
+if ($numpersone_cp > $cat_persone_tariffa_cp[$numtariffa][$num1]) $numpersone_corr_cp = $cat_persone_tariffa_cp[$numtariffa][$num1];
+else $numpersone_corr_cp = $numpersone_cp;
+$numpersone_cp = $numpersone_cp - $numpersone_corr_cp;
+$cat_persone_tariffa_cp[$numtariffa][$num1] = $cat_persone_tariffa_cp[$numtariffa][$num1] - $numpersone_corr_cp;
+if ($dati_cat_pers[$num1]['perc'] == "100") $coeff_cat_persone['i'] += (double) $numpersone_corr_cp;
+else $coeff_cat_persone['p'] += ((double) $numpersone_corr_cp * ((double) $dati_cat_pers[$num1]['perc'] / 100));
+} # fine if ($cat_persone_tariffa_cp[$numtariffa][$num1] and $numpersone_cp)
+} # fine for $num1
+} # fine else if ($dati_r2['napp']["tariffa".$numtariffa] <= 1)
+} # fine if ($numpersone and $dati_cat_pers['num'])
+
 $costo_tariffa_vett[$numtariffa] = 0;
 $tariffesettimanali_vett[$numtariffa] = "";
 $tariffesettimanalip_vett[$numtariffa] = "";
@@ -1281,12 +1450,14 @@ $costo_tariffa_settimana = risul_query($rigasettimana[$num1],0,$tariffa);
 $costo_tariffap_sett = risul_query($rigasettimana[$num1],0,$tariffa."p");
 if (!strcmp($costo_tariffa_settimana,"")) $costo_tariffa_settimana = 0;
 if (!strcmp($costo_tariffap_sett,"")) $costo_tariffap_sett = 0;
-$costo_tariffap_settimana = (double) $costo_tariffap_sett * (double) $numpersone;
+if (!$dati_cat_pers['num']) $costo_tariffap_settimana = (double) $costo_tariffap_sett * (double) $numpersone;
+else $costo_tariffap_settimana = (round(((double) $costo_tariffap_sett * $coeff_cat_persone['p']) / $dati_cat_pers['arrotond']) * $dati_cat_pers['arrotond']) + ((double) $costo_tariffap_sett * $coeff_cat_persone['i']);
 $costo_tariffa_settimana_tot = $costo_tariffa_settimana + $costo_tariffap_settimana;
 $costo_tariffa_vett[$numtariffa] = $costo_tariffa_vett[$numtariffa] + $costo_tariffa_settimana_tot;
 $tariffesettimanali_vett[$numtariffa] .= ",".$costo_tariffa_settimana_tot;
 if ($dati_tariffe[$tariffa]['moltiplica'] == "p") $tariffesettimanalip_vett[$numtariffa] .= ",".$costo_tariffap_settimana;
 if ($dati_r2['napp']["tariffa".$numtariffa] > 1) {
+if (!$dati_cat_pers['num']) {
 $costo_tariffap_settimana_alt = (double) $costo_tariffap_sett * (double) ($numpersone - 1);
 $costo_tariffa_settimana_tot_alt = $costo_tariffa_settimana + $costo_tariffap_settimana_alt;
 for ($num2 = (($numpersone * $dati_r2['napp']["tariffa".$numtariffa]) - $numpersone_orig_tar) ; $num2 > 0 ; $num2--) {
@@ -1306,6 +1477,46 @@ if ($tariffesettimanalip_nr[$numtariffa][$nr]) $tariffesettimanalip_nr[$numtarif
 } # fine for $num3
 } # fine if ($mostra_tariffa[$numtariffa] > 1 and $num1 == $idfineperiodo)
 } # fine for $num2
+} # fine if (!$dati_cat_pers['num'])
+else {
+$cat_persone_tariffa_cp = $cat_persone_tariffa;
+for ($num2 = 0 ; $num2 < $dati_r2['napp']["tariffa".$numtariffa] ; $num2++) {
+$coeff_cat_persone = array();
+$coeff_cat_persone['i'] = 0;
+$coeff_cat_persone['p'] = 0;
+if ($num2 >= ($dati_r2['napp']["tariffa".$numtariffa] - (($numpersone * $dati_r2['napp']["tariffa".$numtariffa]) - $numpersone_orig_tar))) $numpersone_cp = $numpersone - 1;
+else $numpersone_cp = $numpersone;
+for ($num3 = 0 ; $num3 < $dati_cat_pers['num'] ; $num3++) {
+if ($cat_persone_tariffa_cp[$numtariffa][$num3] and $numpersone_cp) {
+if ($numpersone_cp > $cat_persone_tariffa_cp[$numtariffa][$num3]) $numpersone_corr_cp = $cat_persone_tariffa_cp[$numtariffa][$num3];
+else $numpersone_corr_cp = $numpersone_cp;
+$cat_persone_nr[$numtariffa][$num2][$num3] = $numpersone_corr_cp;
+$numpersone_cp = $numpersone_cp - $numpersone_corr_cp;
+$cat_persone_tariffa_cp[$numtariffa][$num3] = $cat_persone_tariffa_cp[$numtariffa][$num3] - $numpersone_corr_cp;
+if ($dati_cat_pers[$num3]['perc'] == "100") $coeff_cat_persone['i'] += (double) $numpersone_corr_cp;
+else $coeff_cat_persone['p'] += ((double) $numpersone_corr_cp * ((double) $dati_cat_pers[$num3]['perc'] / 100));
+} # fine if ($cat_persone_tariffa_cp[$numtariffa][$num3] and $numpersone_cp)
+else $cat_persone_nr[$numtariffa][$num2][$num3] = "0";
+} # fine for $num3
+$costo_tariffap_settimana_alt = (round(((double) $costo_tariffap_sett * $coeff_cat_persone['p']) / $dati_cat_pers['arrotond']) * $dati_cat_pers['arrotond']) + ((double) $costo_tariffap_sett * $coeff_cat_persone['i']);
+$costo_tariffa_settimana_tot_alt = $costo_tariffa_settimana + $costo_tariffap_settimana_alt;
+$costo_tariffa_nr[$numtariffa][$num2] += $costo_tariffa_settimana_tot_alt;
+if (strcmp($tariffesettimanali_nr[$numtariffa][$num2],"")) $tariffesettimanali_nr[$numtariffa][$num2] .= ",";
+$tariffesettimanali_nr[$numtariffa][$num2] .= $costo_tariffa_settimana_tot_alt;
+if ($dati_tariffe[$tariffa]['moltiplica'] == "p") {
+if (strcmp($tariffesettimanalip_nr[$numtariffa][$num2],"")) $tariffesettimanalip_nr[$numtariffa][$num2] .= ",";
+$tariffesettimanalip_nr[$numtariffa][$num2] .= $costo_tariffap_settimana_alt;
+} # fine if ($dati_tariffe[$tariffa]['moltiplica'] == "p")
+if ($mostra_tariffa[$numtariffa] > 1 and $num1 == $idfineperiodo) {
+for ($num3 = 1 ; $num3 < $mostra_tariffa[$numtariffa] ; $num3++) {
+$costo_tariffa_nr[$numtariffa][($num2 + ($dati_r2['napp']["tariffa".$numtariffa] * $num3))] = $costo_tariffa_nr[$numtariffa][$num2];
+$tariffesettimanali_nr[$numtariffa][($num2 + ($dati_r2['napp']["tariffa".$numtariffa] * $num3))] = $tariffesettimanali_nr[$numtariffa][$num2];
+$cat_persone_nr[$numtariffa][($num2 + ($dati_r2['napp']["tariffa".$numtariffa] * $num3))] = $cat_persone_nr[$numtariffa][$num2];
+if ($tariffesettimanalip_nr[$numtariffa][$num2]) $tariffesettimanalip_nr[$numtariffa][($num2 + ($dati_r2['napp']["tariffa".$numtariffa] * $num3))] = $tariffesettimanalip_nr[$numtariffa][$num2];
+} # fine for $num3
+} # fine if ($mostra_tariffa[$numtariffa] > 1 and $num1 == $idfineperiodo)
+} # fine for $num2
+} # fine else if (!$dati_cat_pers['num'])
 } # fine if ($dati_r2['napp']["tariffa".$numtariffa] > 1)
 } # fine else if ((!strcmp($esistetariffa,"") or $esistetariffa < 0) and...
 if ($dati_tariffe[$tariffa]['chiusa'][$num1]) {
@@ -1519,6 +1730,10 @@ if ($dati_ca[$numca]['id'] == $costo_agg_letti_vett[$numtariffa]) {
 $numcostoagg = $numcostiagg + 1;
 ${"idcostoagg".$numcostoagg} = $dati_ca[$numca]['id'];
 ${"nummoltiplica_ca".$numcostoagg} = $num_agg_letti;
+if ($dati_cat_pers['num']) {
+if ($controlla_tariffe) ${"catpers_ca".$numcostoagg} = $cat_pers_letto_tariffa[$numtariffa];
+else ${"catpers_ca".$numcostoagg} = $cat_pers_letto;
+} # fine if ($dati_cat_pers['num'])
 ${"numsettimane".$numcostoagg} = $lunghezza_periodo;
 $ca_associato[$numca] = "SI";
 $ca_associato['nca'][$numca] = $numcostoagg;
@@ -1541,6 +1756,10 @@ $numsettimane_aux = $$numsettimane;
 $nummoltiplica_ca_aux = $$nummoltiplica_ca;
 if ($$numsettimane and ($$numsettimane > $lunghezza_periodo or controlla_num_pos($numsettimane_aux) == "NO")) $continuare = "NO";
 if ($$nummoltiplica_ca and controlla_num_pos($nummoltiplica_ca_aux) == "NO") $continuare = "NO";
+if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num']) {
+$catpers_ca_aux = ${"catpers_ca".$numcostoagg};
+if (controlla_num_pos($catpers_ca_aux) == "NO" or ${"catpers_ca".$numcostoagg} >= $dati_cat_pers['num']) $continuare = "NO";
+} # fine if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num'])
 if (trova_periodo_permesso_costo($dati_ca,$numca,$idinizioperiodo,$idfineperiodo,"") == "NO") {
 if ($dati_ca[$numca]['combina'] == "s") $continuare_comb = "NO";
 else $continuare = "NO";
@@ -1565,8 +1784,9 @@ echo "<tr><td></td></tr></table></div></table></div></form><hr style=\"width: 30
 <input type=\"hidden\" name=\"fineperiodo\" value=\"$data_fineperiodo\">
 <input type=\"hidden\" name=\"num_persone_casa\" value=\"$num_persone_casa\">
 <input type=\"hidden\" name=\"molt_app_persone_casa\" value=\"$molt_app_persone_casa\">
-<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone_orig\">
-$dati_email
+<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone_orig\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[1][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers\" value=\"".$cat_persone_invia[1][$num1]."\">";
+echo "$dati_email
 <input type=\"hidden\" name=\"numcostiagg\" value=\"$numcostiagg\">";
 if ($controlla_tariffe) {
 echo "<input type=\"hidden\" name=\"controlla_tariffe\" value=\"$controlla_tariffe\">";
@@ -1574,6 +1794,7 @@ for ($numtariffa2 = 1 ; $numtariffa2 <= $dati_tariffe['num'] ; $numtariffa2++) {
 echo "<input type=\"hidden\" name=\"reg2_tariffa$numtariffa2\" value=\"".${"reg2_tariffa".$numtariffa2}."\">
 <input type=\"hidden\" name=\"molt_reg2_tariffa$numtariffa2\" value=\"".${"molt_reg2_tariffa".$numtariffa2}."\">
 <input type=\"hidden\" name=\"pers_reg2_tariffa$numtariffa2\" value=\"".${"pers_reg2_tariffa".$numtariffa2}."\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[$numtariffa][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_pers_reg2_tariffa$numtariffa\" value=\"".$cat_persone_invia[$numtariffa][$num1]."\">";
 } # fine for $numtariffa2
 } # fine if ($controlla_tariffe)
 for ($num1 = $idinizioperiodo ; $num1 <= $idfineperiodo ; $num1++) {
@@ -1600,7 +1821,8 @@ echo "<input type=\"hidden\" name=\"id_periodi_costo$numca2\" value=\"".${"id_pe
 <input type=\"hidden\" name=\"costoagg$numca2\" value=\"".${"costoagg".$numca2}."\">
 <input type=\"hidden\" name=\"idcostoagg$numca2\" value=\"".$$idcostoagg_2."\">
 <input type=\"hidden\" name=\"numsettimane$numca2\" value=\"".${"numsettimane".$numca2}."\">
-<input type=\"hidden\" name=\"nummoltiplica_ca$numca2\" value=\"".${"nummoltiplica_ca".$numca2}."\">";
+<input type=\"hidden\" name=\"nummoltiplica_ca$numca2\" value=\"".${"nummoltiplica_ca".$numca2}."\">
+<input type=\"hidden\" name=\"catpers_ca$numca2\" value=\"".${"catpers_ca".$numca2}."\">";
 } # fine if ($dati_ca[$num_costo2]['mostra'] == "s")
 } # fine for $numca2
 echo "<button class=\"cont\" type=\"submit\"><div>".mex("Continua",$pag)."</div></button>
@@ -1827,7 +2049,13 @@ if ($dati_ca[$numca]['escludi_tot_perc'] == "s") $costo_escludi_perc_vett[$num1]
 $prezzo_costo_corr += (double) $prezzo_costo[$numca][$num1];
 } # fine for $num1
 if ($controlla_tariffe and $mostra_tariffa[$numtariffa] > 1) $prezzo_costo_corr = $prezzo_costo_corr / $mostra_tariffa[$numtariffa];
-$dett_costi .= "<em>".$dati_ca[$numca]['nome']."<\\/em>: ".punti_in_num($prezzo_costo_corr)." $Euro.<br>";
+$dett_costi .= "<em>".$dati_ca[$numca]['nome']."<\\/em>";
+if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num']) {
+$catpers_ca = ${"catpers_ca".$ca_associato['nca'][$numca]};
+if (${"nummoltiplica_ca".$ca_associato['nca'][$numca]} == 1) $dett_costi .= " (".$dati_cat_pers[$catpers_ca]['n_sing'].")";
+else $dett_costi .= " (".$dati_cat_pers[$catpers_ca]['n_plur'].")";
+} # fine if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num'])
+$dett_costi .= ": ".punti_in_num($prezzo_costo_corr)." $Euro.<br>";
 #if ($num_app_reali_costo[$numca]) $deduzione_costi = (double) $deduzione_costi + ($prezzo_costo[$numca][0] * ($num_controlla_limite - $num_app_reali_costo[$numca]));
 } # fine if ($ca_associato[$numca] == "SI")
 } # fine for $numca
@@ -1875,6 +2103,19 @@ $numpersone_corr += $num_letti_agg['max'];
 $reg2_checkbox .= " ";
 if ($numpersone_corr != 1) $reg2_checkbox .= mex("persone",$pag);
 else $reg2_checkbox .= mex("persona",$pag);
+if ($dati_cat_pers['num']) {
+$reg2_checkbox .= " <small>(";
+$altra_cat = 0;
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+if (${"cat$num1"."_pers_reg2_tariffa$numtariffa"}) {
+if ($altra_cat) $reg2_checkbox .= ", ";
+else $altra_cat = 1;
+if (${"cat$num1"."_pers_reg2_tariffa$numtariffa"} == 1) $reg2_checkbox .= "<span class=\"wsnw\">1 <em>".$dati_cat_pers[$num1]['n_sing']."</em></span>";
+else $reg2_checkbox .= "<span class=\"wsnw\">".${"cat$num1"."_pers_reg2_tariffa$numtariffa"}." <em>".$dati_cat_pers[$num1]['n_plur']."</em></span>";
+} # fine if (${"cat$num1"."_pers_reg2_tariffa$numtariffa"})
+} # fine for $num1
+$reg2_checkbox .= ")</small>";
+} # fine if ($dati_cat_pers['num'])
 } # fine if ($numpersone)
 } # fine if ($mostra_tariffa[$numtariffa])
 } # fine if ($controlla_tariffe)
@@ -1886,9 +2127,20 @@ else $numpersone_corr = $numpersone + $num_letti_agg['max'];
 $reg2_checkbox = "<label><input type=\"checkbox\" id=\"r2t_$numtariffa\" name=\"reg2_tariffa$numtariffa\" value=\"SI\">
 x </label><input type=\"text\" name=\"molt_reg2_tariffa$numtariffa\" maxlength=\"2\" value =\"1\" style=\"width: 2em;\"
  onclick=\"document.getElementById('r2t_$numtariffa').checked='1';\"><label for=\"r2t_$numtariffa\">
-".mex("per",$pag)." </label><input type=\"text\" name=\"pers_reg2_tariffa$numtariffa\" maxlength=\"2\" value =\"$numpersone_corr\"
+".mex("per",$pag)." ";
+if (!$dati_cat_pers['num']) {
+$reg2_checkbox .= "</label><input type=\"text\" name=\"pers_reg2_tariffa$numtariffa\" maxlength=\"2\" value =\"$numpersone_corr\"
  style=\"width: 2em;\" onclick=\"document.getElementById('r2t_$numtariffa').checked='1';\"><label for=\"r2t_$numtariffa\">
-".mex("persone",$pag)."</label>";
+".mex("persone",$pag);
+} # fine if (!$dati_cat_pers['num'])
+else {
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$reg2_checkbox .= "</label><span class=\"wsnw\"><input type=\"text\" name=\"cat$num1"."_pers_reg2_tariffa$numtariffa\" maxlength=\"2\" value =\"".${"cat$num1"."_numpers"}."\"
+ style=\"width: 2em;\" onclick=\"document.getElementById('r2t_$numtariffa').checked='1';\"><label for=\"r2t_$numtariffa\"> ".$dati_cat_pers[$num1]['n_plur']."</span>";
+if ($num1 != ($dati_cat_pers['num'] - 1)) $reg2_checkbox .= ", ";
+} # fine for $num1
+} # fine else if (!$dati_cat_pers['num'])
+$reg2_checkbox .= "</label>";
 } # fine if ($app_regola2_vett[$numtariffa] and $priv_ins_multiple != "n" and...
 else $reg2_checkbox = "&nbsp;";
 } # fine else if ($controlla_tariffe)
@@ -1934,7 +2186,9 @@ if ($asterisco == "SI") {
 echo "<div style=\"display: inline; color: red;\"><b>*</b></div>";
 $asterisco_totale = "SI";
 } # fine if ($asterisco == "SI")
-echo ".$div_costi</td><td style=\"width: 35px;\"></td><td style=\"width: 220px;\">$reg2_checkbox</td></tr>";
+if ($dati_cat_pers['num']) $style_r2 = "min-width: 220px;";
+else $style_r2 = "width: 220px;";
+echo ".$div_costi</td><td style=\"width: 35px;\"></td><td style=\"$style_r2\">$reg2_checkbox</td></tr>";
 
 if (($caparra or $commissioni)) {
 echo "<tr><td colspan=\"5\" align=\"left\">";
@@ -1990,17 +2244,26 @@ $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"costo_tot_$num_ripeti_cont
 <input type=\"hidden\" name=\"commissioni_$num_ripeti_contr\" value=\"$commissioni_corr\">
 <input type=\"hidden\" name=\"nome_tariffa_$num_ripeti_contr\" value=\"$nometariffa\">
 <input type=\"hidden\" name=\"n_letti_agg_$num_ripeti_contr\" value=\"".$num_letti_agg['max']."\">";
+for ($num2 = 0 ; $num2 < $dati_cat_pers['num'] ; $num2++) {
+if (strcmp($cat_persone_nr[$numtariffa][$num1][$num2],"")) $cat_pers_corr = $cat_persone_nr[$numtariffa][$num1][$num2];
+else $cat_pers_corr = $cat_persone_tariffa[$numtariffa][$num2];
+if (!$cat_pers_corr) $cat_pers_corr = 0;
+$dati_tutte_tariffe .= "<input type=\"hidden\" name=\"num_persone_tipo_".($num2 + 1)."_$num_ripeti_contr\" value=\"$cat_pers_corr\">";
+} # fine for $num2
 $num_ca_tot = 0;
 for ($numca = 0 ; $numca < $dati_ca['num'] ; $numca++) {
 if ($ca_associato[$numca] == "SI") {
 if ($dati_ca[$numca]['associasett'] == "s") $giorni_costo_agg = $settimane_costo[$numca];
 else $giorni_costo_agg = "";
+if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num']) $catpers_costo_agg = (${"catpers_ca".$numca} + 1);
+else $catpers_costo_agg = "";
 $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"nome_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$dati_ca[$numca]['nome']."\">
 <input type=\"hidden\" name=\"val_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$prezzo_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"percentuale_tasse_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$dati_ca[$numca]['tasseperc']."\">
 <input type=\"hidden\" name=\"moltiplica_max_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$moltiplica_costo_nr[$numca][$num1]."\">
 <input type=\"hidden\" name=\"valore_giornaliero_max_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$valgiornmax_costo[$numca][$num1]."\">
-<input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"$giorni_costo_agg\">";
+<input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"$giorni_costo_agg\">
+<input type=\"hidden\" name=\"tipo_persona_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"$catpers_costo_agg\">";
 $num_ca_tot++;
 } # fine if ($ca_associato[$numca] == "SI")
 } # fine for $numca
@@ -2019,18 +2282,26 @@ $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"c_tot_selez$numtariffa"."_
 <input type=\"hidden\" name=\"n_tariffa_selez$numtariffa"."_1\" value=\"$nometariffa\">
 <input type=\"hidden\" name=\"n_letti_agg_tariffa_selez$numtariffa"."_1\" value=\"".$num_letti_agg['max']."\">
 <input type=\"hidden\" name=\"numpers_tariffa_selez$numtariffa"."_1\" value=\"$numpersone\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$cat_pers_corr = $cat_persone_tariffa[$numtariffa][$num1];
+if (!$cat_pers_corr) $cat_pers_corr = "0";
+$dati_tutte_tariffe .= "<input type=\"hidden\" name=\"numpers_tipo_".($num1 + 1)."_tariffa_selez$numtariffa"."_1\" value=\"$cat_pers_corr\">";
+} # fine for $num1
 $num_ca_tot = 0;
 for ($num1 = 0 ; $num1 < $num_controlla_limite ; $num1++) {
 for ($numca = 0 ; $numca < $dati_ca['num'] ; $numca++) {
 if ($ca_associato[$numca] == "SI") {
 if ($dati_ca[$numca]['associasett'] == "s") $giorni_costo_agg = $settimane_costo[$numca];
 else $giorni_costo_agg = "";
+if ($dati_ca[$numca]['letto'] == "s" and $dati_cat_pers['num']) $catpers_costo_agg = (${"catpers_ca".$numca} + 1);
+else $catpers_costo_agg = "";
 $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"nome_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$dati_ca[$numca]['nome']."\">
 <input type=\"hidden\" name=\"val_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$prezzo_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"percentuale_tasse_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$dati_ca[$numca]['tasseperc']."\">
 <input type=\"hidden\" name=\"moltiplica_max_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$moltiplica_costo_nr[$numca][$num1]."\">
 <input type=\"hidden\" name=\"valore_giornaliero_max_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$valgiornmax_costo[$numca][$num1]."\">
-<input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"$giorni_costo_agg\">";
+<input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"$giorni_costo_agg\">
+<input type=\"hidden\" name=\"tipo_persona_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"$catpers_costo_agg\">";
 $num_ca_tot++;
 } # fine if ($ca_associato[$numca] == "SI")
 } # fine for $numca
@@ -2052,11 +2323,12 @@ for ($numca = 1 ; $numca <= $numcostiagg ; $numca++) {
 $idcostoagg = "idcostoagg".$numca;
 $num_costo = $dati_ca['id'][$$idcostoagg];
 if ($dati_ca[$num_costo]['mostra'] == "s") {
-$dati_costi_agg .= "<input type=\"hidden\" name=\"id_periodi_costo$numca\" value=\"".${"id_periodi_costo".$numca}."\">
-<input type=\"hidden\" name=\"costoagg$numca\" value=\"".${"costoagg".$numca}."\">
-<input type=\"hidden\" name=\"idcostoagg$numca\" value=\"".$$idcostoagg."\">
-<input type=\"hidden\" name=\"numsettimane$numca\" value=\"".${"numsettimane".$numca}."\">
-<input type=\"hidden\" name=\"nummoltiplica_ca$numca\" value=\"".${"nummoltiplica_ca".$numca}."\">";
+$dati_costi_agg .= "<input type=\"hidden\" name=\"id_periodi_costo$numca\" value=\"".htmlspecialchars(${"id_periodi_costo".$numca})."\">
+<input type=\"hidden\" name=\"costoagg$numca\" value=\"".htmlspecialchars(${"costoagg".$numca})."\">
+<input type=\"hidden\" name=\"idcostoagg$numca\" value=\"".htmlspecialchars($$idcostoagg)."\">
+<input type=\"hidden\" name=\"numsettimane$numca\" value=\"".htmlspecialchars(${"numsettimane".$numca})."\">
+<input type=\"hidden\" name=\"nummoltiplica_ca$numca\" value=\"".htmlspecialchars(${"nummoltiplica_ca".$numca})."\">
+<input type=\"hidden\" name=\"catpers_ca$numca\" value=\"".htmlspecialchars(${"catpers_ca".$numca})."\">";
 } # fine if ($dati_ca[$num_costo]['mostra'] == "s")
 } # fine for $numca
 
@@ -2173,12 +2445,28 @@ $testo_costo .= "<select name=\"$nummoltiplica_ca\" onclick=\"document.getElemen
 for ($num2 = 1 ; $num2 <= $dati_ca[$num1]['molt_max_num'] ; $num2++) {
 if ($num2 == $valnummoltiplica_ca) $sel = " selected";
 else $sel = "";
-$testo_costo .= "<option value=\"$num2\"$sel>$num2</option>";
+if ($numcostiagg_v != "[nca]") $id_opt = "";
+else $id_opt = " id=\"nm_ca$numcostiagg_v"."_opt$num2\"";
+$testo_costo .= "<option$id_opt value=\"$num2\"$sel>$num2</option>";
 } # fine for $num2
 $testo_costo .= "</select>";
 } # fine else if ($dati_ca[$num1]['molt_max'] != "n")
 $testo_costo .= "<label for=\"ca_$numcostiagg_v\">";
 } # fine if ($dati_ca[$num1]['moltiplica'] == "c")
+if ($dati_ca[$num1]['letto'] == "s" and $dati_cat_pers['num']) {
+$testo_costo .= " (</label><select name=\"catpers_ca$numcostiagg_v\" onclick=\"document.getElementById('ca_$numcostiagg_v').checked='1';\">";
+for ($num2 = 0 ; $num2 < $dati_cat_pers['num'] ; $num2++) {
+if ($num2 == ${"catpers_ca$numcostiagg_v"}) $sel = " selected";
+else $sel = "";
+if ($numcostiagg_v != "[nca]") $id_opt = "";
+else $id_opt = " id=\"cp_ca$numcostiagg_v"."_opt$num2\"";
+$testo_costo .= "<option$id_opt value=\"$num2\"$sel>";
+if ($dati_ca[$num1]['moltiplica'] != "1") $testo_costo .= $dati_cat_pers[$num2]['n_plur'];
+else $testo_costo .= $dati_cat_pers[$num2]['n_sing'];
+$testo_costo .= "</option>";
+} # for $num2
+$testo_costo .= "</select><label for=\"ca_$numcostiagg_v\">)";
+} # fine if ($dati_ca[$num1]['letto'] == "s" and $dati_cat_pers['num'])
 $testo_costo .= ".</label><br>";
 } # fine if ($dati_ca[$num1]['combina'] != "s")
 else {
@@ -2191,6 +2479,7 @@ if ($dati_ca[$num1]['molt_max'] != "n") $chiedi_combina[$categ]['molt_max_num'] 
 elseif ($chiedi_combina[$categ]['molt_max_num'] and $chiedi_combina[$categ]['molt_max_num'] < $dati_ca[$num1]['molt_max_num']) $chiedi_combina[$categ]['molt_max_num'] = $dati_ca[$num1]['molt_max_num'];
 $chiedi_combina[$categ]['molt'] = 1;
 } # fine if ($dati_ca[$num1]['moltiplica'] == "c")
+if ($dati_ca[$num1]['letto'] == "s") $chiedi_combina[$categ]['letto'] = 1;
 } # fine else if ($dati_ca[$num1]['combina'] != "s")
 if ($dati_ca[$num1]['raggruppa'] != "s") $testo_costi_agg .= $testo_costo;
 else $costi_agg_raggr[$testo_costo."<>".$dati_ca[$num1]['categoria']] .= $dati_ca[$num1]['id'].",";
@@ -2221,6 +2510,8 @@ unset(${"nummoltiplica_ca".$numcostiagg});
 if (${"id_periodi_costo".$numcostiagg}) $testo_costo = str_replace("name=\"id_periodi_costo[nca]\" value=\"\"","name=\"id_periodi_costo[nca]\" value=\"".${"id_periodi_costo".$numcostiagg}."\"",$testo_costo);
 if (${"numsettimane".$numcostiagg}) $testo_costo = str_replace("name=\"numsettimane[nca]\" value=\"0\"","name=\"numsettimane[nca]\" value=\"".${"numsettimane".$numcostiagg}."\"",$testo_costo);
 if (${"nummoltiplica_ca".$numcostiagg}) $testo_costo = str_replace("name=\"nummoltiplica_ca[nca]\" value=\"1\"","name=\"nummoltiplica_ca[nca]\" value=\"".${"nummoltiplica_ca".$numcostiagg}."\"",$testo_costo);
+if (strcmp(${"nummoltiplica_ca".$numcostiagg},"")) $testo_costo = str_replace(" id=\"nm_ca[nca]"."_opt".${"nummoltiplica_ca".$numcostiagg}."\" value=\"".${"nummoltiplica_ca".$numcostiagg}."\""," id=\"nm_ca[nca]"."_opt".${"nummoltiplica_ca".$numcostiagg}."\" value=\"".${"nummoltiplica_ca".$numcostiagg}."\" selected",$testo_costo);
+if (strcmp(${"catpers_ca".$numcostiagg},"")) $testo_costo = str_replace(" id=\"cp_ca[nca]"."_opt".${"catpers_ca".$numcostiagg}."\" value=\"".${"catpers_ca".$numcostiagg}."\""," id=\"cp_ca[nca]"."_opt".${"catpers_ca".$numcostiagg}."\" value=\"".${"catpers_ca".$numcostiagg}."\" selected",$testo_costo);
 $testo_costo = str_replace("[nca]",$numcostiagg,$testo_costo);
 if ($num_id_costi == 1) {
 $num_costo = $dati_ca['id'][$id_costi_vett[0]];
@@ -2292,6 +2583,15 @@ $testo_costi_agg .= "</select>";
 } # fine else if ($dati_ca[$num1]['molt_max'] != "n")
 $testo_costi_agg .= "<label for=\"ca_$numcostiagg\">";
 } # fine if ($chiedi_combina[$categoria]['molt'])
+if ($chiedi_combina[$categoria]['letto'] and $dati_cat_pers['num']) {
+$testo_costi_agg .= " (</label><select name=\"catpers_ca$numcostiagg\" onclick=\"document.getElementById('ca_$numcostiagg').checked='1';\">";
+for ($num2 = 0 ; $num2 < $dati_cat_pers['num'] ; $num2++) {
+if ($num2 == ${"catpers_ca$numcostiagg"}) $sel = " selected";
+else $sel = "";
+$testo_costi_agg .= "<option value=\"$num2\"$sel>".$dati_cat_pers[$num2]['n_plur']."</option>";
+} # for $num2
+$testo_costi_agg .= "</select><label for=\"ca_$numcostiagg\">)";
+} # fine if ($chiedi_combina[$categoria]['letto'] and $dati_cat_pers['num'])
 $testo_costi_agg .= ".</label><br>";
 } # fine else if ($testo_costo[0] != "combina")
 } # fine foreach ($costi_agg_raggr as $testo_costo => $id_costi)
@@ -2307,8 +2607,9 @@ echo "<br><br>
 <input type=\"hidden\" name=\"fineperiodo\" value=\"$data_fineperiodo\">
 <input type=\"hidden\" name=\"num_persone_casa\" value=\"$num_persone_casa\">
 <input type=\"hidden\" name=\"molt_app_persone_casa\" value=\"$molt_app_persone_casa\">
-<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">
-<input type=\"hidden\" name=\"mostra_non_disp\" value=\"$mostra_non_disp\">
+<input type=\"hidden\" name=\"numpersone\" value=\"$numpersone\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[1][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers\" value=\"".$cat_persone_invia[1][$num1]."\">";
+echo "<input type=\"hidden\" name=\"mostra_non_disp\" value=\"$mostra_non_disp\">
 <input type=\"hidden\" name=\"numcostiagg\" value=\"$numcostiagg\">
 $dati_email";
 if ($controlla_tariffe) {
@@ -2318,6 +2619,7 @@ for ($numtariffa = 1 ; $numtariffa <= $dati_tariffe['num'] ; $numtariffa++) {
 echo "<input type=\"hidden\" name=\"reg2_tariffa$numtariffa\" value=\"".${"reg2_tariffa".$numtariffa}."\">
 <input type=\"hidden\" name=\"molt_reg2_tariffa$numtariffa\" value=\"".${"molt_reg2_tariffa".$numtariffa}."\">
 <input type=\"hidden\" name=\"pers_reg2_tariffa$numtariffa\" value=\"".${"pers_reg2_tariffa".$numtariffa}."\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[$numtariffa][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_pers_reg2_tariffa$numtariffa\" value=\"".$cat_persone_invia[$numtariffa][$num1]."\">";
 } # fine for $numtariffa
 } # fine if ($controlla_tariffe)
 echo "<table><tr><td>$testo_costi_agg</td><td style=\"width: 25px;\"></td><td valign=\"middle\">
@@ -2450,8 +2752,9 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"prenota.php\"><div
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
 echo "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"$idinizioperiodo\">
 <input type=\"hidden\" name=\"fineperiodo$n_t\" value=\"$idfineperiodo\">
-<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".$num_persone_invia[$n_t]."\">
-<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"$num_persone_casa\">
+<input type=\"hidden\" name=\"numpersone$n_t\" value=\"".$num_persone_invia[$n_t]."\">";
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) if ($cat_persone_invia[$n_t][$num1]) echo "<input type=\"hidden\" name=\"cat$num1"."_numpers$n_t\" value=\"".$cat_persone_invia[$n_t][$num1]."\">";
+echo "<input type=\"hidden\" name=\"num_persone_casa$n_t\" value=\"$num_persone_casa\">
 <input type=\"hidden\" name=\"num_app_richiesti$n_t\" value=\"".$num_app_richiesti_invia[$n_t]."\">
 <input type=\"hidden\" name=\"nometipotariffa$n_t\" value=\"".$tariffa_invia[$n_t]."\">";
 } # fine for $n_t

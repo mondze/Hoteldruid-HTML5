@@ -463,6 +463,7 @@ $file = C_DATI_PATH."/hoteld_doc_backup.php";
 } # fine else if ($backup_contratti != "SI")
 $filelock = @crea_lock_file($file);
 if ($filelock) {
+if (@is_file($file)) {
 if ($compresso == "SI") {
 mt_srand((float) $sec + ((float) $usec * 100000));
 $file_compresso = C_DATI_PATH."/backup".mt_rand(10000,99999).".php.gz";
@@ -503,6 +504,7 @@ fclose ($fbackup);
 if ($compresso == "SI") unlink($file_compresso);
 distruggi_lock_file($filelock,$file);
 if ($id_utente == "b") unlink(C_DATI_PATH."/backup_ext.php");
+} # fine if (@is_file($file))
 } # fine if ($filelock)
 } # fine if ($salva_backup)
 

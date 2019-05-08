@@ -80,6 +80,10 @@ if ($_SERVER['HTTP_USER_AGENT']) $HTTP_USER_AGENT = $_SERVER['HTTP_USER_AGENT'];
 $HTTP_USER_AGENT = aggslashdb($HTTP_USER_AGENT);
 if ($_SERVER['HTTPS'] == "on" or $_SERVER['SERVER_PORT'] == "443") $tipo_conn = "HTTPS";
 else $tipo_conn = "HTTP";
+$minuti_durata_sessione = esegui_query("select valpersonalizza_num from $tablepersonalizza where idpersonalizza = 'minuti_durata_sessione' and idutente = '1'");
+$minuti_durata_sessione = risul_query($minuti_durata_sessione,0,'valpersonalizza_num');
+$limite_sessioni_vecchie = date("Y-m-d H:i:s",(time() - ($minuti_durata_sessione * 60) + (C_DIFF_ORE * 3600)));
+esegui_query("delete from $tablesessioni where ultimo_accesso <= '$limite_sessioni_vecchie'");
 esegui_query("insert into $tablesessioni (idsessioni,idutente,indirizzo_ip,tipo_conn,user_agent,ultimo_accesso) values ('$id_sessione','$id_utente_sessione','$REMOTE_ADDR','$tipo_conn','$HTTP_USER_AGENT','$ultimo_accesso')","",1);
 } # fine if (defined('C_URL_MOD_EXT_CARTE_CREDITO') and C_URL_MOD_EXT_CARTE_CREDITO != "")
 #} # fine if (!numlin_query($id_utente_az))

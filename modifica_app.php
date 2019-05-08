@@ -293,6 +293,8 @@ if (controlla_num(${"n_priorita".$num1}) != "SI") unset(${"n_priorita".$num1});
 ${"n_commento".$num1} = htmlspecialchars(${"n_commento".$num1});
 ${"d_numcasa".$num1} = htmlspecialchars(${"d_numcasa".$num1});
 ${"d_numpiano".$num1} = htmlspecialchars(${"d_numpiano".$num1});
+${"d_maxoccupanti".$num1} = htmlspecialchars(${"d_maxoccupanti".$num1});
+${"d_priorita".$num1} = htmlspecialchars(${"d_priorita".$num1});
 ${"d_commento".$num1} = htmlspecialchars(${"d_commento".$num1});
 if (($form_tabella and strcmp(${"idappartamenti".$num1},${"n_nome_app".$num1})) or (!$form_tabella and ${"n_nome_app".$num1})) $cambia_nome_app = "SI";
 } # fine for $num1
