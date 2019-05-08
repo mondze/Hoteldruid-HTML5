@@ -2634,9 +2634,37 @@ if ($priv_mod != $priv_mod_prec) esegui_query("update ".$PHPR_TAB_PRE."privilegi
 } # fine for $num1
 } # fine if ($versione_corrente < "2.24")
 
-/*if ($versione_corrente < "3.00") {
+if ($versione_corrente < "2.30") {
 $aggiornato = "SI";
 esegui_query("insert into ".$PHPR_TAB_PRE."personalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_categorie_persone','1','1')");
+for ($num1 = 0 ; $num1 < numlin_query($utenti) ; $num1++) {
+$idutente_mostra = risul_query($utenti,$num1,'idutenti');
+esegui_query("insert into ".$PHPR_TAB_PRE."personalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_categorie_persone','$idutente_mostra','1')");
+} # fine for $num1
+$tabletransazioni = $PHPR_TAB_PRE."transazioni";
+$tabletransazioni_temp = $PHPR_TAB_PRE."transaz";
+esegui_query("alter table $tabletransazioni add column dati_transazione21 text");
+esegui_query("alter table $tabletransazioni add column dati_transazione22 text");
+esegui_query("alter table $tabletransazioni rename to $tabletransazioni_temp ");
+esegui_query("create table $tabletransazioni (idtransazioni varchar(30) primary key, idsessione varchar(30), tipo_transazione varchar(5), anno integer, spostamenti text, dati_transazione1 text, dati_transazione2 text, dati_transazione3 text, dati_transazione4 text, dati_transazione5 text, dati_transazione6 text, dati_transazione7 text, dati_transazione8 text, dati_transazione9 text, dati_transazione10 text, dati_transazione11 text, dati_transazione12 text, dati_transazione13 text, dati_transazione14 text, dati_transazione15 text, dati_transazione16 text, dati_transazione17 text, dati_transazione18 text, dati_transazione19 text, dati_transazione20 text, dati_transazione21 text, dati_transazione22 text, ultimo_accesso $DATETIME)");
+esegui_query("insert into $tabletransazioni select idtransazioni,idsessione,tipo_transazione,anno,spostamenti,dati_transazione1,dati_transazione2,dati_transazione3,dati_transazione4,dati_transazione5,dati_transazione6,dati_transazione7,dati_transazione8,dati_transazione9,dati_transazione10,dati_transazione11,dati_transazione12,dati_transazione13,dati_transazione14,dati_transazione15,dati_transazione16,dati_transazione17,dati_transazione18,dati_transazione19,dati_transazione20,dati_transazione21,dati_transazione22,ultimo_accesso from $tabletransazioni_temp ");
+esegui_query("drop table $tabletransazioni_temp ");
+$tabletransazioniweb = $PHPR_TAB_PRE."transazioniweb";
+$tabletransazioniweb_temp = $PHPR_TAB_PRE."transazweb";
+esegui_query("alter table $tabletransazioniweb add column dati_transazione21 text");
+esegui_query("alter table $tabletransazioniweb add column dati_transazione22 text");
+esegui_query("alter table $tabletransazioniweb rename to $tabletransazioniweb_temp ");
+esegui_query("create table $tabletransazioniweb (idtransazioni varchar(30) primary key, idsessione varchar(30), tipo_transazione varchar(5), anno integer, spostamenti text, dati_transazione1 text, dati_transazione2 text, dati_transazione3 text, dati_transazione4 text, dati_transazione5 text, dati_transazione6 text, dati_transazione7 text, dati_transazione8 text, dati_transazione9 text, dati_transazione10 text, dati_transazione11 text, dati_transazione12 text, dati_transazione13 text, dati_transazione14 text, dati_transazione15 text, dati_transazione16 text, dati_transazione17 text, dati_transazione18 text, dati_transazione19 text, dati_transazione20 text, dati_transazione21 text, dati_transazione22 text, ultimo_accesso $DATETIME)");
+esegui_query("insert into $tabletransazioniweb select idtransazioni,idsessione,tipo_transazione,anno,spostamenti,dati_transazione1,dati_transazione2,dati_transazione3,dati_transazione4,dati_transazione5,dati_transazione6,dati_transazione7,dati_transazione8,dati_transazione9,dati_transazione10,dati_transazione11,dati_transazione12,dati_transazione13,dati_transazione14,dati_transazione15,dati_transazione16,dati_transazione17,dati_transazione18,dati_transazione19,dati_transazione20,dati_transazione21,dati_transazione22,ultimo_accesso from $tabletransazioniweb_temp ");
+esegui_query("drop table $tabletransazioniweb_temp ");
+$tablemessaggi = $PHPR_TAB_PRE."messaggi";
+$tablemessaggi_temp = $PHPR_TAB_PRE."messag";
+esegui_query("alter table $tablemessaggi add column dati_messaggio21 text");
+esegui_query("alter table $tablemessaggi add column dati_messaggio22 text");
+esegui_query("alter table $tablemessaggi rename to $tablemessaggi_temp ");
+esegui_query("create table $tablemessaggi (idmessaggi integer primary key, tipo_messaggio varchar(8), stato varchar(8), idutenti text, idutenti_visto text, datavisione $DATETIME, mittente text, testo text, dati_messaggio1 text, dati_messaggio2 text, dati_messaggio3 text, dati_messaggio4 text, dati_messaggio5 text, dati_messaggio6 text, dati_messaggio7 text, dati_messaggio8 text, dati_messaggio9 text, dati_messaggio10 text, dati_messaggio11 text, dati_messaggio12 text, dati_messaggio13 text, dati_messaggio14 text, dati_messaggio15 text, dati_messaggio16 text, dati_messaggio17 text, dati_messaggio18 text, dati_messaggio19 text, dati_messaggio20 text, dati_messaggio21 text, dati_messaggio22 text, datainserimento $DATETIME )");
+esegui_query("insert into $tablemessaggi select idmessaggi,tipo_messaggio,stato,idutenti,idutenti_visto,datavisione,mittente,testo,dati_messaggio1,dati_messaggio2,dati_messaggio3,dati_messaggio4,dati_messaggio5,dati_messaggio6,dati_messaggio7,dati_messaggio8,dati_messaggio9,dati_messaggio10,dati_messaggio11,dati_messaggio12,dati_messaggio13,dati_messaggio14,dati_messaggio15,dati_messaggio16,dati_messaggio17,dati_messaggio18,dati_messaggio19,dati_messaggio20,dati_messaggio21,dati_messaggio22,datainserimento from $tablemessaggi_temp ");
+esegui_query("drop table $tablemessaggi_temp ");
 for ($num1 = 0 ; $num1 < $num_anni ; $num1++) {
 $anno_mostra = risul_query($anni,$num1,'idanni');
 #$tableperiodi = $PHPR_TAB_PRE."periodi".$anno_mostra;
@@ -2662,8 +2690,32 @@ esegui_query("alter table $tableprenota rename to $tableprenota_temp ");
 esegui_query("create table $tableprenota (idprenota integer primary key, idclienti integer, idappartamenti varchar(100), iddatainizio integer, iddatafine integer, assegnazioneapp varchar(4), app_assegnabili text, num_persone integer, cat_persone text, idprenota_compagna text, tariffa text, tariffesettimanali text, incompatibilita text, sconto float8, tariffa_tot float8, caparra float8, commissioni float8, tasseperc float4, pagato float8, metodo_pagamento text, codice varchar(10), origine varchar(70), commento text, conferma varchar(4), checkin $DATETIME, checkout $DATETIME, id_anni_prec text, datainserimento $DATETIME, hostinserimento varchar(50), data_modifica $DATETIME, utente_inserimento integer) ");
 esegui_query("insert into $tableprenota select idprenota,idclienti,idappartamenti,iddatainizio,iddatafine,assegnazioneapp,app_assegnabili,num_persone,cat_persone,idprenota_compagna,tariffa,tariffesettimanali,incompatibilita,sconto,tariffa_tot,caparra,commissioni,tasseperc,pagato,metodo_pagamento,codice,origine,commento,conferma,checkin,checkout,id_anni_prec,datainserimento,hostinserimento,data_modifica,utente_inserimento from $tableprenota_temp ");
 esegui_query("drop table $tableprenota_temp ");
+$prenota_tariffe_pers = esegui_query("select * from $tableprenota where tariffesettimanali $LIKE '%;%' ");
+for ($num2 = 0 ; $num2 < numlin_query($prenota_tariffe_pers) ; $num2++) {
+$idprenota = risul_query($prenota_tariffe_pers,$num2,'idprenota');
+$tariffesett_orig = risul_query($prenota_tariffe_pers,$num2,'tariffesettimanali');
+$tariffesett = explode(";",risul_query($prenota_tariffe_pers,$num2,'tariffesettimanali'));
+$tariffesett = explode(",",$tariffesett[1]);
+$numpers = risul_query($prenota_tariffe_pers,$num2,'num_persone');
+$n_tariffesett = "";
+for ($num3 = 0 ; $num3 < count($tariffesett); $num3++) $n_tariffesett .= ",".round(((double) $tariffesett[$num3] / (double) $numpers),2);
+esegui_query("update $tableprenota set tariffesettimanali = '$tariffesett_orig;".substr($n_tariffesett,1)."' where idprenota = '$idprenota' ");
+} # fine for $num2
+$tablecostiprenota = $PHPR_TAB_PRE."costiprenota".$anno_mostra;
+$tablecostiprenota_temp = $PHPR_TAB_PRE."costipren".$anno_mostra;
+esegui_query("alter table $tablecostiprenota add column cat_persone text ");
+esegui_query("alter table $tablecostiprenota rename to $tablecostiprenota_temp ");
+esegui_query("create table $tablecostiprenota (idcostiprenota integer primary key, idprenota integer, tipo varchar(2), nome varchar(40), valore float8, valore_perc float8, arrotonda float4, tasseperc float4, associasett varchar(1), settimane text, moltiplica text, categoria text, letto varchar(1), cat_persone text, numlimite integer, idntariffe integer, variazione varchar(10), varmoltiplica text, varnumsett varchar(20), varperiodipermessi text, varbeniinv text, varappincompatibili text, vartariffeassociate varchar(10), vartariffeincomp text, datainserimento $DATETIME, hostinserimento varchar(50), utente_inserimento integer) ");
+esegui_query("insert into $tablecostiprenota select idcostiprenota,idprenota,tipo,nome,valore,valore_perc,arrotonda,tasseperc,associasett,settimane,moltiplica,categoria,letto,cat_persone,numlimite,idntariffe,variazione,varmoltiplica,varnumsett,varperiodipermessi,varbeniinv,varappincompatibili,vartariffeassociate,vartariffeincomp,datainserimento,hostinserimento,utente_inserimento from $tablecostiprenota_temp ");
+esegui_query("drop table $tablecostiprenota_temp ");
 } # fine for $num1
-} # fine if ($versione_corrente < "3.00")*/
+$priv_glob = esegui_query("select * from ".$PHPR_TAB_PRE."privilegi where anno = '1' ");
+for ($num1 = 0 ; $num1 < numlin_query($priv_glob) ; $num1++) {
+$id_ut = risul_query($priv_glob,$num1,'idutente');
+$priv_mod_pers = risul_query($priv_glob,$num1,'priv_mod_pers');
+esegui_query("update ".$PHPR_TAB_PRE."privilegi set priv_mod_pers = '$priv_mod_pers"."n' where anno = '1' and idutente = '$id_ut' ");
+} # fine for $num1
+} # fine if ($versione_corrente < "2.30")
 
 
 

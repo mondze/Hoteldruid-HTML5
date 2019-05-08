@@ -309,7 +309,7 @@ $prezzo_costo = $prezzo_costo_fisso + $prezzo_costo_perc2;
 $numper = ($idfineperiodo - $idinizioperiodo + 1);
 $prezzi_giorn_costo = ($prezzo_costo / $numper);
 if (strstr($prezzi_giorn_costo,".")) {
-if (!strstr($prezzo_costo,".") and $prezzo_costo >= $numper) $arrotond_giorn = 1;
+if (!strstr($prezzo_costo,".") and $prezzo_costo >= ($numper * 100)) $arrotond_giorn = 1;
 else $arrotond_giorn = 0.01;
 $prezzi_giorn_costo = floor((double) $prezzi_giorn_costo / $arrotond_giorn) * $arrotond_giorn;
 if ((double) ($prezzi_giorn_costo * $numper) < (double) $prezzo_costo) {
@@ -481,7 +481,7 @@ return $limite_rispettato;
 
 
 
-function dati_costi_agg_prenota ($tablecostiprenota,$id_prenota) {
+function dati_costi_agg_prenota ($tablecostiprenota,$id_prenota,$dati_cat_pers=array()) {
 
 $costi = esegui_query("select * from $tablecostiprenota where idprenota = '$id_prenota' order by tipo, idcostiprenota");
 $dati_cap['num'] = numlin_query($costi);
@@ -516,6 +516,10 @@ $dati_cap[$numca]['molt_agg'] = $molt_agg[0];
 $dati_cap[$numca]['molt_max_num'] = $molt_agg[1];
 $dati_cap[$numca]['moltiplica'] = substr($dati_cap[$numca]['moltiplica'],0,1);
 $dati_cap[$numca]['letto'] = risul_query($costi,$numca,'letto');
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num']) {
+$cat_pers = risul_query($costi,$numca,'cat_persone');
+$dati_cap[$numca]['cat_pers'] = dati_cat_pers_p($cat_pers,-1,$dati_cat_pers,1);
+} # fine if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num'])
 $dati_cap[$numca]['beniinv_orig'] = risul_query($costi,$numca,'varbeniinv');
 if ($dati_cap[$numca]['beniinv_orig']) {
 $beniinv_vett = explode(";",$dati_cap[$numca]['beniinv_orig']);
@@ -589,14 +593,15 @@ return $associa_costo;
 
 
 
-function comunica_aggiunta_costo ($dati_ca,$num_costo,$n_prezzo_costo_agg,$stile_soldi,$pag,$Euro,$associasett_ca,$moltiplica,$settimane_costo,$per_la_prenotazione="",$silenzio="") {
+function comunica_aggiunta_costo ($dati_ca,$num_costo,$n_prezzo_costo_agg,$stile_soldi,$pag,$Euro,$associasett_ca,$moltiplica,$settimane_costo,$per_la_prenotazione="",$silenzio="",$cat_pers="") {
 
-global $parola_settimane,$parola_settimanale;
+global $parola_settimane,$parola_settimanale,$dati_cat_pers;
 $val_costoagg_p = punti_in_num($n_prezzo_costo_agg,$stile_soldi);
 if ($dati_ca[$num_costo]['tipo'] == "u") $mess .= mex("Il costo aggiuntivo unico",$pag);
 if ($dati_ca[$num_costo]['tipo'] == "s") $mess .= mex("Il costo aggiuntivo $parola_settimanale",$pag);
 $mess .= " \"<b>".$dati_ca[$num_costo]['nome']."</b>\"";
 if ($associasett_ca == "s") {
+if (!@is_array($moltiplica) and strstr($moltiplica,",")) $moltiplica = explode(",",$moltiplica);
 if (!@is_array($moltiplica)) $valnummoltiplica_ca = 1;
 else {
 $valnummoltiplica_ca = $moltiplica[1];
@@ -612,11 +617,19 @@ else $numsettimane = "0";
 } # fine else if ($associasett_ca == "n")
 } # fine if ($dati_ca[$num_costo]['tipo'] == "s")
 else $numsettimane = "";
-if ($valnummoltiplica_ca != 1 or strcmp($numsettimane,"")) $mess .= " (";
+if ($valnummoltiplica_ca != 1 or strcmp($numsettimane,"") or strcmp($cat_pers,"")) {
+$mess .= " (";
 if (strcmp($numsettimane,"")) $mess .= "$numsettimane ".mex("$parola_settimane",$pag);
-if ($valnummoltiplica_ca != 1 and strcmp($numsettimane,"")) $mess .= " ";
-if ($valnummoltiplica_ca != 1) $mess .= mex("moltiplicato per",$pag)." $valnummoltiplica_ca";
-if ($valnummoltiplica_ca != 1 or strcmp($numsettimane,"")) $mess .= ")";
+if ($valnummoltiplica_ca != 1 or strcmp($cat_pers,"")) {
+if (strcmp($numsettimane,"")) $mess .= " ";
+if ($valnummoltiplica_ca == 1) $mess .= mex("moltiplicato per",$pag)." 1 <em>".$dati_cat_pers[$cat_pers]['n_sing']."</em>";
+else {
+$mess .= mex("moltiplicato per",$pag)." $valnummoltiplica_ca";
+if (strcmp($cat_pers,"")) $mess .= " <em>".$dati_cat_pers[$cat_pers]['n_plur']."</em>";
+} # fine else if ($valnummoltiplica_ca == 1)
+} # fine if ($valnummoltiplica_ca != 1 or strcmp($cat_pers,""))
+$mess .= ")";
+} # fine if ($valnummoltiplica_ca != 1 or strcmp($numsettimane,"") or strcmp($cat_pers,""))
 $mess .= " ".mex("verrà aggiunto",$pag)."$per_la_prenotazione: <b>$val_costoagg_p</b> $Euro.<br>";
 
 if (!$silenzio) echo $mess;

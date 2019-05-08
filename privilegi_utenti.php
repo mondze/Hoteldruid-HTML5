@@ -134,6 +134,7 @@ priv_mod_pers(varchar15)	s-n			1 modifica delle proprie personalizzazioni si - n
 				s-n			3 modifica dei documenti: si - no
 				s-n			4 modifica interconnessioni: si - no
 				s-n			5 modifica i documenti come API: si - no
+				s-n			6 modifica le tipologie di persone: si - no
 
 priv_ins_clienti(varchar5)	s-n			1 inserimento nuovi clienti si-no
 				s-p-g-n			2 modifica e cancella clienti: si - solo propri - solo dei suoi gruppi - no
@@ -164,6 +165,7 @@ if ($modifica_privilegi_anno and controlla_anno($modifica_privilegi_anno) == "SI
 else $tablenometariffe_mostra = $tablenometariffe;
 $altre_tab_lock = array($tableanni,$tablenometariffe_mostra,$tablecontratti,$tablecasse);
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
+$id_utente_privilegi = aggslashdb($id_utente_privilegi);
 $utente_privilegi = esegui_query("select * from $tableutenti where idutenti = '$id_utente_privilegi'");
 $nome_utente_privilegi = risul_query($utente_privilegi,0,'nome_utente');
 $privilegi_globali = esegui_query("select * from $tableprivilegi where idutente = '$id_utente_privilegi' and anno = '1'");
@@ -199,6 +201,11 @@ $dati_da_modificare .= "<input type=\"hidden\" name=\"modifica_pers\" value=\"$m
 if ($modifica_pers == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare le sue <b>personalizzazioni</b>",$pag).".<br>";
 if ($modifica_pers == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà più modificare le sue <b>personalizzazioni</b>",$pag).".<br>";
 } # fine if (substr($priv_mod_pers,0,1) != $modifica_pers)
+if (substr($priv_mod_pers,6,1) != $modpers_cat_pers) {
+$dati_da_modificare .= "<input type=\"hidden\" name=\"modpers_cat_pers\" value=\"$modpers_cat_pers\">";
+if ($modpers_cat_pers == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare le sue <b>tipologie di persone</b>",$pag).".<br>";
+if ($modpers_cat_pers == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà più modificare le sue <b>tipologie di persone</b>",$pag).".<br>";
+} # fine if (substr($priv_mod_pers,6,1) != $modpers_cat_pers)
 if (substr($priv_mod_pers,1,1) != $crea_backup) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"crea_backup\" value=\"$crea_backup\">";
 if ($crea_backup == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà creare i <b>backup</b>",$pag).".<br>";
@@ -383,7 +390,8 @@ if ($crea_backup == "s" or $crea_backup == "n") $nuovi_priv_mod_pers = substr($n
 if ($modifica_doc == "s" or $modifica_doc == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,2).$modifica_doc.substr($nuovi_priv_mod_pers,3);
 if ($crea_interconnessioni == "s" or $crea_interconnessioni == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,3).$crea_interconnessioni.substr($nuovi_priv_mod_pers,4);
 if ($modifica_doc_api == "s" or $modifica_doc_api == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,4).$modifica_doc_api.substr($nuovi_priv_mod_pers,5);
-if ($gest_pass_cc == "s" or $gest_pass_cc == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,5).$gest_pass_cc;
+if ($gest_pass_cc == "s" or $gest_pass_cc == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,5).$gest_pass_cc.substr($nuovi_priv_mod_pers,6);
+if ($modpers_cat_pers == "s" or $modpers_cat_pers == "n") $nuovi_priv_mod_pers = substr($nuovi_priv_mod_pers,0,6).$modpers_cat_pers;
 if ($nuovi_priv_mod_pers != $priv_mod_pers) esegui_query("update $tableprivilegi set priv_mod_pers = '$nuovi_priv_mod_pers' where idutente = '$id_utente_privilegi' and anno = '1'");
 $nuovi_priv_ins_clienti = $priv_ins_clienti;
 if ($inserimento_clienti == "s" or $inserimento_clienti == "n") $nuovi_priv_ins_clienti = $inserimento_clienti.substr($nuovi_priv_ins_clienti,1);
@@ -1066,6 +1074,18 @@ if (substr($priv_mod_pers,0,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"
 echo "".mex("Modifica delle proprie personalizzazioni",$pag).":
  <label><input type=\"radio\" name=\"modifica_pers\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modifica_pers\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+unset($checked_SI);
+unset($b_SI);
+unset($b_slash_SI);
+unset($checked_NO);
+unset($b_NO);
+unset($b_slash_NO);
+if (substr($priv_mod_pers,6,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
+if (substr($priv_mod_pers,6,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+echo "<table><tr><td style=\"width: 30px;\"></td><td>".mex("Modifica delle tipologie di persone",$pag).":
+ <label><input type=\"radio\" name=\"modpers_cat_pers\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
+ <label><input type=\"radio\" name=\"modpers_cat_pers\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label>
+</td></tr></table>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);

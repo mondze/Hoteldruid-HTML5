@@ -127,6 +127,9 @@ case "ln.":  					$messaggio = "id."; break;
 case "non può essere moltiplicato per più di":	$messaggio = "no puede ser multiplicado por más de"; break;
 case "La tariffa richiesta è chiusa in questo periodo":	$messaggio = "La tarifa seleccionada está cerrada en este período"; break;
 case "Commento":  				$messaggio = "Comentario"; break;
+case "Si deve inserire almeno una persona che possa essere ospite principale":	$messaggio = "Hay que insertar por lo menos una persona que pueda ser huésped principal"; break;
+case "non si sono potuti usare":  		$messaggio = "No ha sido posible usar"; break;
+case "letti aggiuntivi perchè non c'era nessuna tipologia di persone con quel numero":	$messaggio = "camas extras porque no había ningún tipo de personas con ese número"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 

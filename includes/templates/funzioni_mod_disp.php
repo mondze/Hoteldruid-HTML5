@@ -683,11 +683,11 @@ $num_intervallo = 1;
 for ($num2 = 0 ; $num2 < $num_linee_file_intero ; $num2++) {
 if (substr($file_intero[$num2],0,7) == "<option") {
 $data_option = substr($file_intero[$num2],16,10);
-$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datainizio = '$data_option' ");
+$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datainizio = '".aggslashdb($data_option)."' ");
 $esiste_data_option = numlin_query($id_data_option);
 if ($esiste_data_option == 1) $id_data_option = risul_query($id_data_option,0,'idperiodi');
 else {
-$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datafine = '$data_option' ");
+$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datafine = '".aggslashdb($data_option)."' ");
 $id_data_option = risul_query($id_data_option,0,'idperiodi');
 } # fine else if ($esiste_data_option == 1)
 if ($id_data_option >= $inizioperiodo and $id_data_option <= ($fineperiodo + 1)) {

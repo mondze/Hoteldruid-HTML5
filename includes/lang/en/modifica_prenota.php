@@ -15,6 +15,7 @@ case "Modifica i dati del cliente":  		$messaggio = "Modify client's data"; brea
 case "La prenotazione è dell'anno precedente, si potrà modificare solo la data finale":	$messaggio = "The reservation is from previus year, you will be able to modify only the final date"; break;
 case "settimane":  				$messaggio = "weeks"; break;
 case "giorni":  				$messaggio = "days"; break;
+case "giorno":  				$messaggio = "day"; break;
 case "dal":  					$messaggio = "from"; break;
 case "al":  					$messaggio = "to"; break;
 case "cambia in":  				$messaggio = "change to"; break;
@@ -252,6 +253,8 @@ case "La <b>tariffa</b> richiesta è <span class=\"colred\">chiusa</span> in que
 case "cambia il commento":  			$messaggio = "change comment"; break;
 case "Il commento":  				$messaggio = "Comment"; break;
 case "verrà cambiato":  			$messaggio = "will be changed"; break;
+case "per ":  					$messaggio = "for "; break;
+case "Il numero di":  				$messaggio = "The number of"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 

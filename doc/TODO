@@ -1,16 +1,16 @@
 version 3.0
--different custom person types (adults, children 3-10, etc.) for persons in rates (influences only the price, not the total number of people which is the sum of all types) (new document variables for each person type with the number as value) (possibly different for each user, possibility for types to don't sum in total people)
--possibility to make costs as extra beds compatible only with some person types, so they are added automatically when searching availability only if that person type is requested
--possibility to multiply extra costs by a person type (multiple types?) instead of total people
+-extend custom person types support to availability check, reservations tables and webpages
+-new document variables for each person types (people_num_type1, people_num_type2, etc) and extra_cost_person_type in extra costs repetitions
+-for extra costs as extra beds select if the discount of person type must be applied to the cost or not
+-possibility to multiply extra costs by a person type (or multiple types, or exclude selected types) instead of total people
+-possibility for certain extra costs (that ask only by how much multiply, not associated to rates) to be shown as person type when inserting reservations (from hoteldruid and webpages) (only when person types enabled?) (modify fast insertion of "number of children" in "number of infants", with maximum number to be asked)
 -multicurrency: insert exchange rate for each new currency and choose currency when inserting and showing prices (or select the currency for each rate/cost and store current exchange rate in reservation?) (store in each payment the currency used and current exchange rate, so amunt paid can be recalculated in actual currency) (only registerd in reservation payments?)
 -multicurrency website pages and interconnections
 -when there is a repetition [r3] (or other) in the middle of a [r] repetition with conditions applied only inside the repetiton [r3] then don't apply again conditions of [r] after [/r3] (also happens with conditions not applied only in [r3]?) (affects current default docuemnts? add a "use legacy behaviour" option?) (if first part is null then apply conditions to second part, or first part even if null?)
 -bug: wrong roundig of operators with more than 2 decimals in operations in documents
 -interchange code 1 with code 2 in default nations and documents. When inserting default nations and there is a nation with same code 1 in administrator, then use same code 2 and code 3 (if these codes are not in default values)
--new default documents "welcome email" with links to web checkin
 -possibility to keep the data of cancelled reservations (move them in a new table "prenotacanc", import on new year) (privilege to delete permanently or not or choose) (possibility to keep showing them in reservations table, for guests that arrive and leave on the same date)
 -possibility to insert a reservation of the same type (and client) from the "modify reservation" page, also for deleted reservations
--"modify" links in rules 1 table like available in rule 2 table (new process to modify rule 1)
 
 
 version 3.0.1
@@ -42,13 +42,14 @@ version 3.0.2
 -show client name in documents table (if client number is present)
 -add "email2" to client fields and for email documents possibility to send them to "email", "email2" or both
 -add "email2" to structure data (certified or PEC) and corresponding document variable, update with it default Italian document "fattura elettronica"
--add "region/province" to structure data pad possibility to use nation/region/city codes derived from structure values in documents and update "fattura elettronica"
+-add "region/province" to structure data and possibility to use nation/region/city codes derived from structure values in documents and update "fattura elettronica"
 -possibility to insert issuing date for documents in clients data
 -possibility to use a variable of the document as the name of the file when the document is downloaded (once the document is created store it in filename or inside the file in case the document is opened from documents table)
 -link the titular client with guests of the reservation even if he's not a guest himself (?)
 
 
 version 3.1
+-"modify" links in rules 1 table like available in rule 2 table (new process to modify rule 1)
 -possibility to select "always" as the period for rule 1
 -possibility to select "all rooms" or "all rooms from rate X" (or select rooms like rule 2) when inserting rule 1
 -when periods are added also import assignment rules 1, dates in menus and periods of imported rates
@@ -65,19 +66,23 @@ version 3.1
 -add a costant to limit the number of emails sent in last 24h if not using external smtp
 -email documents can be considered as API too and send email automatically when they are called
 -add a default API document with xml from OpenTravel Alliance to export reservations data
+-new default documents "welcome email" with links to web checkin
 
 
-version 3.1.1
+version 3.2
 -rates batch update: add x ($ or %) to prices (also from other rates) daily or weekly, based on dates and availability, with possibility to save it
 -add a "periodic actions" page, where you can set some actions (calling a document though the api and eventually sending the email, batch rate update, update subordination, etc.) to be carried out when the page is called, for example from a cron job
+-possibility to add (and remove?) extra costs, room inventory goods and client/guests data (?) to reservations from the API 
+-add "checked-in" reservations to be selected from documents API
 -possibility to import the fixed price from per person (and viceversa) and insert discounts separately on both when importing rates
 -optional "transaction date" for reservation payments, inserted by operator, different from "insertion date" 
 -possibility to add taxes to extraordinary extra cost
 -possibility to insert the number of people to be divided casually in selected rates when adding new types while inserting a reservation
 
 
-version 3.1.2
+version 3.2.x
 -alternative priority of units when there is an extra bed (order by priorita_lettoagg, priorita and use second letter in assegnazioneapp)
+-possibility to make costs as extra beds compatible only with some person types, so they are added automatically when searching availability only if that person type is requested
 -possibility to use "X days from current date" for "last available date" (and first date?) in periods when extra costs can be inserted (cancel possibility to assign cost when > or < days missing?) (?)
 -possibility for daily extra costs with specific days for not being applied to the last X days
 -possibility for daily extra costs with specific days for being applied only on day X of the reservation
@@ -91,7 +96,7 @@ version 3.1.2
 -in single rate table show correctly minimum stay from daily extra costs applied only to some weekdays
 
 
-version 3.2
+version 3.3
 -late check-in and check-out option, blocking availability to normal check-in, also shown in month table (?) (configuration with 2 rooms, day and night, for each real room? --> assignment rule to book 1 room the first day and the other the last day of reservation)
 -if there is no availability for a minimum stay, then possibility to lower it to the maximum available period (consider periods when all rooms from rule 2 are occupied as limits for available periods)
 -transition to html 5 from html 4.1
@@ -101,7 +106,7 @@ version 3.2
 -possibility to include (framed) internet pages with a javascript function (sample code when pages are generated, as for iframe)
 
 
-version 3.2.1
+version 3.3.1
 -truncate too long (old?) messages, with button to show the rest of the message
 -when inserting prices daily or weekly, for rates with rule 2 that assigns multiple rooms, show the multiplied price with javascript
 -for blue and colors themes add icons when modifying a document, in users privileges and in interconnections
@@ -115,7 +120,7 @@ version 3.2.1
 -when a webpage of the same kind is present in another language, give the possibility to change language
 
 
-version 3.2.2
+version 3.3.2
 -css/js to keep the first row on top when scrolling down the rates table (and first columns with horizontal scroll?) in simple theme (or possibility to show header row each X rows)
 -possibility to show pop-up with dates (between 2 different rows) and price when modifying prices in rates table (redirects to insert prices table)
 -css/js for colored box where prices have been modified when modifying prices in rates table
@@ -134,7 +139,7 @@ version 3.2.2
 -global privilege to don't allow to insert payments without payment method (when available, default on first inserted method?)
 
 
-version 3.2.x
+version 3.3.x
 -view totals of selected reservations when modifying a group of reservations
 -fix values (tariffesettimanali, etc.) of reservations that begin in previous year in documents generated from month table or other pages that only pass reservations numbers
 -possibility for normal users to move other begun (not checkedin) reservations on "try again" if the initial date corresponds to current date

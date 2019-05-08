@@ -630,9 +630,9 @@ $modificato = "SI";
 $periodipermessi_ca = "";
 if ($periodi_permessi == "sel") {
 for ($num1 = 1 ; $num1 <= $num_periodi_permessi_sel ; $num1++) {
-$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".${"pp_dal".$num1}."' ");
+$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb(${"pp_dal".$num1})."' ");
 $idinizioperiodo = risul_query($idinizioperiodo,0,'idperiodi');
-$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".${"pp_al".$num1}."' ");
+$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".aggslashdb(${"pp_al".$num1})."' ");
 $idfineperiodo = risul_query($idfineperiodo,0,'idperiodi');
 $periodipermessi_ca .= ",".$idinizioperiodo."-".$idfineperiodo;
 } # fine for $num1

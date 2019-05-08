@@ -334,8 +334,8 @@ echo "</td><td><div class=\"drop nb_cli\"><ul onmouseover=\"focus_elem('clisearc
 if ($priv_vedi_tab_periodi != "n" and !$mobile_device) {
 echo "<div class=\"drop nb_rat\"><div class=\"nb_rat\"><ul>
 <li><a class=\"nav\" id=\"nb_rat\" href=\"./visualizza_tabelle.php?$sessione_anno_var&amp;tipo_tabella=periodi\">&nbsp;<b>".mex("TARIFFE","head.php")."</b>&nbsp;</a><ul>
-<li><a  id=\"nb_exc\"href=\"./visualizza_tabelle.php?$sessione_anno_var&amp;tipo_tabella=periodi#tab_costi_agg\">&nbsp;<b>".mex("COSTI AGGIUNTIVI","head.php")."</b>&nbsp;</a></li>
-<li><a  id=\"nb_tax\"href=\"./visualizza_tabelle.php?$sessione_anno_var&amp;tipo_tabella=periodi#tab_caparre\">&nbsp;<b>".mex("CAPARRE E TASSE","head.php")."</b>&nbsp;</a></li>
+<li><a id=\"nb_exc\" href=\"./visualizza_tabelle.php?$sessione_anno_var&amp;tipo_tabella=periodi#tab_costi_agg\">&nbsp;<b>".mex("COSTI AGGIUNTIVI","head.php")."</b>&nbsp;</a></li>
+<li><a id=\"nb_tax\" href=\"./visualizza_tabelle.php?$sessione_anno_var&amp;tipo_tabella=periodi#tab_caparre\">&nbsp;<b>".mex("CAPARRE E TASSE","head.php")."</b>&nbsp;</a></li>
 </ul></li></ul></div></div></td><td>";
 } # fine if ($priv_vedi_tab_periodi != "n" and !$mobile_device)
 } # fine if ($priv_vedi_tab_mesi != "n" or $priv_vedi_tab_prenotazioni != "n" or...

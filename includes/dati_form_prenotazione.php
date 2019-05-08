@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2016 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,9 @@ $mess_dati_form .= "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"".
 <input type=\"hidden\" name=\"prenota_vicine$n_t\" value=\"".${"prenota_vicine".$n_t}."\">
 <input type=\"hidden\" name=\"spezzetta$n_t\" value=\"".${"spezzetta".$n_t}."\">";
 } # fine if ($manda_dati_assegnazione != "NO")
+for ($num_catp = 0 ; $num_catp < $num_categorie_persone ; $num_catp++) {
+$mess_dati_form .= "<input type=\"hidden\" name=\"cat$num_catp"."_numpers$n_t\" value=\"".${"cat$num_catp"."_numpers".$n_t}."\">";
+} # fine $num_catp
 $mess_dati_form .= "<input type=\"hidden\" name=\"tipo_sconto$n_t\" value=\"".${"tipo_sconto".$n_t}."\">
 <input type=\"hidden\" name=\"sconto$n_t\" value=\"".${"sconto".$n_t}."\">
 <input type=\"hidden\" name=\"tipo_val_sconto$n_t\" value=\"".${"tipo_val_sconto".$n_t}."\">
@@ -65,11 +68,13 @@ $idcostoagg = "idcostoagg".$numca."_".$n_t;
 $numsettimane = "numsettimane".$numca."_".$n_t;
 $nummoltiplica_ca = "nummoltiplica_ca".$numca."_".$n_t;
 $id_periodi_costo = "id_periodi_costo".$numca."_".$n_t;
+$catpers_ca = "catpers_ca".$numca."_".$n_t;
 $mess_dati_form .= "<input type=\"hidden\" name=\"$idcostoagg\" value=\"".$$idcostoagg."\">
 <input type=\"hidden\" name=\"$costoagg\" value=\"".$$costoagg."\">
 <input type=\"hidden\" name=\"$numsettimane\" value=\"".$$numsettimane."\">
 <input type=\"hidden\" name=\"$nummoltiplica_ca\" value=\"".$$nummoltiplica_ca."\">";
 if ($$id_periodi_costo) $mess_dati_form .= "<input type=\"hidden\" name=\"$id_periodi_costo\" value=\"".$$id_periodi_costo."\">";
+if (strcmp($$catpers_ca,"")) $mess_dati_form .= "<input type=\"hidden\" name=\"$catpers_ca\" value=\"".$$catpers_ca."\">";
 } # fine for $numca
 } # fine for $n_t
 $mess_dati_form .= "<input type=\"hidden\" name=\"numcostiagg\" value=\"$numcostiagg\">
@@ -79,6 +84,7 @@ $mess_dati_form .= "<input type=\"hidden\" name=\"numcostiagg\" value=\"$numcost
 if ($manda_dati_assegnazione != "NO") $mess_dati_form .= "<input type=\"hidden\" name=\"prenota_vicine\" value=\"$prenota_vicine\">";
 else $mess_dati_form .= "<input type=\"hidden\" name=\"id_transazione\" value=\"$id_transazione\">";
 if ($idmessaggi) $mess_dati_form .= "<input type=\"hidden\" name=\"idmessaggi\" value=\"$idmessaggi\">";
+if ($num_categorie_persone > 1) echo "<input type=\"hidden\" name=\"num_categorie_persone\" value=\"$num_categorie_persone\">";
 
 if ($echo_dati_form != "NO") echo $mess_dati_form;
 

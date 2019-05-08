@@ -678,7 +678,7 @@ if ($cerca_ini and $cerca_fine) break;
 else {
 $cerca_ini = $oggi_ini;
 $cerca_fine = $oggi_fine;
-} # fine if ($num_periodi_date > 1 or $d_increment[0] > 1)
+} # fine else if ($num_periodi_date > 1 or $d_increment[0] > 1)
 if ($sel_tab_prenota == "correnti" and $cerca_ini and $cerca_fine) $cerca_prenota = "SI";
 if ($sel_tab_prenota == "future") {
 $cerca_fine = "";
@@ -687,7 +687,7 @@ if ($cerca_ini) $cerca_prenota = "SI";
 if ($sel_tab_prenota == "partcorr" and $cerca_ini and $cerca_fine) {
 if ($cerca_ini == $oggi_ini) $ini_id = risul_query($oggi,0,'idperiodi');
 else {
-$ini_id = esegui_query("select idperiodi from $tableperiodi where datainizio = '$cerca_ini' ");
+$ini_id = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb($cerca_ini)."' ");
 $ini_id = risul_query($ini_id,0,'idperiodi');
 } # fine else if ($cerca_ini == $oggi_ini)
 if ($ini_id > 1) {

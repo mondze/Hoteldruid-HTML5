@@ -513,6 +513,7 @@ $mess_prenota .= ":<br><br>";
 $costo_tariffa_tot = (double) 0;
 unset($lista_tariffe_sett);
 unset($lista_tariffep_sett);
+unset($lista_tariffepo_sett);
 $tar_sett_imp = $tariffe_sett_imp[$n_t];
 for ($num2 = $inizioperiodo[$n_t] ; $num2 <= $fineperiodo[$n_t] ; $num2++) {
 $riga_tariffa = esegui_query("select * from  $tableperiodi where idperiodi = $num2");
@@ -523,6 +524,7 @@ if (!strcmp($costo_tariffa,"")) $costo_tariffa = 0;
 if (strcmp($tar_sett_imp[$num2],"")) $costo_tariffap = 0;
 else $costo_tariffap = risul_query($riga_tariffa,0,$tipotariffa[$n_t]."p");
 if (!strcmp($costo_tariffap,"")) $costo_tariffap = 0;
+$lista_tariffepo_sett .= ",".$costo_tariffap;
 $costo_tariffap = (double) $costo_tariffap * (double) $numpersone[$n_t];
 $lista_tariffep_sett .= ",".$costo_tariffap;
 $costo_tariffa = (double) $costo_tariffa + $costo_tariffap;
@@ -534,6 +536,7 @@ $lista_tariffe_sett = substr($lista_tariffe_sett,1);
 if ($lista_tariffep_sett) {
 $lista_tariffep_sett = substr($lista_tariffep_sett,1);
 $lista_tariffe_sett .= ";$lista_tariffep_sett";
+if ($lista_tariffepo_sett) $lista_tariffe_sett .= ";".substr($lista_tariffepo_sett,1);
 } # fine if ($lista_tariffep_sett)
 $costo_tariffa = $costo_tariffa_tot;
 $nometariffa = $dati_tariffe[$tipotariffa[$n_t]]['nome'];

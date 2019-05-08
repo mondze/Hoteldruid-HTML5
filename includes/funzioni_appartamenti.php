@@ -72,7 +72,9 @@ for ($num1 = 0 ; $num1 < $num_appartamenti ; $num1++) {
 $id_appartamento = risul_query($appartamenti,$num1,'idappartamenti');
 $appartamenti_consentiti_regola1[$id_appartamento] = "NO";
 } # fine for $num1
+if (is_array($regole1_consentite)) {
 for ($num1 = 0 ; $num1 < count($regole1_consentite) ; $num1++) if ($regole1_consentite[$num1]) $condizioni_regole1_consentite .= "motivazione = '".$regole1_consentite[$num1]."' or ";
+} # fine if (is_array($regole1_consentite))
 if ($condizioni_regole1_consentite) {
 $condizioni_regole1_consentite = "(".str_replace("motivazione = ' '","motivazione = '' or motivazione is null",substr($condizioni_regole1_consentite,0,-4)).")";
 $appartamenti_regola1 = esegui_query("select idregole,iddatainizio,iddatafine,app_agenzia from $tableregole where $condizioni_regole1_consentite order by app_agenzia");

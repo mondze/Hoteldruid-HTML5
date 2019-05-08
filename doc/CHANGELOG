@@ -1,3 +1,10 @@
+2.3.0 (09/11/2018)
+======================
+-initial support for different custom person types
+-fixed bug: user id not escaped in privileges page
+-fixed bug: dates values not escaped in some places in hoteldruid and created webpages
+
+
 2.2.4 (01/10/2018)
 ======================
 -added new document variable [extra_cost_max_daily_value] with daily price in repetitons of costs

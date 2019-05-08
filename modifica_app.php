@@ -218,26 +218,13 @@ echo mex("L'appartamento",'unit.php')." <b>$idappartamenti</b> ".mex("è stato c
 <button class=\"cont\" type=\"submit\"><div>OK</div></button>
 </div></form>";
 
-$file_interconnessioni = C_DATI_PATH."/dati_interconnessioni.php";
-if (@is_file($file_interconnessioni)) {
-include($file_interconnessioni);
-if (@is_array($ic_present)) {
-unlock_tabelle($tabelle_lock);
+if ($tabelle_lock) unlock_tabelle($tabelle_lock);
 unset($tabelle_lock);
-$interconn_dir = opendir("./includes/interconnect/");
-while ($mod_ext = readdir($interconn_dir)) {
-if ($mod_ext != "." and $mod_ext != ".." and @is_dir("./includes/interconnect/$mod_ext")) {
-include("./includes/interconnect/$mod_ext/name.php");
-if ($ic_present[$interconnection_name] == "SI") {
-include("./includes/interconnect/$mod_ext/functions.php");
-$funz_update_availability = "update_availability_".$interconnection_name;
-$funz_update_availability($file_interconnessioni,$anno,$PHPR_TAB_PRE,1);
-} # fine if ($ic_present[$interconnection_name] == "SI")
-} # fine if ($modello_ext != "." and $modello_ext != ".." and...
-} # fine while ($mod_ext = readdir($interconn_dir))
-closedir($interconn_dir);
-} # fine if (@is_array($ic_present))
-} # fine if (@is_file($file_interconnessioni))
+$lock = 1;
+$aggiorna_disp = 1;
+$aggiorna_tar = 0;
+if (@function_exists('pcntl_fork')) include("./includes/interconnect/aggiorna_ic_fork.php");
+else include("./includes/interconnect/aggiorna_ic.php");
 
 } # fine else if ($cancella_sicuro != "SI")
 } # fine if ($cancellare != "NO")

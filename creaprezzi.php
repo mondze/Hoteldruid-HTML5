@@ -2617,9 +2617,9 @@ esegui_query("update $tablenometariffe set beniinv_ca = '$beniinv_ca' where idnt
 if ($periodi_permessi == "sel") {
 $periodipermessi_ca = "";
 for ($num1 = 1 ; $num1 <= $num_periodi_permessi_sel ; $num1++) {
-$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".${"pp_dal".$num1}."' ");
+$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb(${"pp_dal".$num1})."' ");
 $idinizioperiodo = risul_query($idinizioperiodo,0,'idperiodi');
-$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".${"pp_al".$num1}."' ");
+$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".aggslashdb(${"pp_al".$num1})."' ");
 $idfineperiodo = risul_query($idfineperiodo,0,'idperiodi');
 $periodipermessi_ca .= ",".$idinizioperiodo."-".$idfineperiodo;
 } # fine for $num1
@@ -2633,7 +2633,7 @@ $appincompatibili_ca .= ${"idapp_incomp_".$num1}.",";
 } # fine (${"app_incomp_".$num1} == "i")
 } # fine for $num1
 $appincompatibili_ca = substr($appincompatibili_ca,0,-1);
-if (strcmp($appincompatibili_ca,"")) esegui_query("update $tablenometariffe set appincompatibili_ca = '$appincompatibili_ca' where idntariffe = '$idntariffe'");
+if (strcmp($appincompatibili_ca,"")) esegui_query("update $tablenometariffe set appincompatibili_ca = '".aggslashdb($appincompatibili_ca)."' where idntariffe = '$idntariffe'");
 if (strcmp($categoria_ca,"")) esegui_query("update $tablenometariffe set categoria_ca = '".aggslashdb($categoria_ca)."' where idntariffe = '$idntariffe'");
 if ($limite_ca == "s") esegui_query("update $tablenometariffe set numlimite_ca = '$numlimite_ca' where idntariffe = '$idntariffe'");
 if ($agg_utenti == "s") $q_utenti_costi_sel = $utenti_attiva_costi_sel;

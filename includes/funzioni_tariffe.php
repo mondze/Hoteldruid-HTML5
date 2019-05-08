@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -398,6 +398,153 @@ break;
 } # fine if ($dati_tariffe[$tariffa]['imp_prezzi_int'])
 return $imp_periodo;
 } # fine function periodo_importato_tar
+
+
+
+
+function dati_cat_pers ($id_utente,$tablepersonalizza,$lingua_mex,$priv_ins_num_persone="s",$dati_perc=1,$altre_lingue=0) {
+
+$dati_cat_pers = array();
+if ($priv_ins_num_persone != "n") {
+$cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '$id_utente' ");
+if ($dati_perc) $perc_cat_persone = explode(";",risul_query($cat_pers,0,'valpersonalizza'));
+$dati_cat_pers['num'] = risul_query($cat_pers,0,'valpersonalizza_num');
+if ($dati_cat_pers['num'] > 1) {
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) $dati_cat_pers[$num1] = array();
+if ($dati_perc) {
+$dati_cat_pers[0]['osp_princ'] = "s";
+$dati_cat_pers[0]['perc'] = "100";
+} # fine if ($dati_perc)
+$nomi_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($lingua_mex)."' and idutente = '$id_utente'");
+if (!numlin_query($nomi_cat_pers)) {
+$nomi_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_en' and idutente = '$id_utente'");
+if (!numlin_query($nomi_cat_pers)) {
+$nomi_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_ita' and idutente = '$id_utente'");
+$dati_cat_pers['lang'] = "ita";
+} # fine if (!numlin_query($nomi_cat_pers))
+else $dati_cat_pers['lang'] = "en";
+} # fine if (!numlin_query($nomi_cat_pers))
+else $dati_cat_pers['lang'] = $lingua_mex;
+$nomi_cat_pers = explode("<",risul_query($nomi_cat_pers,0,'valpersonalizza'));
+
+if ($altre_lingue) {
+if ($dati_cat_pers['lang'] != 'ita') {
+$n_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_ita' and idutente = '$id_utente' ");
+$n_cat_pers = explode("<",risul_query($n_cat_pers,0,'valpersonalizza'));
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$n_cat_pers_v = explode(">",$n_cat_pers[$num1]);
+$dati_cat_pers[$num1]['langs']['ita']['n_s'] = $n_cat_pers_v[0];
+$dati_cat_pers[$num1]['langs']['ita']['n_p'] = $n_cat_pers_v[1];
+} # fine for $num1
+} # fine if ($dati_cat_pers['lang'] != 'ita')
+$lang_dir = opendir("./includes/lang/");
+while ($ini_lingua = readdir($lang_dir)) {
+if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and $ini_lingua != $dati_cat_pers['lang'] and @is_file("./includes/lang/$ini_lingua/l_n")) {
+$n_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($ini_lingua)."' and idutente = '$id_utente' ");
+if (numlin_query($n_cat_pers)) {
+$n_cat_pers = explode("<",risul_query($n_cat_pers,0,'valpersonalizza'));
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$n_cat_pers_v = explode(">",$n_cat_pers[$num1]);
+$dati_cat_pers[$num1]['langs'][$ini_lingua]['n_s'] = $n_cat_pers_v[0];
+$dati_cat_pers[$num1]['langs'][$ini_lingua]['n_p'] = $n_cat_pers_v[1];
+} # fine for $num1
+} # fine if (numlin_query($n_cat_pers))
+} # fine if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and...
+} # fine while ($file = readdir($lang_dig))
+closedir($lang_dir);
+} # fine if ($altre_lingue)
+
+for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
+$nomi_cat_pers[$num1] = explode(">",$nomi_cat_pers[$num1]);
+$dati_cat_pers[$num1]['n_sing'] = $nomi_cat_pers[$num1][0];
+$dati_cat_pers[$num1]['n_plur'] = $nomi_cat_pers[$num1][1];
+if ($altre_lingue) {
+$dati_cat_pers[$num1]['langs'][$dati_cat_pers['lang']]['n_s'] = $nomi_cat_pers[$num1][0];
+$dati_cat_pers[$num1]['langs'][$dati_cat_pers['lang']]['n_p'] = $nomi_cat_pers[$num1][1];
+} # fine if ($altre_lingue)
+if ($dati_perc and $num1 > 0) {
+$dati_cat_pers[$num1]['perc'] = substr($perc_cat_persone[($num1 - 1)],2);
+if ($num1 == 1) {
+$perc_corr = explode("r",$dati_cat_pers[$num1]['perc']);
+$dati_cat_pers[$num1]['perc'] = $perc_corr[0];
+$dati_cat_pers['arrotond'] = $perc_corr[1];
+} # fine if ($num1 == 1)
+$dati_cat_pers[$num1]['osp_princ'] = substr($perc_cat_persone[($num1 - 1)],0,1);
+} # fine if ($dati_perc and $num1 > 0)
+} # fine for $num1
+} # fine if ($dati_cat_pers['num'] > 1)
+else $dati_cat_pers['num'] = 0;
+} # fine if ($priv_ins_num_persone != "n")
+else $dati_cat_pers['num'] = 0;
+
+return $dati_cat_pers;
+
+} # fine function dati_cat_pers
+
+
+
+
+function dati_cat_pers_p (&$query_prenota,$ord_prenota,$dati_cat_pers,$num_persone,$dati_perc=1) {
+
+$dati_cat_pers_p = array();
+$dati_cat_pers_p['num'] = 0;
+if ($ord_prenota == -1) $dati_cat_pers_p['int'] = $query_prenota;
+else $dati_cat_pers_p['int'] = risul_query($query_prenota,$ord_prenota,'cat_persone');
+if ($dati_cat_pers_p['int']) {
+$cat_pers_vett = explode("<",$dati_cat_pers_p['int']);
+$dati_cat_pers_p['num'] = (count($cat_pers_vett) - 1);
+if ($dati_perc) $dati_cat_pers_p['arrotond'] = $cat_pers_vett[0];
+else $dati_cat_pers_p['int'] = "";
+for ($num1 = 0 ; $num1 < $dati_cat_pers_p['num'] ; $num1++) {
+$cat_pers_corr = explode(">",$cat_pers_vett[($num1 + 1)]);
+$cat_pers = $cat_pers_corr[0];
+$dati_cat_pers_p['ord'][$num1] = $cat_pers;
+$dati_cat_pers_p[$num1]['molt'] = $cat_pers_corr[1];
+$dati_cat_pers_p[$num1]['lang'] = $cat_pers_corr[4];
+$dati_cat_pers_p[$num1]['n_sing'] = $cat_pers_corr[5];
+$dati_cat_pers_p[$num1]['n_plur'] = $cat_pers_corr[6];
+$dati_cat_pers_p[$num1]['n_sing_orig'] = $cat_pers_corr[5];
+$dati_cat_pers_p[$num1]['n_plur_orig'] = $cat_pers_corr[6];
+if ($dati_cat_pers[$cat_pers]['langs'][$cat_pers_corr[4]]['n_p'] == $cat_pers_corr[6]) $esist = 1;
+else $esist = 0;
+if ($dati_perc) {
+$dati_cat_pers_p[$num1]['osp_princ'] = $cat_pers_corr[2];
+$dati_cat_pers_p[$num1]['perc'] = $cat_pers_corr[3];
+if ($esist and strcmp($dati_cat_pers[$cat_pers]['perc'],"") and $dati_cat_pers[$cat_pers]['perc'] != $cat_pers_corr[3]) {
+$esist = 0;
+$dati_cat_pers_p[$num1]['n_sing'] .= " (".$cat_pers_corr[3]."%)";
+$dati_cat_pers_p[$num1]['n_plur'] .= " (".$cat_pers_corr[3]."%)";
+} # fine if ($esist and strcmp($dati_cat_pers[$cat_pers]['perc'],"") and...
+} # fine if ($dati_perc)
+else $dati_cat_pers_p['int'] .= "<".$cat_pers.">".$cat_pers_corr[1].">".$cat_pers_corr[4].">".$cat_pers_corr[5].">".$cat_pers_corr[6];
+if ($esist and !$dati_cat_pers_p[$cat_pers]['esist']) {
+$dati_cat_pers_p[$cat_pers]['esist'] = ($num1 + 1);
+$dati_cat_pers_p[$cat_pers]['ncp'] = $num1;
+} # fine if ($esist and !$dati_cat_pers_p[$cat_pers]['esist'])
+} # fine for $num1
+} # fine if ($dati_cat_pers_p['int'])
+elseif ($dati_cat_pers['num'] and $num_persone) {
+$dati_cat_pers_p['num'] = 1;
+$dati_cat_pers_p['ord'][0] = 0;
+$dati_cat_pers_p[0]['molt'] = $num_persone;
+$dati_cat_pers_p[0]['lang'] = $dati_cat_pers['lang'];
+$dati_cat_pers_p[0]['n_sing'] = $dati_cat_pers[0]['n_sing'];
+$dati_cat_pers_p[0]['n_plur'] = $dati_cat_pers[0]['n_plur'];
+$dati_cat_pers_p[0]['n_sing_orig'] = $dati_cat_pers[0]['n_sing'];
+$dati_cat_pers_p[0]['n_plur_orig'] = $dati_cat_pers[0]['n_plur'];
+if (!$dati_perc) $dati_cat_pers_p['int'] = "<0>$num_persone>".$dati_cat_pers['lang'].">".$dati_cat_pers[0]['n_sing'].">".$dati_cat_pers[0]['n_plur'];
+else {
+$dati_cat_pers_p['int'] = $dati_cat_pers['arrotond']."<0>$num_persone>s>100>".$dati_cat_pers['lang'].">".$dati_cat_pers[0]['n_sing'].">".$dati_cat_pers[0]['n_plur'];
+$dati_cat_pers_p['arrotond'] = $dati_cat_pers['arrotond'];
+$dati_cat_pers_p[0]['osp_princ'] = "s";
+$dati_cat_pers_p[0]['perc'] = 100;
+} # fine else if (!$dati_perc)
+$dati_cat_pers_p[0]['esist'] = 1;
+} # fine elseif ($dati_cat_pers['num'] and $num_persone)
+
+return $dati_cat_pers_p;
+
+} # fine function dati_cat_pers_p
 
 
 

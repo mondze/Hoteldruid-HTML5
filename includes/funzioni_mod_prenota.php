@@ -274,7 +274,7 @@ if ($num_soldi_esistenti >= (C_MASSIMO_NUM_STORIA_SOLDI + 1)) $priv_mod_pagato =
 
 function prepara_modifiche_prenotazione ($id_prenota_idpr,$num_id_prenota,&$prenota_in_anno_succ,&$dati_da_anno_prec,&$tra_anni,$anno,$PHPR_TAB_PRE) {
 global $d_id_utente_inserimento_idpr,$d_id_clienti_idpr,$d_id_data_inizio_idpr,$d_id_data_fine_idpr,$d_appartamento_idpr,$d_assegnazione_app_idpr,$d_app_assegnabili_idpr,$d_nome_tipotariffa_idpr,$d_app_eliminati_costi_idpr,$d_sconto_idpr,$d_caparra_idpr,$d_met_paga_caparra_idpr,$d_commissioni_idpr,$d_num_persone_idpr,$d_nome_tariffa_idpr,$d_costo_tariffa_idpr,$d_molt_tariffa_idpr,$d_tariffesettimanali_idpr,$d_costo_agg_tot_idpr,$d_prezzo_costo_agg_idpr,$d_costo_tot_idpr,$d_pagato_idpr,$d_confermato_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_commento,$d_prenota_comp_idpr;
-global $dati_tariffe,$dati_ca,$dati_prenota_modifica,$id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$fineperiodo_orig,$stile_data,$d_data_inizio_f,$d_data_fine_f,$n_host_inserimento_idpr;
+global $dati_tariffe,$dati_cat_pers,$dati_ca,$dati_prenota_modifica,$id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$fineperiodo_orig,$stile_data,$d_data_inizio_f,$d_data_fine_f,$n_host_inserimento_idpr,$id_utente,$lingua_mex,$d_cat_persone_idpr;
 if (!function_exists('dati_tariffe')) include("./includes/funzioni_tariffe.php");
 if (!function_exists('dati_costi_agg_ntariffe')) include("./includes/funzioni_costi_agg.php");
 
@@ -285,6 +285,7 @@ $tableregole = $PHPR_TAB_PRE."regole".$anno;
 $tableappartamenti = $PHPR_TAB_PRE."appartamenti";
 $tableclienti = $PHPR_TAB_PRE."clienti";
 $tablecostiprenota = $PHPR_TAB_PRE."costiprenota".$anno;
+$tablepersonalizza = $PHPR_TAB_PRE."personalizza";
 
 $d_id_utente_inserimento_idpr = array();
 $d_id_clienti_idpr = array();
@@ -302,6 +303,7 @@ $d_caparra_idpr = array();
 $d_met_paga_caparra_idpr = array();
 $d_commissioni_idpr = array();
 $d_num_persone_idpr = array();
+$d_cat_persone_idpr = array();
 $d_nome_tariffa_idpr = array();
 $d_tariffesettimanali_idpr = array();
 $d_costo_agg_tot_idpr = array();
@@ -315,6 +317,7 @@ $d_prenota_comp_idpr = array();
 $n_host_inserimento_idpr = array();
 
 $dati_tariffe = dati_tariffe($tablenometariffe,"","",$tableregole);
+$dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,"v",1,1);
 $dati_ca = dati_costi_agg_ntariffe($tablenometariffe,$dati_tariffe['num'],"NO","",$tableappartamenti);
 
 
@@ -387,7 +390,7 @@ $tableprenota_prec = $PHPR_TAB_PRE."prenota".($anno - 1);
 $tablecostiprenota_prec = $PHPR_TAB_PRE."costiprenota".($anno - 1);
 $dati_tariffe = dati_tariffe($PHPR_TAB_PRE."ntariffe".($anno - 1),"","",$PHPR_TAB_PRE."regole".($anno - 1));
 $dati_ca = dati_costi_agg_ntariffe($PHPR_TAB_PRE."ntariffe".($anno - 1),$dati_tariffe['num'],"NO","",$tableappartamenti);
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota_prec,$id_prenota_prec);
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota_prec,$id_prenota_prec,$dati_cat_pers);
 ${"dati_cap".$id_prenota} = $dati_cap;
 function passa_var_a_anno_prec (&$id_prenota,&$tableperiodi,&$tableprenota,&$tablecostiprenota,&$d_id_data_inizio,&$d_id_data_fine,&$n_fineperiodo,&$inizioperiodo,&$fineperiodo,&$lunghezza_periodo,$dati_prenota_modifica) {
 global $id_prenota_prec,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$d_id_data_inizio_orig,$d_id_data_fine_orig,$n_fineperiodo_orig,$inizioperiodo_orig,$fineperiodo_orig;
@@ -435,7 +438,7 @@ $d_costo_tariffa_idpr[$id_prenota] = $d_costo_tariffa;
 $d_molt_tariffa = $d_tariffa[2];
 $d_molt_tariffa_idpr[$id_prenota] = $d_molt_tariffa;
 if ($dati_da_anno_prec != "SI") {
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota);
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota,$dati_cat_pers);
 ${"dati_cap".$id_prenota} = $dati_cap;
 } # fine if ($dati_da_anno_prec != "SI")
 $d_nome_tipotariffa = "";
@@ -462,6 +465,8 @@ $d_origine_prenota = risul_query($dati_prenota_modifica,0,'origine');
 $d_num_persone = risul_query($dati_prenota_modifica,0,'num_persone');
 $d_num_persone_idpr[$id_prenota] = $d_num_persone;
 if (!$d_num_persone) $d_num_persone = 0;
+$d_cat_persone = dati_cat_pers_p($dati_prenota_modifica,0,$dati_cat_pers,$d_num_persone);
+$d_cat_persone_idpr[$id_prenota] = $d_cat_persone;
 $d_tariffesettimanali = risul_query($dati_prenota_modifica,0,'tariffesettimanali');
 $d_tariffesettimanali_idpr[$id_prenota] = $d_tariffesettimanali;
 $d_costo_agg_tot = (double) 0;
@@ -499,7 +504,7 @@ $n_host_inserimento_idpr[$id_prenota] = risul_query($dati_prenota_modifica,0,'ho
 
 function esegui_modifiche_prenotazione (&$inserire,&$cancellata,$id_prenota_int,$id_prenota_idpr,$num_id_prenota,$id_transazione,$id_sessione,$anno,$id_nuovo_utente_inserimento,$n_stima_checkin,$n_met_paga_caparra,$n_origine_prenota,$n_pagato,$n_confermato,$tipo_commento,$n_commento,$n_cancella_commento,$tableprenota_da_aggiornare,$tipo_sposta,$dati_da_anno_prec,$prenota_in_anno_succ,$tra_anni,$PHPR_TAB_PRE) {
 global $id_utente,$priv_mod_checkin,$attiva_regole1_consentite,$regole1_consentite,$attiva_tariffe_consentite,$tariffe_consentite_vett,$priv_mod_date,$priv_ins_periodi_passati,$priv_mod_commento,$priv_mod_commenti_pers,$priv_mod_sconto,$priv_mod_caparra,$priv_mod_pagato,$priv_mod_orig_prenota,$d_commento,$cassa_pagamenti,$nome_utente;
-global $dati_ca,$d_id_utente_inserimento_idpr,$d_appartamento_idpr,$d_id_data_inizio_idpr,$d_nome_tariffa_idpr,$d_app_eliminati_costi_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_prenota_comp_idpr,$fineperiodo_orig,$comm_pers_presenti;
+global $dati_ca,$dati_cat_pers,$d_cat_persone_idpr,$d_id_utente_inserimento_idpr,$d_appartamento_idpr,$d_id_data_inizio_idpr,$d_nome_tariffa_idpr,$d_app_eliminati_costi_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_prenota_comp_idpr,$fineperiodo_orig,$comm_pers_presenti;
 global $id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$stile_data,$tipo_n_app,$priv_mod_utente_ins,$utenti_gruppi;
 
 $pag = "modifica_prenota.php";
@@ -603,6 +608,7 @@ $n_tariffesettimanali_idpr = unserialize(risul_query($dati_transazione,0,'dati_t
 $id_per_corr_finto = (string) risul_query($dati_transazione,0,'dati_transazione18');
 $prenota_comp_idpr = unserialize(risul_query($dati_transazione,0,'dati_transazione19'));
 $n_app_eliminati_costi_idpr = unserialize(risul_query($dati_transazione,0,'dati_transazione20'));
+$cat_persone_idpr = unserialize(risul_query($dati_transazione,0,'dati_transazione21'));
 
 if (get_magic_quotes_gpc()) {
 $n_pagato = stripslashes($n_pagato);
@@ -622,7 +628,9 @@ $spostamenti = explode(",",$spostamenti);
 unset($dati_prenota_idpr);
 unset($beniinv_presenti);
 unset($num_ripetizioni_costo_mod_idpr);
+unset($cambia_cat_pers_ca_mod_idpr);
 unset($num_ripetizioni_costo_ins_idpr);
+unset($cambia_cat_pers_ca_ins_idpr);
 unset($n_tipotariffa_idpr);
 $d_data_inserimento_idpr = explode(",",$d_data_inserimento);
 $d_host_inserimento_idpr = explode(",",$d_host_inserimento);
@@ -633,11 +641,13 @@ for ($num_idpr = 0 ; $num_idpr < $num_id_prenota ; $num_idpr++) {
 $id_prenota = $id_prenota_idpr[$num_idpr];
 $d_checkin = $d_checkin_idpr[$id_prenota];
 $d_id_data_inizio = $d_id_data_inizio_idpr[$id_prenota];
+$d_cat_persone = $d_cat_persone_idpr[$id_prenota];
 $n_costo_tot = $n_costo_tot_idpr[$id_prenota];
 $n_appartamento = $n_appartamento_idpr[$id_prenota];
 $n_assegnazioneapp = $n_assegnazioneapp_idpr[$id_prenota];
 $n_lista_app = $n_lista_app_idpr[$id_prenota];
 $n_numpersone = $n_numpersone_idpr[$id_prenota];
+$cat_persone = $cat_persone_idpr[$id_prenota];
 $n_nometipotariffa = $n_nometipotariffa_idpr[$id_prenota];
 $n_costo_tariffa = $n_costo_tariffa_idpr[$id_prenota];
 $costi_aggiuntivi_modificati_int = $costi_aggiuntivi_modificati_int_idpr[$id_prenota];
@@ -784,6 +794,33 @@ if ($id_periodo_corrente >= $inizioperiodo) $inserire = "NO";
 
 #if ($n_numpersone != "" and $priv_mod_num_persone != "s") $inserire = "NO";
 if ($n_numpersone and controlla_num_pos($n_numpersone) != "SI") $inserire = "NO";
+if ($dati_cat_pers['num']) {
+$numpersone_cat_pers = 0;
+$osp_princ_trovato = 0;
+$cat_persone['int'] = "";
+for ($num2 = 0 ; $num2 < $cat_persone['num'] ; $num2++) {
+if ($cat_persone[$num2]['molt']) {
+if (controlla_num_pos($cat_persone[$num2]['molt']) == "NO") $inserire = "NO";
+else $numpersone_cat_pers += $cat_persone[$num2]['molt'];
+if ($cat_persone[$num2]['osp_princ'] == "s") $osp_princ_trovato = 1;
+$cat_pers = $cat_persone[$num2]['ord'];
+if (substr($cat_pers,0,2) != "ex") {
+if ($cat_persone[$num2]['n_plur'] != $dati_cat_pers[$cat_pers]['langs'][$cat_persone[$num2]['lang']]['n_p'] or $cat_persone[$num2]['perc'] != $dati_cat_pers[$cat_pers]['perc']) $inserire = "NO";
+} # fine if (substr($cat_pers,0,2) != "ex")
+else {
+$ncp = substr($cat_pers,2);
+$cat_pers = $d_cat_persone['ord'][$ncp];
+if ($cat_persone[$num2]['n_plur'] != $d_cat_persone[$ncp]['n_plur'] or $cat_persone[$num2]['perc'] != $d_cat_persone[$ncp]['perc'] or $d_cat_persone[$cat_pers]['esist'] == ($ncp + 1)) $inserire = "NO";
+$cat_persone[$num2]['n_sing'] = $d_cat_persone[$ncp]['n_sing_orig'];
+$cat_persone[$num2]['n_plur'] = $d_cat_persone[$ncp]['n_plur_orig'];
+} # fine else if (substr($cat_pers,0,2) != "ex")
+$cat_persone['int'] .= "<$cat_pers>".$cat_persone[$num2]['molt'].">".$cat_persone[$num2]['osp_princ'].">".$cat_persone[$num2]['perc'].">".$cat_persone[$num2]['lang'].">".$cat_persone[$num2]['n_sing'].">".$cat_persone[$num2]['n_plur'];
+} # fine if ($cat_persone[$num2]['molt'])
+} # fine for $num2
+if ($numpersone_cat_pers != $numpersone or ($n_numpersone and !$osp_princ_trovato)) $inserire = "NO";
+if ($cat_persone['int']) $cat_persone['int'] = $cat_persone['arrotond'].$cat_persone['int'];
+$cat_persone_idpr[$id_prenota] = $cat_persone;
+} # fine if ($dati_cat_pers['num'])
 
 if ($priv_mod_commenti_pers != "s" and $tipo_commento != "checkin" and $tipo_commento != "checkout") $tipo_commento = "";
 if ($priv_mod_commento != "s" and !strcmp($tipo_commento,"")) $n_commento = "";
@@ -815,6 +852,13 @@ else $num_limite = (string) 0;
 if ((string) $num_costo_mod != (string) "NO") {
 $settimane_costo = $costo_agg_modificato[1];
 $moltiplica = $costo_agg_modificato[2];
+$cat_pers_ca = $costo_agg_modificato[3];
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num'] and $cat_pers_ca != "e") {
+if (!strcmp($dati_cat_pers[$cat_pers_ca]['n_plur'],"")) $inserire = "NO";
+elseif ($cat_pers_ca != $dati_cap[$numca]['cat_pers']['ord'][0] or !$dati_cap[$numca]['cat_pers'][$dati_cap[$numca]['cat_pers']['ord'][0]]['esist']) {
+$cambia_cat_pers_ca_mod_idpr[$id_prenota][$num_costo_mod] = $dati_cat_pers['arrotond']."<$cat_pers_ca>>".$dati_cat_pers[$cat_pers_ca]['osp_princ'].">".$dati_cat_pers[$cat_pers_ca]['perc'].">".$dati_cat_pers['lang'].">".$dati_cat_pers[$cat_pers_ca]['n_sing'].">".$dati_cat_pers[$cat_pers_ca]['n_plur'];
+} # fine elseif ($cat_pers_ca != $dati_cap[$numca]['cat_pers']['ord'][0] or...
+} # fine if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num'] and $cat_pers_ca != "e")
 } # fine if ((string) $num_costo_mod != (string) "NO")
 else {
 $settimane_costo = $dati_cap[$numca]['settimane'];
@@ -844,6 +888,11 @@ $num_costo = $dati_ca['id'][$costo_agg_da_inserire[9]];
 if ($costo_agg_da_inserire[9] != $dati_ca[$num_costo]['id'] and $costo_agg_da_inserire[9] != "-1") $inserire = "NO";
 elseif (controlla_num_limite_costo($tablecostiprenota,$tableprenota,$dati_ca,$num_costo,$num_costi_presenti,$inizioperiodo,$fineperiodo,$costo_agg_da_inserire[6],$costo_agg_da_inserire[7],"",$tra_anni) == "NO") $inserire = "NO";
 if (str_replace(",$appartamento,","",",".$dati_ca[$num_costo]['appincompatibili'].",") != ",".$dati_ca[$num_costo]['appincompatibili'].",") $inserire = "NO";
+if ($costo_agg_da_inserire[8] == "s" and $dati_cat_pers['num']) {
+$cat_pers_ca = $costo_agg_da_inserire[19];
+if (!strcmp($dati_cat_pers[$cat_pers_ca]['n_plur'],"")) $inserire = "NO";
+else $cambia_cat_pers_ca_ins_idpr[$id_prenota][$num2] = $dati_cat_pers['arrotond']."<$cat_pers_ca>>".$dati_cat_pers[$cat_pers_ca]['osp_princ'].">".$dati_cat_pers[$cat_pers_ca]['perc'].">".$dati_cat_pers['lang'].">".$dati_cat_pers[$cat_pers_ca]['n_sing'].">".$dati_cat_pers[$cat_pers_ca]['n_plur'];
+} # fine if ($costo_agg_da_inserire[8] == "s" and $dati_cat_pers['num'])
 if ($dati_ca[$num_costo]['tipo_beniinv']) {
 $num_ripetizioni_costo_ins_idpr[$id_prenota][$num2] = "";
 $risul = controlla_beni_inventario_costo($tablerelinventario,$dati_ca,$num_costo,$beniinv_presenti,$num_ripetizioni_costo_ins_idpr[$id_prenota][$num2],"SI",$inizioperiodo,$fineperiodo,$costo_agg_da_inserire[6],$costo_agg_da_inserire[7],$appartamento);
@@ -1097,12 +1146,14 @@ $id_prenota = $id_prenota_idpr[$num_idpr];
 $d_id_utente_inserimento = $d_id_utente_inserimento_idpr[$id_prenota];
 $d_app_eliminati_costi = $d_app_eliminati_costi_idpr[$id_prenota];
 $d_prenota_comp = $d_prenota_comp_idpr[$id_prenota];
+$d_cat_persone = $d_cat_persone_idpr[$id_prenota];
 $n_costo_tot = $n_costo_tot_idpr[$id_prenota];
 $n_appartamento = $n_appartamento_idpr[$id_prenota];
 $n_assegnazioneapp = $n_assegnazioneapp_idpr[$id_prenota];
 $n_lista_app = $n_lista_app_idpr[$id_prenota];
 $n_app_eliminati_costi = $n_app_eliminati_costi_idpr[$id_prenota];
 $n_numpersone = $n_numpersone_idpr[$id_prenota];
+$cat_persone = $cat_persone_idpr[$id_prenota];
 $n_nometipotariffa = $n_nometipotariffa_idpr[$id_prenota];
 $n_costo_tariffa = $n_costo_tariffa_idpr[$id_prenota];
 $costi_aggiuntivi_modificati_int = $costi_aggiuntivi_modificati_int_idpr[$id_prenota];
@@ -1192,8 +1243,13 @@ esegui_query("update $tableprenota set idprenota_compagna = '$prenota_comp2' whe
 if ($dati_da_anno_prec == "SI") passa_var_a_anno_prec($id_prenota,$tableperiodi,$tableprenota,$tablecostiprenota,$d_id_data_inizio,$d_id_data_fine,$n_fineperiodo,$inizioperiodo,$fineperiodo,$lunghezza_periodo,$dati_prenota_modifica);
 
 if ($n_numpersone != "") {
-esegui_query("update $tableprenota set num_persone = '$n_numpersone' where idprenota = '$id_prenota' ");
+if (!$dati_cat_pers['num']) esegui_query("update $tableprenota set num_persone = '$n_numpersone', cat_persone = NULL where idprenota = '$id_prenota' ");
+else esegui_query("update $tableprenota set num_persone = '$n_numpersone' where idprenota = '$id_prenota' ");
 } # fine if ($n_numpersone != "")
+
+if ($dati_cat_pers['num'] and $cat_persone['int'] != $d_cat_persone['int']) {
+esegui_query("update $tableprenota set cat_persone = '".aggslashdb($cat_persone['int'])."' where idprenota = '$id_prenota' ");
+} # fine if ($dati_cat_pers['num'] and $cat_persone['int'] != $d_cat_persone['int'])
 
 if ($n_nometipotariffa != "") {
 if (substr($n_costo_tariffa,-1) == "p") $n_costo_tariffa = substr($n_costo_tariffa,0,-1)."#@&p";
@@ -1216,6 +1272,7 @@ if ($costo_agg_modificato[1] == "cancella") esegui_query("delete from $tablecost
 else {
 esegui_query("update $tablecostiprenota set settimane = '".$costo_agg_modificato[1]."', moltiplica = '".$costo_agg_modificato[2]."' where idcostiprenota = '".$costo_agg_modificato[0]."' and idprenota = '$id_prenota' ");
 if ($num_ripetizioni_costo_mod_idpr[$id_prenota][$num2]) esegui_query("update $tablecostiprenota set varbeniinv = '".$num_ripetizioni_costo_mod_idpr[$id_prenota][$num2]."' where idcostiprenota = '".$costo_agg_modificato[0]."' and idprenota = '$id_prenota' ");
+if ($cambia_cat_pers_ca_mod_idpr[$id_prenota][$num2]) esegui_query("update $tablecostiprenota set cat_persone = '".aggslashdb($cambia_cat_pers_ca_mod_idpr[$id_prenota][$num2])."' where idcostiprenota = '".$costo_agg_modificato[0]."' and idprenota = '$id_prenota' ");
 } # fine else if ($costo_agg_modificato[1] == "cancella")
 } # fine for $num2
 } # fine if ($costi_aggiuntivi_modificati_int)
@@ -1232,6 +1289,7 @@ if ($costo_agg_da_inserire[15]) $costo_agg_da_inserire[15] = $num_ripetizioni_co
 esegui_query("insert into $tablecostiprenota (idcostiprenota,idprenota,tipo,nome,valore,associasett,settimane,moltiplica,letto,idntariffe,varmoltiplica,varnumsett,varperiodipermessi,vartariffeassociate,vartariffeincomp,varbeniinv,varappincompatibili,variazione,categoria,datainserimento,hostinserimento,utente_inserimento) values ('$idcostiprenota','$id_prenota','".$costo_agg_da_inserire[0]."','".aggslashdb($costo_agg_da_inserire[1])."','".$costo_agg_da_inserire[2]."','".$costo_agg_da_inserire[5]."','".$costo_agg_da_inserire[6]."','".$costo_agg_da_inserire[7]."','".$costo_agg_da_inserire[8]."','".$costo_agg_da_inserire[9]."','".$costo_agg_da_inserire[10]."','".$costo_agg_da_inserire[11]."','".$costo_agg_da_inserire[12]."','".$costo_agg_da_inserire[13]."','".$costo_agg_da_inserire[14]."','".$costo_agg_da_inserire[15]."','".$costo_agg_da_inserire[16]."','".$costo_agg_da_inserire[17]."','".$costo_agg_da_inserire[18]."','$datainserimento','$HOSTNAME','$id_utente')");
 if (substr($costo_agg_da_inserire[0],1,1) != "f") esegui_query("update $tablecostiprenota set valore_perc = '".$costo_agg_da_inserire[3]."', arrotonda = '".$costo_agg_da_inserire[4]."' where idcostiprenota = '$idcostiprenota'");
 if ($dati_ca[$num_costo]['tasseperc']) esegui_query("update $tablecostiprenota set tasseperc = '".$dati_ca[$num_costo]['tasseperc']."' where idcostiprenota = '$idcostiprenota'");
+if ($cambia_cat_pers_ca_ins_idpr[$id_prenota][$num2]) esegui_query("update $tablecostiprenota set cat_persone = '".aggslashdb($cambia_cat_pers_ca_ins_idpr[$id_prenota][$num2])."' where idcostiprenota = '$idcostiprenota' ");
 } # fine for $num2
 } # fine if ($costi_aggiuntivi_da_inserire_int)
 

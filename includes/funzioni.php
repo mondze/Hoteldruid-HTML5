@@ -53,8 +53,8 @@ $tablepersonalizza = $PHPR_TAB_PRE."personalizza";
 
 #@include("./includes/costanti.php");
 #@include(C_DATI_PATH."/costanti.php");
-define('C_PHPR_VERSIONE_NUM',2.24);
-define('C_PHPR_VERSIONE_TXT',"2.2.4");
+define('C_PHPR_VERSIONE_NUM',2.30);
+define('C_PHPR_VERSIONE_TXT',"2.3.0");
 
 if (!function_exists('utf8_encode')) {
 function utf8_encode ($testo) { return ($testo); }

@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -393,11 +393,11 @@ $num_intervallo = 1;
 for ($num2 = 0 ; $num2 < $num_linee_file_intero ; $num2++) {
 if (substr($file_intero[$num2],0,7) == "<option") {
 $data_option = substr($file_intero[$num2],16,10);
-$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datainizio = '$data_option' ");
+$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datainizio = '".aggslashdb($data_option)."' ");
 $esiste_data_option = numlin_query($id_data_option);
 if ($esiste_data_option == 1) $id_data_option = risul_query($id_data_option,0,'idperiodi');
 else {
-$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datafine = '$data_option' ");
+$id_data_option = esegui_query("select idperiodi from $tableperiodi_modello where datafine = '".aggslashdb($data_option)."' ");
 $id_data_option = risul_query($id_data_option,0,'idperiodi');
 } # fine else if ($esiste_data_option == 1)
 if ($id_data_option >= $inizioperiodo and $id_data_option <= ($fineperiodo + 1)) {
@@ -913,12 +913,12 @@ $fineperiodo = aggslashdb(${"fineperiodo".$num1});
 $idinizioperiodo = esegui_query("select idperiodi from $tableperiodi_prec where datainizio = '$inizioperiodo' ");
 $num_idinizioperiodo = numlin_query($idinizioperiodo);
 if ($num_idinizioperiodo == 0) { $idinizioperiodo = 10000; }
-else { $idinizioperiodo = risul_query($idinizioperiodo,0,idperiodi); }
+else { $idinizioperiodo = risul_query($idinizioperiodo,0,'idperiodi'); }
 $inizioperiodo = $idinizioperiodo;
 $idfineperiodo = esegui_query("select idperiodi from $tableperiodi_prec where datafine = '$fineperiodo' ");
 $num_idfineperiodo = numlin_query($idfineperiodo);
 if ($num_idfineperiodo == 0) { $idfineperiodo = -1; }
-else { $idfineperiodo = risul_query($idfineperiodo,0,idperiodi); }
+else { $idfineperiodo = risul_query($idfineperiodo,0,'idperiodi'); }
 $fineperiodo = $idfineperiodo;
 $intervalloperiodo = aggslashdb(${"intervalloperiodo".$num1});
 if ($estendi_ultima_data == "SI" and $num1 == ($num_periodi_date - 1)) $fineperiodo = $id_data_ini_periodi_prec + $intervalloperiodo;
@@ -954,7 +954,7 @@ for ($num1 = 0 ; $num1 < 2000 ; $num1++) {
 $datainizio = date("Y-m-d",mktime(0,0,0,$mese_inizio,$giorno_inizio,$anno_inizio));
 $datainizio = esegui_query("select * from $tableperiodi where datainizio = '$datainizio'");
 if (numlin_query($datainizio) == 1) {
-$n_inizioperiodo[0] = risul_query($datainizio,0,idperiodi);
+$n_inizioperiodo[0] = risul_query($datainizio,0,'idperiodi');
 break;
 } # fine if (numlin_query($datainizio) == 1)
 $giorno_inizio = $giorno_inizio + ($n_intervalloperiodo[0] * $aggiungi_giorni);
@@ -966,9 +966,9 @@ for ($num1 = 0 ; $num1 < $n_num_periodi_date ; $num1++) {
 $inizioperiodo = $n_inizioperiodo[$num1];
 $fineperiodo = $n_fineperiodo[$num1];
 $inizioperiodo = esegui_query("select datainizio from $tableperiodi where idperiodi = '$inizioperiodo' ");
-$inizioperiodo = @risul_query($inizioperiodo,0,datainizio);
+$inizioperiodo = @risul_query($inizioperiodo,0,'datainizio');
 $fineperiodo = esegui_query("select datafine from $tableperiodi where idperiodi = '$fineperiodo' ");
-$fineperiodo = @risul_query($fineperiodo,0,datafine);
+$fineperiodo = @risul_query($fineperiodo,0,'datafine');
 if (!$inizioperiodo or !$fineperiodo) $n_num_periodi_date = 0;
 ${"inizioperiodo".$num1} = $inizioperiodo;
 ${"fineperiodo".$num1} = $fineperiodo;

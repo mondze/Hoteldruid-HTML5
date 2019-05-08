@@ -231,8 +231,10 @@ $nuovo_id = esegui_query("select max(idutenti) from $tableutenti");
 $nuovo_id = risul_query($nuovo_id,0,0) + 1;
 $nomi_contr = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_contratti' and idutente = '1' ");
 $nomi_contr = risul_query($nomi_contr,0,'valpersonalizza');
+$cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '1' ");
+$num_cat_pers = risul_query($cat_pers,0,'valpersonalizza_num');
 esegui_query("insert into $tableutenti (idutenti,nome_utente,tipo_pass,datainserimento,hostinserimento) values ('$nuovo_id','$nome','n','$datainserimento','$HOSTNAME')");
-esegui_query("insert into $tableprivilegi (idutente,anno,casse_consentite,priv_mod_pers,priv_ins_clienti,prefisso_clienti,priv_messaggi,priv_inventario) values ('$nuovo_id','1','n,','nnnnnn','nnnss','n,','nn','nnnnnnnnn')");
+esegui_query("insert into $tableprivilegi (idutente,anno,casse_consentite,priv_mod_pers,priv_ins_clienti,prefisso_clienti,priv_messaggi,priv_inventario) values ('$nuovo_id','1','n,','nnnnnnn','nnnss','n,','nn','nnnnnnnnn')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('col_tab_tutte_prenota','$nuovo_id','nu#@&cg#@&in#@&fi#@&tc#@&ca#@&pa#@&ap#@&pe#@&co')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('rig_tab_tutte_prenota','$nuovo_id','to#@&ta#@&ca#@&pc')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('dati_struttura','$nuovo_id','#@&#@&#@&#@&#@&#@&#@&#@&#@&#@&#@&')");
@@ -256,6 +258,18 @@ esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersona
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_righe_tab_doc_salvati','$nuovo_id','100')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_righe_tab_storia_soldi','$nuovo_id','200')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('stile_data','$nuovo_id','europa')");
+if ($num_cat_pers > 1) {
+$perc_cat_pers = risul_query($cat_pers,0,'valpersonalizza');
+esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza,valpersonalizza_num) values ('num_categorie_persone','$nuovo_id','".aggslashdb($perc_cat_pers)."','$num_cat_pers')");
+$nomi_cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza $LIKE 'nomi_cat_pers_%' and idutente = '1' ");
+$num_nomi_cat_pers = numlin_query($nomi_cat_pers);
+for ($num1 = 0 ; $num1 <= $num_nomi_cat_pers ; $num1++) {
+$l_cat_pers = risul_query($nomi_cat_pers,$num1,'idpersonalizza');
+$n_cat_pers = risul_query($nomi_cat_pers,$num1,'valpersonalizza');
+esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('".aggslashdb($l_cat_pers)."','$nuovo_id','".aggslashdb($n_cat_pers)."')");
+} # fine for $num1
+} # fine if ($num_cat_pers > 1)
+else esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_categorie_persone','$nuovo_id','1')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('ore_anticipa_periodo_corrente','$nuovo_id','0')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('metodi_pagamento','$nuovo_id','')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('origini_prenota','$nuovo_id','')");

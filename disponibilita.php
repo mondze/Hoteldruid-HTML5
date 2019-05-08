@@ -177,11 +177,11 @@ $data_inizioperiodo = $inizioperiodo;
 $data_inizioperiodo_f = formatta_data($data_inizioperiodo,$stile_data);
 $data_fineperiodo = $fineperiodo;
 $data_fineperiodo_f = formatta_data($data_fineperiodo,$stile_data);
-$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '$inizioperiodo' ");
+$idinizioperiodo = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb($inizioperiodo)."' ");
 $num_idinizioperiodo = numlin_query($idinizioperiodo);
 if ($num_idinizioperiodo == 0) { $idinizioperiodo = 10000; }
 else { $idinizioperiodo = risul_query($idinizioperiodo,0,'idperiodi'); }
-$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '$fineperiodo' ");
+$idfineperiodo = esegui_query("select idperiodi from $tableperiodi where datafine = '".aggslashdb($fineperiodo)."' ");
 $num_idfineperiodo = numlin_query($idfineperiodo);
 if ($num_idfineperiodo == 0) { $idfineperiodo = -1; }
 else { $idfineperiodo = risul_query($idfineperiodo,0,'idperiodi'); }

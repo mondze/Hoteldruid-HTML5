@@ -365,6 +365,9 @@ case "potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel":	$m
 case "non potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel":	$messaggio = "ya no podrá modificar el <b>usuario</b> que ha insertado la reserva en el"; break;
 case "senza mostrarla":  			$messaggio = "sin mostrarla"; break;
 case "senza mostrarli":  			$messaggio = "sin mostrarlos"; break;
+case "Modifica delle tipologie di persone":  	$messaggio = "Modificar los tipos de personas"; break;
+case "potrà modificare le sue <b>tipologie di persone</b>":	$messaggio = "podrá modificar sus <b>tipos de personas</b>"; break;
+case "non potrà più modificare le sue <b>tipologie di persone</b>":	$messaggio = "ya no podrá modificar sus <b>tipos de personas</b>"; break;
 case "":  		$messaggio = ""; break;
 case "":  		$messaggio = ""; break;
 

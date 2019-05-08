@@ -331,17 +331,19 @@ $numero_tariffa = ${"numero_tariffa".$n_t};
 
 if (!$inizioperiodo or !$fineperiodo or !$numero_tariffa) $verificare = "NO";
 
+if (!preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$inizioperiodo)) $inizioperiodo = "1975-01-01";
+if (!preg_match("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/",$fineperiodo)) $fineperiodo = "1975-01-01";
 $data_inizioperiodo[$n_t] = $inizioperiodo;
 $data_inizioperiodo_f[$n_t] = formatta_data($data_inizioperiodo[$n_t],$stile_data);
 $data_fineperiodo[$n_t] = $fineperiodo;
 $data_fineperiodo_f[$n_t] = formatta_data($data_fineperiodo[$n_t],$stile_data);
-$idinizioperiodo[$n_t] = esegui_query("select idperiodi from $tableperiodi where datainizio = '$inizioperiodo' ");
+$idinizioperiodo[$n_t] = esegui_query("select idperiodi from $tableperiodi where datainizio = '".aggslashdb($inizioperiodo)."' ");
 $num_idinizioperiodo = numlin_query($idinizioperiodo[$n_t]);
 if ($num_idinizioperiodo == 0) { $idinizioperiodo[$n_t] = 10000; }
 else { $idinizioperiodo[$n_t] = risul_query($idinizioperiodo[$n_t],0,'idperiodi'); }
 $inizioperiodo = $idinizioperiodo[$n_t];
 if (!$idinizioperiodo_min or $inizioperiodo < $idinizioperiodo_min) $idinizioperiodo_min = $inizioperiodo;
-$idfineperiodo[$n_t] = esegui_query("select idperiodi from $tableperiodi where datafine = '$fineperiodo' ");
+$idfineperiodo[$n_t] = esegui_query("select idperiodi from $tableperiodi where datafine = '".aggslashdb($fineperiodo)."' ");
 $num_idfineperiodo = numlin_query($idfineperiodo[$n_t]);
 if ($num_idfineperiodo == 0) { $idfineperiodo[$n_t] = -1; }
 else { $idfineperiodo[$n_t] = risul_query($idfineperiodo[$n_t],0,'idperiodi'); }
