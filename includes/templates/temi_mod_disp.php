@@ -118,7 +118,7 @@ $framed_mode_extra_head[1] = "<style type=\"text/css\">
  div.arrdate input, div.depdate input { margin: 0; }
  div.submit_check { text-align: right; }
  span.ftxt_phr { display: block; }
- #perstype td { display: block; text-align: left; padding: 2px 0 2px 0; }
+ table.perstype td { display: block; text-align: left; padding: 2px 0 2px 0; }
 </style>";
 $framed_mode_example[1] = "<iframe src=\"[page_url]?framed=1\" 
 style=\"width: 200px; height: 260px;\" frameborder=\"0\">

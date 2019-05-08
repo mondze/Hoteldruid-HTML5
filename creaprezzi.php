@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2017 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -748,6 +748,7 @@ if ($ins_rapido_costo and $priv_ins_costi_agg != "n") {
 $inserisci_settimanalmente = "";
 $inserisci = "";
 $modifica = "";
+if ($tipocostoagg != "off_spec" and $tipocostoagg != "num_bamb" and $tipocostoagg != "letto_agg") $tipocostoagg = "perm_min";
 
 if ($tipocostoagg == "perm_min" or $tipocostoagg == "off_spec") {
 $rigatariffe = esegui_query("select * from $tablenometariffe where idntariffe = 1 ");
@@ -883,7 +884,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"creaprezzi.php\"><
 <input type=\"hidden\" name=\"ins_rapido_costo\" value=\"SI\">
 <input type=\"hidden\" name=\"tipocostoagg\" value=\"$tipocostoagg\">
 <input type=\"hidden\" name=\"inseriscicosti\" value=\"SI\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 if (!$nomecostoagg) {
 $num_nome = 1;
 while ($num_nome) {
@@ -899,7 +900,7 @@ if ($tipocostoagg == "num_bamb") echo "<div style=\"text-align: center; font-siz
 echo "<br>";
 if ($nom_err) echo "<b class=\"colred\">&gt;</b>";
 echo mex("Nome del nuovo costo aggiuntivo",$pag).":
-<input type=\"text\" name=\"nomecostoagg\" size=\"24\" value=\"$nomecostoagg\">.<br><br>";
+<input type=\"text\" name=\"nomecostoagg\" size=\"24\" value=\"".htmlspecialchars($nomecostoagg)."\">.<br><br>";
 
 if ($tipocostoagg == "num_bamb" or $tipocostoagg == "letto_agg" or $tipocostoagg == "off_spec") {
 if ($val_err) echo "<b class=\"colred\">&gt;</b>";
@@ -921,26 +922,26 @@ if ($tipo_val_rapido != "t" and $tipo_val_rapido != "p") $checked = " checked";
 else $checked = "";
 echo "<table><tr><td style=\"width: 30px;\"></td><td>
 <label><input type=\"radio\" id=\"tsb_f\" name=\"tipo_val_rapido\" value=\"f\"$checked> ".mex("fisso di",$pag)."
-</label><input type=\"text\" name=\"valore_f_ca\" value=\"$valore_f_ca\" size=\"12\"
+</label><input type=\"text\" name=\"valore_f_ca\" value=\"".htmlspecialchars($valore_f_ca)."\" size=\"12\"
  onclick=\"document.getElementById('tsb_f').checked='1'\"><label for=\"tsb_f\">$Euro";
 if ($tipocostoagg == "off_spec" or $tipocostoagg == "letto_agg") echo " ".mex("al giorno",$pag);
 echo "</label></td></tr>";
 if ($tipo_val_rapido == "t") $checked = " checked";
 else $checked = "";
 echo "<tr><td></td><td><label><input type=\"radio\" id=\"tsb_t\" name=\"tipo_val_rapido\" value=\"t\"$checked>
-</label><input type=\"text\" name=\"valore_p_ca_t\" value=\"$valore_p_ca_t\" size=\"4\"
+</label><input type=\"text\" name=\"valore_p_ca_t\" value=\"".htmlspecialchars($valore_p_ca_t)."\" size=\"4\"
  onclick=\"document.getElementById('tsb_t').checked='1'\"><label for=\"tsb_t\">% 
 ".mex("della tariffa",$pag)." ".mex("arrotondato a",$pag)."
-</label><input type=\"text\" name=\"arrotonda_ca_t\" value=\"$arrotonda_ca_t\" size=\"6\"
+</label><input type=\"text\" name=\"arrotonda_ca_t\" value=\"".htmlspecialchars($arrotonda_ca_t)."\" size=\"6\"
  onclick=\"document.getElementById('tsb_t').checked='1'\"><label for=\"tsb_t\">$Euro</label></td></tr>";
 if ($tipocostoagg == "num_bamb" or $tipocostoagg == "letto_agg") {
 if ($tipo_val_rapido == "p") $checked = " checked";
 else $checked = "";
 echo "<tr><td></td><td><label><input type=\"radio\" id=\"tsb_p\" name=\"tipo_val_rapido\" value=\"p\"$checked>
-</label><input type=\"text\" name=\"valore_p_ca_p\" value=\"$valore_p_ca_p\" size=\"4\"
+</label><input type=\"text\" name=\"valore_p_ca_p\" value=\"".htmlspecialchars($valore_p_ca_p)."\" size=\"4\"
  onclick=\"document.getElementById('tsb_p').checked='1'\"><label for=\"tsb_p\">% 
 ".mex("del prezzo di una persona",$pag)." ".mex("arrotondato a",$pag)."
-</label><input type=\"text\" name=\"arrotonda_ca_p\" value=\"$arrotonda_ca_p\" size=\"6\"
+</label><input type=\"text\" name=\"arrotonda_ca_p\" value=\"".htmlspecialchars($arrotonda_ca_p)."\" size=\"6\"
  onclick=\"document.getElementById('tsb_p').checked='1'\"><label for=\"tsb_p\">$Euro</label>
  <small>(".mex("solo per tariffe con prezzi a persona",$pag).")</small></td></tr>";
 } # fine if ($tipocostoagg == "num_bamb" or $tipocostoagg == "letto_agg")
@@ -948,10 +949,10 @@ if ($tipocostoagg == "off_spec") {
 if ($tipo_val_rapido == "pt") $checked = " checked";
 else $checked = "";
 echo "<tr><td></td><td><label><input type=\"radio\" id=\"tsb_pt\" name=\"tipo_val_rapido\" value=\"pt\"$checked>
-</label><input type=\"text\" name=\"valore_p_ca_pt\" value=\"$valore_p_ca_pt\" size=\"4\"
+</label><input type=\"text\" name=\"valore_p_ca_pt\" value=\"".htmlspecialchars($valore_p_ca_pt)."\" size=\"4\"
  onclick=\"document.getElementById('tsb_pt').checked='1'\"><label for=\"tsb_pt\">% 
 ".mex("del prezzo totale",$pag)." ".mex("arrotondato a",$pag)."
-</label><input type=\"text\" name=\"arrotonda_ca_pt\" value=\"$arrotonda_ca_pt\" size=\"6\"
+</label><input type=\"text\" name=\"arrotonda_ca_pt\" value=\"".htmlspecialchars($arrotonda_ca_pt)."\" size=\"6\"
  onclick=\"document.getElementById('tsb_pt').checked='1'\"><label for=\"tsb_pt\">$Euro</label></td></tr>";
 } # fine if ($tipocostoagg == "off_spec")
 echo "</table><br>";
@@ -960,7 +961,7 @@ echo "</table><br>";
 if ($tipocostoagg == "num_bamb" or $tipocostoagg == "letto_agg" or $tipocostoagg == "off_spec") {
 if (!$tasseperc_ca) $tasseperc_ca = "0";
 if ($tas_err) echo "<b class=\"colred\">&gt;</b>";
-echo "".mex("Tasse",$pag).": <input type=\"text\" name=\"tasseperc_ca\" value=\"$tasseperc_ca\" size=\"4\">%
+echo "".mex("Tasse",$pag).": <input type=\"text\" name=\"tasseperc_ca\" value=\"".htmlspecialchars($tasseperc_ca)."\" size=\"4\">%
  <small>(".mex("il valore del costo si intente con tasse già incluse",$pag).")</small><br><br>";
 } # fine if ($tipocostoagg == "num_bamb" or $tipocostoagg == "letto_agg")
 
@@ -969,7 +970,7 @@ if (!$valminmax_pm) $valminmax_pm = 3;
 echo "<br>";
 if ($vmm_err) echo "<b class=\"colred\">&gt;</b>";
 echo mex("Numero minimo di giorni",$pag).":
-<input type=\"text\" name=\"valminmax_pm\" size=\"3\" value=\"$valminmax_pm\">.<br><br>";
+<input type=\"text\" name=\"valminmax_pm\" size=\"3\" value=\"".htmlspecialchars($valminmax_pm)."\">.<br><br>";
 } # fine if ($tipocostoagg == "perm_min")
 
 if ($tipocostoagg == "perm_min" or $tipocostoagg == "off_spec") {
@@ -1004,7 +1005,7 @@ else $checked = "";
 if ($agm_err) echo "<b class=\"colred\">&gt;</b>";
 echo "<label><input type=\"checkbox\" id=\"ass_g_m\" name=\"assegna_giorni_min\" value=\"s\"$checked>
 ".mex("Se la prenotazione ha una durata di",$pag)."
- </label><input type=\"text\" name=\"valminmax_pm\" size=\"3\" value=\"$valminmax_pm\"
+ </label><input type=\"text\" name=\"valminmax_pm\" size=\"3\" value=\"".htmlspecialchars($valminmax_pm)."\"
 onclick=\"document.getElementById('ass_g_m').checked='1'\"><label for=\"ass_g_m\">
  ".mex("o più giorni",$pag).".</label><br>";
 if ($assegna_da_giorno_ini == "s") $checked = " checked";
@@ -1018,7 +1019,7 @@ echo "<label><input type=\"checkbox\" id=\"ass_g_i\" name=\"assegna_da_giorno_in
 <option value=\"meno\"$sel_m>".mex("meno di",$pag)."</option>
 <option value=\"piu\"$sel_p>".mex("più di",$pag)."</option>
 </select>
-<input type=\"text\" name=\"ass_gio_ini_num\" value=\"".$ass_gio_ini_num."\" size=\"3\"
+<input type=\"text\" name=\"ass_gio_ini_num\" value=\"".htmlspecialchars($ass_gio_ini_num)."\" size=\"3\"
  onclick=\"document.getElementById('ass_g_i').checked='1'\">
 <label for=\"ass_g_i\">".mex("giorni dalla data iniziale della prenotazione quando viene inserita",$pag).".</label><br>";
 if ($assegna_prenota_contemp == "s") $checked = " checked";
@@ -1026,7 +1027,7 @@ else $checked = "";
 if ($apc_err) echo "<b class=\"colred\">&gt;</b>";
 echo "<label><input type=\"checkbox\" id=\"ass_p_c\" name=\"assegna_prenota_contemp\" value=\"s\"$checked>
 ".mex("Se si inseriscono",$pag)."</label>
-<input type=\"text\" name=\"ass_pren_cont_num\" value=\"".$ass_pren_cont_num."\" size=\"3\"
+<input type=\"text\" name=\"ass_pren_cont_num\" value=\"".htmlspecialchars($ass_pren_cont_num)."\" size=\"3\"
  onclick=\"document.getElementById('ass_p_c').checked='1'\">
 <label for=\"ass_p_c\">".mex("o più prenotazioni contemporaneamente",$pag).".</label><br><br><br>";
 } # fine if ($tipocostoagg == "off_spec")
@@ -1165,7 +1166,7 @@ if ($tipocostoagg == "letto_agg") {
 if ($moltmax_err) echo "<b class=\"colred\">&gt;</b>";
 if (!$moltmax) $moltmax = 1;
 echo "".mex("Numero massimo",$pag)." ".mex("per appartamento",'unit.php').":
- <input type=\"text\" name=\"moltmax\" value=\"$moltmax\" size=\"3\">.<br><br>";
+ <input type=\"text\" name=\"moltmax\" value=\"".htmlspecialchars($moltmax)."\" size=\"3\">.<br><br>";
 } # fine if ($tipocostoagg == "letto_agg")
 
 if ($tipocostoagg == "letto_agg") {
@@ -1183,7 +1184,7 @@ echo "<label><input type=\"radio\" name=\"limite_ca\" value=\"n\"$checked> ".mex
 if ($limite_ca == "s") $checked = " checked";
 else $checked = "";
 echo "<label><input type=\"radio\" id=\"li_s\" name=\"limite_ca\" value=\"s\"$checked> ".mex("Si",$pag).":</label>
-<input type=\"text\" name=\"numlimite_ca\" value=\"$numlimite_ca\" size=\"4\" onclick=\"document.getElementById('li_s').checked='1';\">
+<input type=\"text\" name=\"numlimite_ca\" value=\"".htmlspecialchars($numlimite_ca)."\" size=\"4\" onclick=\"document.getElementById('li_s').checked='1';\">
 </td></tr></table><br>";
 } # fine if ($tipocostoagg == "letto_agg")
 
@@ -1194,7 +1195,7 @@ echo "<br><label><input type=\"checkbox\" name=\"agg_modelli\" value=\"s\" check
 } # fine if ($id_utente == 1)
 } # fine if ($tipocostoagg == "off_spec")
 
-if ($origine) $action = $origine;
+if ($origine) $action = controlla_pag_origine($origine);
 else $action = $pag;
 echo "<div style=\"text-align: center;\">
 <button class=\"aexc\" type=\"submit\"><div>".mex("Inserisci il costo aggiuntivo",$pag)."</div></button>
@@ -1404,7 +1405,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"creaprezzi.php\"><
 <input type=\"hidden\" name=\"inseriscicosti\" value=\"SI\">
 <input type=\"hidden\" name=\"nomecostoagg\" value=\"$nomecostoagg\">
 <input type=\"hidden\" name=\"categoria_ca\" value=\"$categoria_ca\">
-<input type=\"hidden\" name=\"tipo_ca\" value=\"$tipo_ca\">";
+<input type=\"hidden\" name=\"tipo_ca\" value=\"".htmlspecialchars($tipo_ca)."\">";
 
 if ($passo >= 3) {
 $valore_f_ca = formatta_soldi($valore_f_ca);
@@ -1419,7 +1420,7 @@ if ($valore_p_ca and $tipo_ca == "s" and substr($tipo_percentuale,0,7) != "tarif
 if (($tasseperc_ca and controlla_soldi($tasseperc_ca) == "NO") or $tasseperc_ca > 100 or $tasseperc_ca < 0) $errore = "SI";
 if ($tipo_tasse != "t") $tipo_tasse = "p";
 echo "<input type=\"hidden\" name=\"valore_f_ca\" value=\"$valore_f_ca\">
-<input type=\"hidden\" name=\"tipo_percentuale\" value=\"$tipo_percentuale\">
+<input type=\"hidden\" name=\"tipo_percentuale\" value=\"".htmlspecialchars($tipo_percentuale)."\">
 <input type=\"hidden\" name=\"valore_p_ca\" value=\"$valore_p_ca\">
 <input type=\"hidden\" name=\"arrotonda_ca\" value=\"$arrotonda_ca\">
 <input type=\"hidden\" name=\"tipo_tasse\" value=\"$tipo_tasse\">
@@ -1432,8 +1433,8 @@ if ($tipo_ca != "s" and $associasett != "") $errore = "SI";
 if ($tipo_ca == "s" and $associasett == "") $errore = "SI";
 if ($valore_p_ca and $associasett == "n") $errore = "SI";
 if ($associasett != "" and $associasett != "n" and $associasett != "s") $errore = "SI";
-echo "<input type=\"hidden\" name=\"associa_tariffe\" value=\"$associa_tariffe\">
-<input type=\"hidden\" name=\"associasett\" value=\"$associasett\">";
+echo "<input type=\"hidden\" name=\"associa_tariffe\" value=\"".htmlspecialchars($associa_tariffe)."\">
+<input type=\"hidden\" name=\"associasett\" value=\"".htmlspecialchars($associasett)."\">";
 $rigatariffe = esegui_query("select * from $tablenometariffe where idntariffe = 1 ");
 $numero_tariffe = risul_query($rigatariffe,0,'nomecostoagg');
 for ($numtariffa = 1 ; $numtariffa <= $numero_tariffe ; $numtariffa++) {
@@ -1452,9 +1453,9 @@ if (${"valminmax".$tariffa} and (controlla_num_pos(${"valminmax".$tariffa}) == "
 if (${"sel".$tariffa} and ${"minmax".$tariffa} and !${"valminmax".$tariffa}) $errore = "SI";
 if (${"valminmax2".$tariffa} and (controlla_num_pos(${"valminmax2".$tariffa}) == "NO" or ${"valminmax2".$tariffa} == 0)) $errore = "SI";
 if (${"sel".$tariffa} and ${"minmax".$tariffa} == "tra" and (!${"valminmax2".$tariffa} or ${"valminmax2".$tariffa} <= ${"valminmax".$tariffa})) $errore = "SI";
-echo "<input type=\"hidden\" name=\"minmax$tariffa\" value=\"".${"minmax".$tariffa}."\">
-<input type=\"hidden\" name=\"valminmax$tariffa\" value=\"".${"valminmax".$tariffa}."\">
-<input type=\"hidden\" name=\"valminmax2$tariffa\" value=\"".${"valminmax2".$tariffa}."\">";
+echo "<input type=\"hidden\" name=\"minmax$tariffa\" value=\"".htmlspecialchars(${"minmax".$tariffa})."\">
+<input type=\"hidden\" name=\"valminmax$tariffa\" value=\"".htmlspecialchars(${"valminmax".$tariffa})."\">
+<input type=\"hidden\" name=\"valminmax2$tariffa\" value=\"".htmlspecialchars(${"valminmax2".$tariffa})."\">";
 } # fine if ($attiva_tariffe_consentite == "n" or $tariffe_consentite_vett[$numtariffa] == "SI")
 } # fine for $numtariffa
 if ($assegna_da_giorno_ini != "s") $assegna_da_giorno_ini = "";
@@ -1462,27 +1463,27 @@ if ($assegna_da_giorno_ini == "s" and $ass_gio_ini_segno != "meno" and $ass_gio_
 if ($assegna_da_giorno_ini == "s" and (!$ass_gio_ini_num or controlla_num_pos($ass_gio_ini_num) == "NO")) $errore = "SI";
 if ($assegna_prenota_contemp != "s") $assegna_prenota_contemp = "";
 if ($assegna_prenota_contemp == "s" and (!$ass_pren_cont_num or controlla_num_pos($ass_pren_cont_num) == "NO")) $errore = "SI";
-echo "<input type=\"hidden\" name=\"assegna_da_giorno_ini\" value=\"$assegna_da_giorno_ini\">
-<input type=\"hidden\" name=\"ass_gio_ini_segno\" value=\"$ass_gio_ini_segno\">
-<input type=\"hidden\" name=\"ass_gio_ini_num\" value=\"$ass_gio_ini_num\">
+echo "<input type=\"hidden\" name=\"assegna_da_giorno_ini\" value=\"".htmlspecialchars($assegna_da_giorno_ini)."\">
+<input type=\"hidden\" name=\"ass_gio_ini_segno\" value=\"".htmlspecialchars($ass_gio_ini_segno)."\">
+<input type=\"hidden\" name=\"ass_gio_ini_num\" value=\"".htmlspecialchars($ass_gio_ini_num)."\">
 <input type=\"hidden\" name=\"assegna_prenota_contemp\" value=\"$assegna_prenota_contemp\">
-<input type=\"hidden\" name=\"ass_pren_cont_num\" value=\"$ass_pren_cont_num\">";
+<input type=\"hidden\" name=\"ass_pren_cont_num\" value=\"".htmlspecialchars($ass_pren_cont_num)."\">";
 } # fine if ($passo >= 4)
 
 if ($passo >= 5) {
-echo "<input type=\"hidden\" name=\"numsett_ca\" value=\"$numsett_ca\">
-<input type=\"hidden\" name=\"pos_menouna\" value=\"$pos_menouna\">
-<input type=\"hidden\" name=\"val1_prime_si\" value=\"$val1_prime_si\">
-<input type=\"hidden\" name=\"val2_prime_si\" value=\"$val2_prime_si\">
-<input type=\"hidden\" name=\"val1_prime_no\" value=\"$val1_prime_no\">
-<input type=\"hidden\" name=\"val2_prime_no\" value=\"$val2_prime_no\">
-<input type=\"hidden\" name=\"lun_sel\" value=\"$lun_sel\">
-<input type=\"hidden\" name=\"mar_sel\" value=\"$mar_sel\">
-<input type=\"hidden\" name=\"mer_sel\" value=\"$mer_sel\">
-<input type=\"hidden\" name=\"gio_sel\" value=\"$gio_sel\">
-<input type=\"hidden\" name=\"ven_sel\" value=\"$ven_sel\">
-<input type=\"hidden\" name=\"sab_sel\" value=\"$sab_sel\">
-<input type=\"hidden\" name=\"dom_sel\" value=\"$dom_sel\">";
+echo "<input type=\"hidden\" name=\"numsett_ca\" value=\"".htmlspecialchars($numsett_ca)."\">
+<input type=\"hidden\" name=\"pos_menouna\" value=\"".htmlspecialchars($pos_menouna)."\">
+<input type=\"hidden\" name=\"val1_prime_si\" value=\"".htmlspecialchars($val1_prime_si)."\">
+<input type=\"hidden\" name=\"val2_prime_si\" value=\"".htmlspecialchars($val2_prime_si)."\">
+<input type=\"hidden\" name=\"val1_prime_no\" value=\"".htmlspecialchars($val1_prime_no)."\">
+<input type=\"hidden\" name=\"val2_prime_no\" value=\"".htmlspecialchars($val2_prime_no)."\">
+<input type=\"hidden\" name=\"lun_sel\" value=\"".htmlspecialchars($lun_sel)."\">
+<input type=\"hidden\" name=\"mar_sel\" value=\"".htmlspecialchars($mar_sel)."\">
+<input type=\"hidden\" name=\"mer_sel\" value=\"".htmlspecialchars($mer_sel)."\">
+<input type=\"hidden\" name=\"gio_sel\" value=\"".htmlspecialchars($gio_sel)."\">
+<input type=\"hidden\" name=\"ven_sel\" value=\"".htmlspecialchars($ven_sel)."\">
+<input type=\"hidden\" name=\"sab_sel\" value=\"".htmlspecialchars($sab_sel)."\">
+<input type=\"hidden\" name=\"dom_sel\" value=\"".htmlspecialchars($dom_sel)."\">";
 if ($tipo_ca == "s") {
 if ($numsett_ca != "t" and $numsett_ca != "m" and $numsett_ca != "c" and $numsett_ca != "s" and $numsett_ca != "n" and $numsett_ca != "g") $errore = "SI";
 if ($tipo_periodi != "g" and $numsett_ca == "g") $errore = "SI";
@@ -1514,12 +1515,12 @@ if ($moltiplica_ca == "1" and strcmp($agg_moltiplica_1,"")) $agg_moltiplica = $a
 if ($moltiplica_ca == "p" and strcmp($agg_moltiplica_p,"")) $agg_moltiplica = $agg_moltiplica_p;
 if ($moltiplica_ca == "t" and strcmp($agg_moltiplica_t,"")) $agg_moltiplica = $agg_moltiplica_t;
 if ($moltiplica_ca == "c") $agg_moltiplica = 0;
-echo "<input type=\"hidden\" name=\"moltiplica_ca\" value=\"$moltiplica_ca\">
-<input type=\"hidden\" name=\"tipo_moltmax\" value=\"$tipo_moltmax\">
-<input type=\"hidden\" name=\"moltmax\" value=\"$moltmax\">
-<input type=\"hidden\" name=\"meno_moltmax_p\" value=\"$meno_moltmax_p\">
-<input type=\"hidden\" name=\"meno_moltmax_t\" value=\"$meno_moltmax_t\">
-<input type=\"hidden\" name=\"agg_moltiplica\" value=\"$agg_moltiplica\">";
+echo "<input type=\"hidden\" name=\"moltiplica_ca\" value=\"".htmlspecialchars($moltiplica_ca)."\">
+<input type=\"hidden\" name=\"tipo_moltmax\" value=\"".htmlspecialchars($tipo_moltmax)."\">
+<input type=\"hidden\" name=\"moltmax\" value=\"".htmlspecialchars($moltmax)."\">
+<input type=\"hidden\" name=\"meno_moltmax_p\" value=\"".htmlspecialchars($meno_moltmax_p)."\">
+<input type=\"hidden\" name=\"meno_moltmax_t\" value=\"".htmlspecialchars($meno_moltmax_t)."\">
+<input type=\"hidden\" name=\"agg_moltiplica\" value=\"".htmlspecialchars($agg_moltiplica)."\">";
 if ($moltiplica_ca != "1" and $moltiplica_ca != "c" and $moltiplica_ca != "p" and $moltiplica_ca != "t") $errore = "SI";
 if ($moltiplica_ca == "c") {
 if ($associa_tariffe != "n" or $assegna_da_giorno_ini or $assegna_prenota_contemp) $errore = "SI";
@@ -1535,13 +1536,13 @@ if (controlla_num($agg_moltiplica) == "NO") $errore = "SI";
 
 if ($passo >= 7) {
 if (!$beni_inv_elimina) $beni_inv_elimina = "nessuno";
-echo "<input type=\"hidden\" name=\"beni_inv_elimina\" value=\"$beni_inv_elimina\">
-<input type=\"hidden\" name=\"num_beni_inv_elimina_sel\" value=\"$num_beni_inv_elimina_sel\">
-<input type=\"hidden\" name=\"tipo_bie\" value=\"$tipo_bie\">
-<input type=\"hidden\" name=\"mag_bie_sel\" value=\"$mag_bie_sel\">";
+echo "<input type=\"hidden\" name=\"beni_inv_elimina\" value=\"".htmlspecialchars($beni_inv_elimina)."\">
+<input type=\"hidden\" name=\"num_beni_inv_elimina_sel\" value=\"".htmlspecialchars($num_beni_inv_elimina_sel)."\">
+<input type=\"hidden\" name=\"tipo_bie\" value=\"".htmlspecialchars($tipo_bie)."\">
+<input type=\"hidden\" name=\"mag_bie_sel\" value=\"".htmlspecialchars($mag_bie_sel)."\">";
 for ($num1 = 1 ; $num1 <= $num_beni_inv_elimina_sel ; $num1++) {
-echo "<input type=\"hidden\" name=\"bene_inv_sel$num1\" value=\"".${"bene_inv_sel".$num1}."\">
-<input type=\"hidden\" name=\"molt_bene_inv_sel$num1\" value=\"".${"molt_bene_inv_sel".$num1}."\">";
+echo "<input type=\"hidden\" name=\"bene_inv_sel$num1\" value=\"".htmlspecialchars(${"bene_inv_sel".$num1})."\">
+<input type=\"hidden\" name=\"molt_bene_inv_sel$num1\" value=\"".htmlspecialchars(${"molt_bene_inv_sel".$num1})."\">";
 } # fine for $num1
 if ($beni_inv_elimina != "nessuno" and $beni_inv_elimina != "sel") $errore = "SI";
 if ($beni_inv_elimina != "nessuno" and ($priv_vedi_beni_inv == "n" or (($priv_vedi_inv_mag == "n" or $priv_mod_beni_in_mag == "n") and ($priv_vedi_inv_app == "n" or $priv_mod_beni_in_app == "n")))) $errore = "SI";
@@ -1569,12 +1570,12 @@ if (numlin_query($mag_esist) != 1) $errore = "SI";
 } # fine if ($passo >= 7)
 
 if ($passo >= 8) {
-echo "<input type=\"hidden\" name=\"periodi_permessi\" value=\"$periodi_permessi\">
-<input type=\"hidden\" name=\"num_periodi_permessi_sel\" value=\"$num_periodi_permessi_sel\">
-<input type=\"hidden\" name=\"tipo_pp\" value=\"$tipo_pp\">";
+echo "<input type=\"hidden\" name=\"periodi_permessi\" value=\"".htmlspecialchars($periodi_permessi)."\">
+<input type=\"hidden\" name=\"num_periodi_permessi_sel\" value=\"".htmlspecialchars($num_periodi_permessi_sel)."\">
+<input type=\"hidden\" name=\"tipo_pp\" value=\"".htmlspecialchars($tipo_pp)."\">";
 for ($num1 = 1 ; $num1 <= $num_periodi_permessi_sel ; $num1++) {
-echo "<input type=\"hidden\" name=\"pp_dal$num1\" value=\"".${"pp_dal".$num1}."\">
-<input type=\"hidden\" name=\"pp_al$num1\" value=\"".${"pp_al".$num1}."\">";
+echo "<input type=\"hidden\" name=\"pp_dal$num1\" value=\"".htmlspecialchars(${"pp_dal".$num1})."\">
+<input type=\"hidden\" name=\"pp_al$num1\" value=\"".htmlspecialchars(${"pp_al".$num1})."\">";
 } # fine for $num1
 if ($periodi_permessi != "tutti" and $periodi_permessi != "sel") $errore = "SI";
 if ($periodi_permessi == "sel") {
@@ -1605,8 +1606,8 @@ if (${"app_incomp_".$num1} == "i") {
 $app_incompatibili = "SI";
 if ($priv_vedi_tab_appartamenti != "s" and $appartamenti_consentiti[${"idapp_incomp_".$num1}] == "NO") $errore = "SI";
 if ($associa_tariffe != "n" or $assegna_da_giorno_ini or $assegna_prenota_contemp) $errore = "SI";
-echo "<input type=\"hidden\" name=\"app_incomp_$num1\" value=\"".${"app_incomp_".$num1}."\">
-<input type=\"hidden\" name=\"idapp_incomp_$num1\" value=\"".${"idapp_incomp_".$num1}."\">";
+echo "<input type=\"hidden\" name=\"app_incomp_$num1\" value=\"".htmlspecialchars(${"app_incomp_".$num1})."\">
+<input type=\"hidden\" name=\"idapp_incomp_$num1\" value=\"".htmlspecialchars(${"idapp_incomp_".$num1})."\">";
 } # fine if (${"app_incomp_".$num1} == "i")
 } # fine for $num1
 } # fine if ($passo >= 9)
@@ -1620,7 +1621,7 @@ if (${"incomp_".$tariffa} != "" and ${"incomp_".$tariffa} != "i") $errore = "SI"
 if ((${"sel".$tariffa} == "s" and $associa_tariffe != "n") and ${"incomp_".$tariffa} != "") $errore = "SI";
 if (${"incomp_".$tariffa} == "i") {
 $tariffe_incompatibili = "SI";
-echo "<input type=\"hidden\" name=\"incomp_$tariffa\" value=\"".${"incomp_".$tariffa}."\">";
+echo "<input type=\"hidden\" name=\"incomp_$tariffa\" value=\"".htmlspecialchars(${"incomp_".$tariffa})."\">";
 } # fine if (${"incomp_".$tariffa} == "i")
 } # fine if ($attiva_tariffe_consentite == "n" or $tariffe_consentite_vett[$numtariffa] == "SI")
 } # fine for $numtariffa
@@ -1628,13 +1629,13 @@ echo "<input type=\"hidden\" name=\"incomp_$tariffa\" value=\"".${"incomp_".$tar
 
 if ($passo >= 11) {
 if ($combina_ca != "s" or $raggruppa_ca != "s") $combina_ca = "n";
-echo "<input type=\"hidden\" name=\"mostra_ca\" value=\"$mostra_ca\">
-<input type=\"hidden\" name=\"raggruppa_ca\" value=\"$raggruppa_ca\">
-<input type=\"hidden\" name=\"combina_ca\" value=\"$combina_ca\">
-<input type=\"hidden\" name=\"letto_ca\" value=\"$letto_ca\">
-<input type=\"hidden\" name=\"escludi_da_tot\" value=\"$escludi_da_tot\">
-<input type=\"hidden\" name=\"limite_ca\" value=\"$limite_ca\">
-<input type=\"hidden\" name=\"numlimite_ca\" value=\"$numlimite_ca\">";
+echo "<input type=\"hidden\" name=\"mostra_ca\" value=\"".htmlspecialchars($mostra_ca)."\">
+<input type=\"hidden\" name=\"raggruppa_ca\" value=\"".htmlspecialchars($raggruppa_ca)."\">
+<input type=\"hidden\" name=\"combina_ca\" value=\"".htmlspecialchars($combina_ca)."\">
+<input type=\"hidden\" name=\"letto_ca\" value=\"".htmlspecialchars($letto_ca)."\">
+<input type=\"hidden\" name=\"escludi_da_tot\" value=\"".htmlspecialchars($escludi_da_tot)."\">
+<input type=\"hidden\" name=\"limite_ca\" value=\"".htmlspecialchars($limite_ca)."\">
+<input type=\"hidden\" name=\"numlimite_ca\" value=\"".htmlspecialchars($numlimite_ca)."\">";
 if (($associa_tariffe != "n" or $assegna_da_giorno_ini or $assegna_prenota_contemp) and $mostra_ca != "n") $errore = "SI";
 if (($associa_tariffe == "n" and !$assegna_da_giorno_ini and !$assegna_prenota_contemp) and $mostra_ca != "s" and $mostra_ca != "n") $errore = "SI";
 if ($raggruppa_ca != "s" and $raggruppa_ca != "n") $errore = "SI";
@@ -1880,7 +1881,7 @@ if (${"minmax".$tariffa} == "eq") $selected = " selected";
 else $selected = "";
 echo "<option value=\"eq\"$selected>".mex("esattamente",$pag)."</option>
 </select>
-<input type=\"text\" name=\"valminmax$tariffa\" value=\"".${"valminmax".$tariffa}."\" size=\"3\">
+<input type=\"text\" name=\"valminmax$tariffa\" value=\"".htmlspecialchars(${"valminmax".$tariffa})."\" size=\"3\">
 <span id=\"valminmax2$tariffa\"></span>".mex("$parola_settimane",$pag).")";
 echo "<script type=\"text/javascript\">
 <!--
@@ -1911,13 +1912,13 @@ echo "<small><label><input type=\"checkbox\" id=\"ass_g_i\" name=\"assegna_da_gi
 <option value=\"meno\"$sel_m>".mex("meno di",$pag)."</option>
 <option value=\"piu\"$sel_p>".mex("più di",$pag)."</option>
 </select>
-<input type=\"text\" name=\"ass_gio_ini_num\" value=\"".$ass_gio_ini_num."\" size=\"3\">
+<input type=\"text\" name=\"ass_gio_ini_num\" value=\"".htmlspecialchars($ass_gio_ini_num)."\" size=\"3\">
 <label for=\"ass_g_i\">".mex("giorni dalla data iniziale della prenotazione quando viene inserita",$pag).".</label><br>";
 if ($assegna_prenota_contemp == "s") $checked = " checked";
 else $checked = "";
 echo "<label><input type=\"checkbox\" id=\"ass_p_c\" name=\"assegna_prenota_contemp\" value=\"s\"$checked>
 ".mex("Quando possibile assegna automaticamente se si inseriscono",$pag)."</label>
-<input type=\"text\" name=\"ass_pren_cont_num\" value=\"".$ass_pren_cont_num."\" size=\"3\">
+<input type=\"text\" name=\"ass_pren_cont_num\" value=\"".htmlspecialchars($ass_pren_cont_num)."\" size=\"3\">
 <label for=\"ass_p_c\">".mex("o più prenotazioni contemporaneamente",$pag).".</label><br></small><br>";
 if ($tipo_ca == "s") {
 echo mex("Associare a specifi$sillaba_che $parola_settimane della prenotazione",$pag)."?";
@@ -1969,9 +1970,9 @@ else $checked = "";
 if (!$val1_prime_si) $val1_prime_si = "1";
 if (!$val2_prime_si) $val2_prime_si = "1";
 echo "<input type=\"radio\" id=\"ns_s\" name=\"numsett_ca\" value=\"s\"$checked>
- <input type=\"text\" name=\"val1_prime_si\" value=\"$val1_prime_si\" size=\"3\" onfocus=\"document.getElementById('ns_s').checked='1';\">
+ <input type=\"text\" name=\"val1_prime_si\" value=\"".htmlspecialchars($val1_prime_si)."\" size=\"3\" onfocus=\"document.getElementById('ns_s').checked='1';\">
  <label for=\"ns_s\">".mex("$parola_settimane sì",$pag)." ".mex("e",$pag)."</label>
- <input type=\"text\" name=\"val2_prime_si\" value=\"$val2_prime_si\" size=\"3\" onfocus=\"document.getElementById('ns_s').checked='1';\">
+ <input type=\"text\" name=\"val2_prime_si\" value=\"".htmlspecialchars($val2_prime_si)."\" size=\"3\" onfocus=\"document.getElementById('ns_s').checked='1';\">
  <label for=\"ns_s\">".mex("$parola_settimane no",$pag)."</label></td></tr>
 <tr><td></td><td>";
 if ($numsett_ca == "n") $checked = " checked";
@@ -1979,9 +1980,9 @@ else $checked = "";
 if (!$val1_prime_no) $val1_prime_no = "1";
 if (!$val2_prime_no) $val2_prime_no = "1";
 echo "<input type=\"radio\" id=\"ns_n\" name=\"numsett_ca\" value=\"n\"$checked>
- <input type=\"text\" name=\"val1_prime_no\" value=\"$val1_prime_no\" size=\"3\" onfocus=\"document.getElementById('ns_n').checked='1';\">
+ <input type=\"text\" name=\"val1_prime_no\" value=\"".htmlspecialchars($val1_prime_no)."\" size=\"3\" onfocus=\"document.getElementById('ns_n').checked='1';\">
  <label for=\"ns_n\">".mex("$parola_settimane no",$pag)." ".mex("e",$pag)."</label>
- <input type=\"text\" name=\"val2_prime_no\" value=\"$val2_prime_no\" size=\"3\" onfocus=\"document.getElementById('ns_n').checked='1';\">
+ <input type=\"text\" name=\"val2_prime_no\" value=\"".htmlspecialchars($val2_prime_no)."\" size=\"3\" onfocus=\"document.getElementById('ns_n').checked='1';\">
  <label for=\"ns_n\">".mex("$parola_settimane sì",$pag)."</label></td></tr>
 <tr><td></td><td>";
 if ($tipo_periodi == "g") {
@@ -2029,7 +2030,7 @@ $agg_moltiplica_1 = 0;
 if ($moltiplica_ca == "1" and $agg_moltiplica) $agg_moltiplica_1 = $agg_moltiplica;
 echo "<td colspan=\"2\"><label><input type=\"radio\" id=\"mo_1\" name=\"moltiplica_ca\" value=\"1\"$checked>
 ".mex("Uno",$pag).", ".mex("aggiungendo",$pag)." </label>
-<input type=\"text\" name=\"agg_moltiplica_1\" value=\"$agg_moltiplica_1\" size=\"3\" onclick=\"document.getElementById('mo_1').checked='1';\"></td></tr>";
+<input type=\"text\" name=\"agg_moltiplica_1\" value=\"".htmlspecialchars($agg_moltiplica_1)."\" size=\"3\" onclick=\"document.getElementById('mo_1').checked='1';\"></td></tr>";
 if ($moltiplica_ca == "p") $checked = " checked";
 else $checked = "";
 $agg_moltiplica_p = 0;
@@ -2037,7 +2038,7 @@ if ($moltiplica_ca == "p" and $agg_moltiplica) $agg_moltiplica_p = $agg_moltipli
 echo "<tr><td></td>
 <td colspan=\"2\"><label><input type=\"radio\" id=\"mo_p\" name=\"moltiplica_ca\" value=\"p\"$checked>
 ".mex("Numero di persone",$pag).", ".mex("aggiungendo",$pag)." </label>
-<input type=\"text\" name=\"agg_moltiplica_p\" value=\"$agg_moltiplica_p\" size=\"3\" onclick=\"document.getElementById('mo_p').checked='1';\">
+<input type=\"text\" name=\"agg_moltiplica_p\" value=\"".htmlspecialchars($agg_moltiplica_p)."\" size=\"3\" onclick=\"document.getElementById('mo_p').checked='1';\">
 <small>(".mex("escluse quelle dei costi con letti aggiuntivi",$pag).")</small></td></tr>";
 if ($moltiplica_ca == "t") $checked = " checked";
 else $checked = "";
@@ -2046,7 +2047,7 @@ if ($moltiplica_ca == "t" and $agg_moltiplica) $agg_moltiplica_t = $agg_moltipli
 echo "<tr><td></td>
 <td colspan=\"2\"><label><input type=\"radio\" id=\"mo_t\" name=\"moltiplica_ca\" value=\"t\"$checked>
 ".mex("Numero di persone totale",$pag).", ".mex("aggiungendo",$pag)." </label>
-<input type=\"text\" name=\"agg_moltiplica_t\" value=\"$agg_moltiplica_t\" size=\"3\" onclick=\"document.getElementById('mo_t').checked='1';\"></td></tr>";
+<input type=\"text\" name=\"agg_moltiplica_t\" value=\"".htmlspecialchars($agg_moltiplica_t)."\" size=\"3\" onclick=\"document.getElementById('mo_t').checked='1';\"></td></tr>";
 if ($associa_tariffe == "n" and !$assegna_da_giorno_ini and !$assegna_prenota_contemp) {
 if ($moltiplica_ca == "c") $checked = " checked";
 else $checked = "";
@@ -2065,16 +2066,16 @@ echo "<tr><td></td>
 ".mex("Chiedere",$pag).". ".mex("Numero massimo",$pag).":</label></td>
 <td onclick=\"document.getElementById('mo_c').checked='1';\">
 <input type=\"radio\" id=\"mm_n\" name=\"tipo_moltmax\" value=\"n\"$checked_tipo_n>
- <input type=\"text\" name=\"moltmax\" value=\"$moltmax\" size=\"3\" onclick=\"document.getElementById('mm_n').checked='1';\">
+ <input type=\"text\" name=\"moltmax\" value=\"".htmlspecialchars($moltmax)."\" size=\"3\" onclick=\"document.getElementById('mm_n').checked='1';\">
  <label for=\"mm_n\">(".mex("0 se illimitato",$pag).")</label></td></tr>
 <tr><td colspan=\"2\"></td><td onclick=\"document.getElementById('mo_c').checked='1';\">
 <label><input type=\"radio\" id=\"mm_p\" name=\"tipo_moltmax\" value=\"p\"$checked_tipo_p>
  ".mex("Numero di persone",$pag)." ".mex("meno",$pag)."</label>
- <input type=\"text\" name=\"meno_moltmax_p\" value=\"$meno_moltmax_p\" size=\"2\" onclick=\"document.getElementById('mm_p').checked='1';\"></td></tr>
+ <input type=\"text\" name=\"meno_moltmax_p\" value=\"".htmlspecialchars($meno_moltmax_p)."\" size=\"2\" onclick=\"document.getElementById('mm_p').checked='1';\"></td></tr>
 <tr><td colspan=\"2\"></td><td onclick=\"document.getElementById('mo_c').checked='1';\">
 <label><input type=\"radio\" id=\"mm_t\" name=\"tipo_moltmax\" value=\"t\"$checked_tipo_t>
  ".mex("Numero di persone totale",$pag)." ".mex("meno",$pag)."</label>
- <input type=\"text\" name=\"meno_moltmax_t\" value=\"$meno_moltmax_t\" size=\"2\" onclick=\"document.getElementById('mm_t').checked='1';\"></td></tr>";
+ <input type=\"text\" name=\"meno_moltmax_t\" value=\"".htmlspecialchars($meno_moltmax_t)."\" size=\"2\" onclick=\"document.getElementById('mm_t').checked='1';\"></td></tr>";
 } # fine if ($associa_tariffe == "n" and...
 echo "</table><small>(".mex("il costo viene moltiplicato per zero se la somma è negativa",$pag).")</small><br><br>";
 } # fine if ($passo == 5)
@@ -2162,7 +2163,7 @@ if ($num1 > 1) echo "<tr><td></td><td></td><td onclick=\"document.getElementById
 if (!${"molt_bene_inv_sel".$num1}) ${"molt_bene_inv_sel".$num1} = 1;
 echo "<select name=\"bene_inv_sel$num1\">
 <option value=\"\">----</option>".str_replace("\"".${"bene_inv_sel".$num1}."\">","\"".${"bene_inv_sel".$num1}."\" selected>",$opt_beni_inv)."
-</select> x <input type=\"text\" name=\"molt_bene_inv_sel$num1\" value=\"".${"molt_bene_inv_sel".$num1}."\" size=\"4\">";
+</select> x <input type=\"text\" name=\"molt_bene_inv_sel$num1\" value=\"".htmlspecialchars(${"molt_bene_inv_sel".$num1})."\" size=\"4\">";
 if ($num1 == $num_beni_inv_elimina_sel) {
 $id_minus = " id=\"minus".($num1 + 1)."\"";
 if ($num1 > 1) echo "</td><td id=\"minus$num1\"><input class=\"sbutton\" type=\"submit\" name=\"elimina_bene_inv_elimina\" value=\"".mex("Elimina un bene",$pag)."\" onclick=\"elim_lin_bene_inv();\"></td></tr><tr><td></td><td></td><td>";
@@ -2418,7 +2419,7 @@ echo "<label><input type=\"radio\" name=\"limite_ca\" value=\"n\"$checked> ".mex
 if ($limite_ca == "s") $checked = " checked";
 else $checked = "";
 echo "<label><input type=\"radio\" id=\"li_s\" name=\"limite_ca\" value=\"s\"$checked> ".mex("Si",$pag).":</label>
-<input type=\"text\" name=\"numlimite_ca\" value=\"$numlimite_ca\" size=\"4\" onclick=\"document.getElementById('li_s').checked='1';\">
+<input type=\"text\" name=\"numlimite_ca\" value=\"".htmlspecialchars($numlimite_ca)."\" size=\"4\" onclick=\"document.getElementById('li_s').checked='1';\">
 </td></tr></table><br>";
 } # fine if ($tipo_ca != "s" or...
 } # fine if ($passo == 10)
@@ -2641,7 +2642,7 @@ else $q_utenti_costi_sel = "";
 aggiorna_privilegi_ins_costo($idntariffe,$tableprivilegi,$id_utente,$anno,$attiva_costi_agg_consentiti,$priv_ins_costi_agg,$utenti_gruppi,$q_utenti_costi_sel);
 $idntariffe++;
 esegui_query("update $tablenometariffe set numlimite_ca = '$idntariffe' where idntariffe = 1");
-if ($origine) $action = $origine;
+if ($origine) $action = controlla_pag_origine($origine);
 else $action = $pag;
 echo "</div></form>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"modifica_costi.php\"><div>
@@ -3555,7 +3556,7 @@ echo "<a name=\"ins_costi_agg\"></a>
 <div class=\"linhbox\">
 ".mex("Nome del nuovo costo aggiuntivo",$pag).":
 <input type=\"text\" name=\"nomecostoagg\" size=\"24\" value=\"$nomecostoagg\">.<br>
-".mex("Categoria",$pag).": <input type=\"text\" name=\"categoria_ca\" value=\"$categoria_ca\" size=\"18\"> (".mex("opzionale",$pag).").<br>
+".mex("Categoria",$pag).": <input type=\"text\" name=\"categoria_ca\" value=\"".htmlspecialchars($categoria_ca)."\" size=\"18\"> (".mex("opzionale",$pag).").<br>
 ".mex("Tipo di costo aggiuntivo",$pag).":
 <select name=\"tipo_ca\">";
 if ($tipo_ca == "u") $selected = " selected";

@@ -223,7 +223,7 @@ dati_regole2($dati_r2,$app_regola2_predef,"","","",$id_periodo_corrente,$tipo_pe
 unlock_tabelle($tabelle_lock);
 
 $numero_tariffe = $dati_tariffe['num'];
-if (!$num_tariffe_mostra) $num_tariffe_mostra = 1;
+if (!$num_tariffe_mostra or controlla_num_pos($num_tariffe_mostra) != "SI") $num_tariffe_mostra = 1;
 for ($num1 = 1 ; $num1 <= $num_tariffe_mostra ; $num1++) {
 if (${"numtariffa".$num1} < 1 or ${"numtariffa".$num1} > $numero_tariffe or controlla_num_pos(${"numtariffa".$num1}) != "SI") {
 if ($num1 == 1) ${"numtariffa".$num1} = 1;
@@ -711,8 +711,8 @@ echo "<br><div style=\"text-align: center; font-size: 80%;\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"cambia_mostra_tab\" value=\"1\">
-<input type=\"hidden\" name=\"mos_per_sing\" value=\"$mos_per_sing\">
-<input type=\"hidden\" name=\"form_tabella\" value=\"$form_tabella\">
+<input type=\"hidden\" name=\"mos_per_sing\" value=\"".htmlspecialchars($mos_per_sing)."\">
+<input type=\"hidden\" name=\"form_tabella\" value=\"".htmlspecialchars($form_tabella)."\">
 <input type=\"hidden\" name=\"num_tariffe_mostra\" value=\"$num_tariffe_mostra\">";
 $lista_tariffe_sel = "";
 for ($num1 = 1 ; $num1 <= $num_tariffe_mostra ; $num1++) {
@@ -738,10 +738,10 @@ echo "<form id=\"f_tpt\" accept-charset=\"utf-8\" method=\"post\" action=\"$azio
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"periodi\">
-<input type=\"hidden\" name=\"mostra_disp\" value=\"$mostra_disp\">
-<input type=\"hidden\" name=\"mostra_pmm\" value=\"$mostra_pmm\">
-<input type=\"hidden\" name=\"raggruppa_date\" value=\"$raggruppa_date\">
-<input type=\"hidden\" name=\"mos_per_sing\" value=\"$mos_per_sing\">
+<input type=\"hidden\" name=\"mostra_disp\" value=\"".htmlspecialchars($mostra_disp)."\">
+<input type=\"hidden\" name=\"mostra_pmm\" value=\"".htmlspecialchars($mostra_pmm)."\">
+<input type=\"hidden\" name=\"raggruppa_date\" value=\"".htmlspecialchars($raggruppa_date)."\">
+<input type=\"hidden\" name=\"mos_per_sing\" value=\"".htmlspecialchars($mos_per_sing)."\">
 <input type=\"hidden\" name=\"lista_periodi\" value=\"".substr($lista_periodi,0,-1)."\">
 <input type=\"hidden\" name=\"lista_sett_in_per\" value=\"".substr($lista_sett_in_per,0,-1)."\">
 <input type=\"hidden\" name=\"tariffe_sel\" value=\"SI\">
@@ -783,7 +783,7 @@ if ($sett_in_per_col[$num1] > 1) echo " - ".substr($fine_colonna_periodo[$num1],
 } # fine if ($raggruppa_date != "s")
 else echo formatta_data($ini_colonna_periodo[$num1],$stile_data)."<br>---<br>".formatta_data($fine_colonna_periodo[$num1],$stile_data);
 if ($sett_in_per_col[$num1] > 1) echo "<br><small>".str_replace(" ","&nbsp;","(".$sett_in_per_col[$num1]." ".mex($parola_settimane,$pag).")")."</small><a
- href=\"./$pag?anno=$anno&amp;id_sessione=$id_sessione&amp;mostra_disp=$mostra_disp&amp;mostra_pmm=$mostra_pmm&amp;raggruppa_date=$raggruppa_date&amp;mos_per_sing=1&amp;form_tabella=$form_tabella$lista_tariffe_sel\" style=\"text-decoration: none; color: #777777;\" title=\"".mex("mostra prezzi $parola_settimanali",'visualizza_tabelle.php')."\"><b>&prime;</b></a>";
+ href=\"./$pag?anno=$anno&amp;id_sessione=$id_sessione&amp;mostra_disp=".htmlspecialchars($mostra_disp)."&amp;mostra_pmm=".htmlspecialchars($mostra_pmm)."&amp;raggruppa_date=".htmlspecialchars($raggruppa_date)."&amp;mos_per_sing=1&amp;form_tabella=".htmlspecialchars($form_tabella)."$lista_tariffe_sel\" style=\"text-decoration: none; color: #777777;\" title=\"".mex("mostra prezzi $parola_settimanali",'visualizza_tabelle.php')."\"><b>&prime;</b></a>";
 echo "</small></td>";
 } # fine if ($mostra_data[$num1])
 } # fine for $num1
@@ -925,11 +925,11 @@ echo "<div style=\"text-align: center;\">
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$pag\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"mostra_disp\" value=\"$mostra_disp\">
-<input type=\"hidden\" name=\"mostra_pmm\" value=\"$mostra_pmm\">
-<input type=\"hidden\" name=\"raggruppa_date\" value=\"$raggruppa_date\">
-<input type=\"hidden\" name=\"mos_per_sing\" value=\"$mos_per_sing\">
-<input type=\"hidden\" name=\"form_tabella\" value=\"$form_tabella\">
+<input type=\"hidden\" name=\"mostra_disp\" value=\"".htmlspecialchars($mostra_disp)."\">
+<input type=\"hidden\" name=\"mostra_pmm\" value=\"".htmlspecialchars($mostra_pmm)."\">
+<input type=\"hidden\" name=\"raggruppa_date\" value=\"".htmlspecialchars($raggruppa_date)."\">
+<input type=\"hidden\" name=\"mos_per_sing\" value=\"".htmlspecialchars($mos_per_sing)."\">
+<input type=\"hidden\" name=\"form_tabella\" value=\"".htmlspecialchars($form_tabella)."\">
 <input type=\"hidden\" name=\"num_tariffe_mostra\" value=\"".($num_tariffe_mostra + 1)."\">";
 for ($num1 = 1 ; $num1 <= $num_tariffe_mostra ; $num1++) {
 echo "<input type=\"hidden\" name=\"numtariffa$num1\" value=\"".${"numtariffa".$num1}."\">";

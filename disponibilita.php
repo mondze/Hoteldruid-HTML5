@@ -240,7 +240,7 @@ if ($email_1) $dati_email .= "<input type=\"hidden\" name=\"email_1\" value=\"$e
 if ($testo_email_richiesta) {
 if (@get_magic_quotes_gpc()) $testo_email_richiesta = stripslashes($testo_email_richiesta);
 $dati_email .= "<input type=\"hidden\" name=\"testo_email_richiesta\" value=\"".str_replace("\"","&quot;",$testo_email_richiesta)."\">";
-if ($origine) $dati_email .= "<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+if ($origine) $dati_email .= "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 } # fine if ($testo_email_richiesta)
 
 # Espando le variabili dei costi combinabili (aumentando $numcostiagg per ogni $n_t, alla fine saranno tutti uguali)
@@ -2685,7 +2685,7 @@ echo "<input type=\"hidden\" name=\"data_inizio_$num1\" value=\"$data_inizio\">
 <input type=\"hidden\" name=\"num_periodi_$num1\" value=\"$lunghezza_perioido\">
 <input type=\"hidden\" name=\"num_persone_$num1\" value=\"".$numpersone_rc[$num1]."\">";
 } # fine for $num1
-if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 echo "$dati_email
 $dati_tutte_tariffe
 ".ucfirst(mex("documento di tipo",$pag))."
@@ -2821,7 +2821,7 @@ else unlock_tabelle($tabelle_lock);
 
 
 if ($origine) {
-$action = $origine;
+$action = controlla_pag_origine($origine);
 $fr_torna_indietro = mex("Torna indietro",$pag);
 } # fine if ($origine)
 else {

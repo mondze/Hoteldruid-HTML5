@@ -5,10 +5,10 @@ version 3.0
 -link person types to specific guests and possibility to enforce requested age depending on person type (or give a warning)
 -multicurrency: insert exchange rate for each new currency and choose currency when inserting and showing prices (or select the currency for each rate/cost and store current exchange rate in reservation?) (store in each payment the currency used and current exchange rate, so amount paid can be recalculated in actual currency) (only registerd in reservation payments?)
 -multicurrency website pages and interconnections
--add email2 and email3 (PEC or invoice code) to client data (also add document variables and update "fattura elettronica") (also webpages)
 -when there is a repetition [r3] (or other) in the middle of a [r] repetition with conditions applied only inside the repetiton [r3] then don't apply again conditions of [r] after [/r3] (also happens with conditions not applied only in [r3]?) (affects current default docuemnts? add a "use legacy behaviour" option?) (if first part is null then apply conditions to second part, or first part even if null?)
 -bug: wrong roundig of operators with more than 2 decimals in operations in documents
 -interchange code 1 with code 2 in default nations and documents. When inserting default nations and there is a nation with same code 1 in administrator, then use same code 2 and code 3 (if these codes are not in default values)
+-add email2 and email3 (PEC or invoice code) to client data (also add document variables and update "fattura elettronica") (also webpages)
 -save documents with names longer than 255 characters with a tag "extra" in the filename and insert reservation and client numbers in the document header
 -when a new year is created (try to) rename documents created in the first 10 days with new reservation numbers (to get linked to current year reservations and not appear mistakenly when creating the following year)
 -automatically create new year also when normal user makes login on a page different than inizio.php (username and password in url) (reload page to inizio.php?) (?)
@@ -163,6 +163,7 @@ version 3.3.x
 -possibility to select "all rates" when inserting deposits and commissions
 -possibility to use dates from a user instead of specific dates in website pages (?)
 -possibility to translate also the dates with "modify phrases" in website pages
+-move English and Spanish translations of webpages (only availability excluded) from phrases.php to modt_pag.php in land folder (so phrases in other languages can be automatically added in translation script)
 -possibility to import settings (at least html parts) from another website page (with or without phrases)
 -possibility to create website pages in multiple languages all at once
 -add the editing of website directories in the "create webpages" page (redirecting to "configure and customize" page)

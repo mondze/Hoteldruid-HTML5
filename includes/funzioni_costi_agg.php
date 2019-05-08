@@ -447,8 +447,10 @@ else $num_letti_agg['catp'][$num1] .= $dati_cat_pers[$dati_ca[$num_costo]['cat_p
 $num_letti_agg['catp_tot'][$num1][$dati_ca[$num_costo]['cat_pers']['ord'][0]] += $moltiplica_corr;
 } # fine if ($dati_ca[$num_costo]['cat_pers']['esist'][0])
 else {
+if (!$num_letti_agg['catp_solo_esist']) {
 if ($moltiplica_corr > 1) $num_letti_agg['catp'][$num1] .= $dati_ca[$num_costo]['cat_pers'][0]['n_plur'];
 else $num_letti_agg['catp'][$num1] .= $dati_ca[$num_costo]['cat_pers'][0]['n_sing'];
+} # fine if (!$num_letti_agg['catp_solo_esist'])
 $num_letti_agg['catp_tot'][$num1]['ex'][$dati_ca[$num_costo]['cat_pers'][0]['n_plur']] += $moltiplica_corr;
 } # fine if ($dati_ca[$num_costo]['cat_pers']['esist'][0])
 } # fine if ($dati_cat_pers['num'])

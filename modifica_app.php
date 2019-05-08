@@ -49,7 +49,7 @@ else include("./includes/head.php");
 
 
 
-if (!$url_enc) $idappartamenti = htmlspecialchars($idappartamenti);
+$idappartamenti = htmlspecialchars($idappartamenti);
 $idappartamenti = aggslashdb($idappartamenti);
 
 if ($cancella_app) {

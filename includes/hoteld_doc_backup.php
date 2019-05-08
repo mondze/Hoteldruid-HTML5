@@ -1,6 +1,6 @@
 <?php exit(); ?>
 
-<!--             2019-02-08 17:33:17             -->
+<!--             2019-02-23 17:26:26             -->
 
 <!--  **    SAVE THIS FILE AS hoteld_doc_backup.php     **  -->
 
@@ -8,7 +8,7 @@
 
 
 <backup>
-<versione>2.3</versione>
+<versione>2.31</versione>
 <database>
 <tabella>
 <nometabella>contratti</nometabella>
@@ -37,6 +37,8 @@
 <riga><cmp>9336</cmp><cmp>vett4</cmp><cmp>iva_perc_esist_fael;var_tmp_fael</cmp></riga>
 <riga><cmp>9337</cmp><cmp>vett4</cmp><cmp>natura_fael;num_iva_fael</cmp></riga>
 <riga><cmp>9338</cmp><cmp>vett4</cmp><cmp>iva_perc_vett_fael_p;num_iva_fael</cmp></riga>
+<riga><cmp>9339</cmp><cmp>vett4</cmp><cmp>tot_iva_vett_fael_p;num_iva_fael</cmp></riga>
+<riga><cmp>9340</cmp><cmp>vett4</cmp><cmp>tot_no_iva_vett_fael_p;num_iva_fael</cmp></riga>
 <riga><cmp>35</cmp><cmp>vett2</cmp><cmp>iva_perc_vett_fatt;num_iva_fatt</cmp></riga>
 <riga><cmp>36</cmp><cmp>vett2</cmp><cmp>iva_perc_esist_fatt;var_tmp_fatt</cmp></riga>
 <riga><cmp>2076</cmp><cmp>vett17</cmp><cmp>date_rimovcli;data_rimovcli</cmp></riga>
@@ -159,8 +161,6 @@
 <riga><cmp>404512</cmp><cmp>var4</cmp><cmp>num_ripetizione_fael</cmp></riga>
 <riga><cmp>404513</cmp><cmp>var4</cmp><cmp>tot_parz_no_iva_fael</cmp></riga>
 <riga><cmp>404514</cmp><cmp>var4</cmp><cmp>tot_parz_iva_fael</cmp></riga>
-<riga><cmp>404515</cmp><cmp>var4</cmp><cmp>tot_parz_no_iva_fael_p</cmp></riga>
-<riga><cmp>404516</cmp><cmp>var4</cmp><cmp>tot_parz_iva_fael_p</cmp></riga>
 <riga><cmp>404517</cmp><cmp>var4</cmp><cmp>max_num_iva_fael</cmp></riga>
 <riga><cmp>404518</cmp><cmp>var4</cmp><cmp>frase_persone_fael</cmp></riga>
 <riga><cmp>404519</cmp><cmp>var4</cmp><cmp>accorpa_sconto_e_tariffa_fael</cmp></riga>
@@ -738,8 +738,8 @@ tr.bgclr { background-color: #eeeeee; }
 [/c][/r3][/r][/r4][r4 array="iva_perc_vett_fael"]      <DatiRiepilogo>
         <AliquotaIVA>[iva_perc_vett_fael_p(num_iva_fael)]</AliquotaIVA>
         [natura_fael(num_iva_fael)]
-        <ImponibileImporto>[tot_parz_no_iva_fael_p]</ImponibileImporto>
-        <Imposta>[tot_parz_iva_fael_p]</Imposta>
+        <ImponibileImporto>[tot_no_iva_vett_fael_p(num_iva_fael)]</ImponibileImporto>
+        <Imposta>[tot_iva_vett_fael_p(num_iva_fael)]</Imposta>
       </DatiRiepilogo>
 [/r4]    </DatiBeniServizi>
   </FatturaElettronicaBody>
@@ -3069,7 +3069,7 @@ Ricevuta[c numero_progressivo_documento!=""] n. [numero_progressivo_documento][/
 <riga><cmp>30</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?mos_tariffa_fael#%?=#%?txt#%?1#$?sconto#%?!=#%?txt#%?0#@?set#%?404510#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>31</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404511#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>32</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425231#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>36</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?425234#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>36</cmp><cmp>cond4</cmp><cmp>ind#@?#$?cognome#%?=#%?txt#%?#@?set#%?425234#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>39</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?425238#%?=#%?txt#%?N4#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>40</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?425232#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>42</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425227#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
@@ -3099,110 +3099,117 @@ Ricevuta[c numero_progressivo_documento!=""] n. [numero_progressivo_documento][/
 <riga><cmp>106</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404451#%?valore_costo_agg_senza_tasse#%?+#%?txt#%?0#%?</cmp></riga>
 <riga><cmp>108</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_tassa_fael#%?=#%?txt#%?1#@?oper#%?404451#%?valore_costo_agg#%?+#%?txt#%?0#%?</cmp></riga>
 <riga><cmp>110</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425240#%?costo_agg_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>111</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404442#%?=#%?var#%?nome_costo_agg#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>112</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?+#%?var#%?valore_costo_agg_senza_tasse#%?</cmp></riga>
-<riga><cmp>113</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?+#%?var#%?valore_costo_agg_senza_tasse#%?</cmp></riga>
-<riga><cmp>114</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?+#%?var#%?tasse_costo_agg#%?</cmp></riga>
-<riga><cmp>115</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?425237#%?num_linea_fael#%?+#%?txt#%?1#%?</cmp></riga>
-<riga><cmp>116</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_tassa_fael#%?=#%?txt#%?1#@?oper#%?425228#%?tot_costi_tassa_fael#%?+#%?var#%?valore_costo_agg#%?</cmp></riga>
-<riga><cmp>117</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404450#%?tot_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>118</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404515#%?tot_parz_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>119</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404516#%?tot_parz_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>120</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?costo_tot_fael#%?-#%?var#%?tot_no_iva_fael#%?</cmp></riga>
-<riga><cmp>121</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?iva_fael#%?-#%?var#%?tot_costi_tassa_fael#%?</cmp></riga>
-<riga><cmp>122</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404449#%?iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>123</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?mos_costo_agg_fael#%?!=#%?txt#%?1#$?percentuale_tasse_costo_agg#%?!=#%?txt#%?-1#@?break#%?cont</cmp></riga>
-<riga><cmp>124</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425231#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>125</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404511#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>126</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?cont</cmp></riga>
-<riga><cmp>128</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?max_num_iva_fael#%?>#%?txt#%?1#@?set#%?425232#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>129</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?ultima_prenota_fael#%?=#%?var#%?numero_prenotazione#@?break#%?</cmp></riga>
-<riga><cmp>130</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404439#%?=#%?var#%?numero_prenotazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>131</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?+#%?var#%?costo_tariffa_senza_tasse#%?</cmp></riga>
-<riga><cmp>132</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?+#%?var#%?costo_tariffa_senza_tasse#%?</cmp></riga>
-<riga><cmp>133</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?+#%?var#%?tasse_tariffa#%?</cmp></riga>
-<riga><cmp>134</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?425237#%?num_linea_fael#%?+#%?txt#%?1#%?</cmp></riga>
-<riga><cmp>135</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
-<riga><cmp>136</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
-<riga><cmp>137</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?-#%?var#%?tasse_sconto#%?</cmp></riga>
-<riga><cmp>138</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404437#%?costo_tariffa_senza_tasse#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>139</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404452#%?sconto_senza_tasse#%?*#%?txt#%?-1#%?</cmp></riga>
-<riga><cmp>140</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404450#%?tot_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>141</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404515#%?tot_parz_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>142</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404516#%?tot_parz_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>143</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?costo_tot_fael#%?-#%?var#%?tot_no_iva_fael#%?</cmp></riga>
-<riga><cmp>144</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?iva_fael#%?-#%?var#%?tot_costi_tassa_fael#%?</cmp></riga>
-<riga><cmp>145</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404449#%?iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>146</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?accorpa_sconto_e_tariffa_fael#%?=#%?txt#%?SI#@?oper#%?404437#%?costo_tariffa_senza_tasse#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
-<riga><cmp>147</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?accorpa_sconto_e_tariffa_fael#%?=#%?txt#%?SI#@?set#%?404510#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>148</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425239#%?tariffa_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>149</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404518#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>150</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?num_persone_tot#%?!=#%?txt#%?#$?num_persone_tot#%?!=#%?txt#%?0#@?set#%?404518#%?=#%?txt#%? per x persone#%?txt#%?x#%?var#%?num_persone_tot#%?</cmp></riga>
-<riga><cmp>151</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?num_ripetizione_fael#%?>#%?txt#%?1#@?break#%?</cmp></riga>
-<riga><cmp>152</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404447#%?costo_tot_fael#%?+#%?var#%?costo_tot#%?</cmp></riga>
-<riga><cmp>153</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404448#%?costo_tot_fael#%?+#%?txt#%?0#%?</cmp></riga>
-<riga><cmp>154</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_fiscale_struttura#%?!=#%?txt#%?#@?set#%?404430#%?=#%?txt#%?- Codice Fiscale  #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>155</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_fiscale_struttura#%?!=#%?txt#%?#@?set#%?404430#%?.=#%?var#%?codice_fiscale_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>156</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?404433#%?=#%?txt#%?Tel. #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>157</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?var#%?telefono_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>158</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404439#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>159</cmp><cmp>cond4</cmp><cmp>inr#@?#@?oper#%?404512#%?num_ripetizione_fael#%?+#%?txt#%?1#%?</cmp></riga>
-<riga><cmp>160</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404519#%?=#%?txt#%?SI#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>161</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?425226#%?=#%?txt#%?nome del costo da considerare come tassa#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>162</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404447#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>163</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?telefono_struttura#%?!=#%?txt#%?#$?sito_web_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?txt#%? - #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>164</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?sito_web_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?var#%?sito_web_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>165</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404443#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>166</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404431#%?=#%?var#%?nome#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>167</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404432#%?=#%?var#%?cognome#%?txt#%?&#%?txt#%?&amp;#%?</cmp></riga>
-<riga><cmp>168</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404432#%?=#%?var#%?cognome_fael#%?txt#%?<#%?txt#%?&lt;#%?</cmp></riga>
-<riga><cmp>169</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404455#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>170</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?numcivico#%?!=#%?txt#%?#@?set#%?404455#%?=#%?txt#%?, #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>171</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?numcivico#%?!=#%?txt#%?#@?set#%?404455#%?.=#%?var#%?numcivico#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>172</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404425#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>173</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?citta#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?var#%?citta#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>174</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?txt#%? (#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>175</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?var#%?regione#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>176</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?txt#%?)#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>180</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404426#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>181</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?cap#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?var#%?cap#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>183</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?cap#%?!=#%?txt#%?#$?nazione#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?txt#%? #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>184</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?nazione#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?var#%?nazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>185</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404505#%?=#%?var#%?codice_fiscale#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>186</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404506#%?=#%?var#%?partita_iva#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>187</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404507#%?=#%?var#%?via#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>188</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404508#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>189</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404512#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>190</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404513#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>191</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404514#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>192</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?425228#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>193</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425233#%?=#%?var#%?codice2_nazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>194</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?trunc#%?425233#%?2#%?#%?ini</cmp></riga>
-<riga><cmp>195</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_nazione_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>196</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?!=#%?txt#%?IT#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?var#%?codice_fiscale_fael#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>197</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?!=#%?txt#%?IT#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?var#%?documento#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>198</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?partita_iva_fael#%?!=#%?txt#%?#@?set#%?404505#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>199</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?provincia_struttura_fael#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la sigla della provincia della struttura nella prima condizione di questo documento (da "configura e personalizza" nella sezione "documenti" cliccare sul numero del documento, nella pagina che si apre premere il bottone "variabili personalizzate e condizioni del documento" in fondo alla pagina, poi nella linea della prima condizione premere il bottone "modifica", infine inserire la sigla della provincia nel campo di testo accanto a "provincia_struttura_fael" e premere "modifica la condizione") .<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>200</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?partita_iva_struttura#%?=#%?txt#%?#$?email_struttura#%?=#%?txt#%?#$?indirizzo_struttura#%?=#%?txt#%?#$?CAP_struttura#%?=#%?txt#%?#$?comune_struttura#%?=#%?txt#%?#$?ragione_sociale_struttura#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la ragione sociale, l'indirizzo, il CAP, il comune, la partita iva e l'email (PEC) della struttura in "configura e personalizza".<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>201</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_fiscale_fael#%?=#%?txt#%?#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la nazione di residenza e il numero di partita iva del cliente oppure il suo codice fiscale.<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>202</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?via#%?=#%?txt#%?#$?codice_nazione_fael#%?=#%?txt#%?#$?citta#%?=#%?txt#%?#$?cap#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la residenza del cliente (indirizzo, CAP, città e nazione).<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>203</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?=#%?txt#%?IT#$?codice_regione#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Se il cliente risiede in Italia si deve inserire anche la provincia di residenza.<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>204</cmp><cmp>cond4</cmp><cmp>ind#@?#@?date#%?425235#%?oggi#%?is#%?0#%?g</cmp></riga>
-<riga><cmp>205</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425236#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>206</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?tipo_struttura#%?!=#%?txt#%?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?=#%?txt#%? presso #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>207</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?tipo_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?var#%?tipo_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>208</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?tipo_struttura#%?!=#%?txt#%?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?txt#%? #%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>209</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?var#%?nome_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>210</cmp><cmp>cond4</cmp><cmp>ind#@?or#$?email_struttura#%?!=#%?txt#%?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?=#%?txt#%?<ContattiTrasmittente>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>211</cmp><cmp>cond4</cmp><cmp>ind#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?<Telefono>numtel</Telefono>#%?txt#%?numtel#%?var#%?telefono_struttura#%?</cmp></riga>
-<riga><cmp>212</cmp><cmp>cond4</cmp><cmp>ind#@?#$?email_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?<Email>indem</Email>#%?txt#%?indem#%?var#%?email_struttura#%?</cmp></riga>
-<riga><cmp>213</cmp><cmp>cond4</cmp><cmp>ind#@?or#$?email_struttura#%?!=#%?txt#%?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?</ContattiTrasmittente>#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>214</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425242#%?=#%?txt#%?0000000#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>215</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_nazione_fael#%?!=#%?txt#%?IT#@?set#%?425242#%?=#%?txt#%?XXXXXXX#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>216</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425244#%?=#%?var#%?email#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>217</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425243#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
-<riga><cmp>218</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?pec_fael#%?{}#%?txt#%?@#$?cod_destinatario_fael#%?=#%?txt#%?0000000#@?set#%?425243#%?=#%?txt#%?<PECDestinatario>pec_fael</PECDestinatario>#%?txt#%?pec_fael#%?var#%?pec_fael#%?</cmp></riga>
-<riga><cmp>219</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?linea_pecdestinatario_fael#%?=#%?txt#%?#$?cod_destinatario_fael#%?=#%?txt#%?0000000#@?set#%?425242#%?=#%?var#%?pec_fael#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>111</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425240#%?=#%?var#%?costo_agg_no_iva_fael_p#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>112</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404442#%?=#%?var#%?nome_costo_agg#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>113</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?+#%?var#%?valore_costo_agg_senza_tasse#%?</cmp></riga>
+<riga><cmp>114</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?+#%?var#%?valore_costo_agg_senza_tasse#%?</cmp></riga>
+<riga><cmp>115</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?+#%?var#%?tasse_costo_agg#%?</cmp></riga>
+<riga><cmp>116</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_agg_fael#%?=#%?txt#%?1#@?oper#%?425237#%?num_linea_fael#%?+#%?txt#%?1#%?</cmp></riga>
+<riga><cmp>117</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_costo_tassa_fael#%?=#%?txt#%?1#@?oper#%?425228#%?tot_costi_tassa_fael#%?+#%?var#%?valore_costo_agg#%?</cmp></riga>
+<riga><cmp>118</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404450#%?tot_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>121</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?a9340#%?tot_parz_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>122</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?a9340#%?=#%?var#%?tot_no_iva_vett_fael_p(num_iva_fael)#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>123</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?a9339#%?tot_parz_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>124</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?a9339#%?=#%?var#%?tot_iva_vett_fael_p(num_iva_fael)#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>125</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?costo_tot_fael#%?-#%?var#%?tot_no_iva_fael#%?</cmp></riga>
+<riga><cmp>126</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?iva_fael#%?-#%?var#%?tot_costi_tassa_fael#%?</cmp></riga>
+<riga><cmp>128</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404449#%?iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>129</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?mos_costo_agg_fael#%?!=#%?txt#%?1#$?percentuale_tasse_costo_agg#%?!=#%?txt#%?-1#@?break#%?cont</cmp></riga>
+<riga><cmp>130</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425231#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>131</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404511#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>132</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?cont</cmp></riga>
+<riga><cmp>133</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?max_num_iva_fael#%?>#%?txt#%?1#@?set#%?425232#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>134</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?ultima_prenota_fael#%?=#%?var#%?numero_prenotazione#@?break#%?</cmp></riga>
+<riga><cmp>135</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404439#%?=#%?var#%?numero_prenotazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>136</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?+#%?var#%?costo_tariffa_senza_tasse#%?</cmp></riga>
+<riga><cmp>137</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?+#%?var#%?costo_tariffa_senza_tasse#%?</cmp></riga>
+<riga><cmp>138</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?+#%?var#%?tasse_tariffa#%?</cmp></riga>
+<riga><cmp>139</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_tariffa_fael#%?=#%?txt#%?1#@?oper#%?425237#%?num_linea_fael#%?+#%?txt#%?1#%?</cmp></riga>
+<riga><cmp>140</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404443#%?tot_no_iva_fael#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
+<riga><cmp>141</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404513#%?tot_parz_no_iva_fael#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
+<riga><cmp>142</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?mos_sconto_fael#%?=#%?txt#%?1#@?oper#%?404514#%?tot_parz_iva_fael#%?-#%?var#%?tasse_sconto#%?</cmp></riga>
+<riga><cmp>143</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404437#%?costo_tariffa_senza_tasse#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>146</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404452#%?sconto_senza_tasse#%?*#%?txt#%?-1#%?</cmp></riga>
+<riga><cmp>147</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404450#%?tot_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>148</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?a9340#%?tot_parz_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>149</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?a9340#%?=#%?var#%?tot_no_iva_vett_fael_p(num_iva_fael)#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>150</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?a9339#%?tot_parz_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>151</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?a9339#%?=#%?var#%?tot_iva_vett_fael_p(num_iva_fael)#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>152</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?costo_tot_fael#%?-#%?var#%?tot_no_iva_fael#%?</cmp></riga>
+<riga><cmp>153</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425229#%?iva_fael#%?-#%?var#%?tot_costi_tassa_fael#%?</cmp></riga>
+<riga><cmp>154</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404449#%?iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>155</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?accorpa_sconto_e_tariffa_fael#%?=#%?txt#%?SI#@?oper#%?404437#%?costo_tariffa_senza_tasse#%?-#%?var#%?sconto_senza_tasse#%?</cmp></riga>
+<riga><cmp>156</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?accorpa_sconto_e_tariffa_fael#%?=#%?txt#%?SI#@?set#%?404510#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>157</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?425239#%?tariffa_no_iva_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>158</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425239#%?=#%?var#%?tariffa_no_iva_fael_p#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>159</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404518#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>160</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?num_persone_tot#%?!=#%?txt#%?#$?num_persone_tot#%?!=#%?txt#%?0#@?set#%?404518#%?=#%?txt#%? per x persone#%?txt#%?x#%?var#%?num_persone_tot#%?</cmp></riga>
+<riga><cmp>161</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?num_ripetizione_fael#%?>#%?txt#%?1#@?break#%?</cmp></riga>
+<riga><cmp>162</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404447#%?costo_tot_fael#%?+#%?var#%?costo_tot#%?</cmp></riga>
+<riga><cmp>163</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?oper#%?404448#%?costo_tot_fael#%?+#%?txt#%?0#%?</cmp></riga>
+<riga><cmp>164</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404448#%?=#%?var#%?costo_tot_fael_p#%?txt#%?,#%?txt#%?#%?</cmp></riga>
+<riga><cmp>165</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_fiscale_struttura#%?!=#%?txt#%?#@?set#%?404430#%?=#%?txt#%?- Codice Fiscale  #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>166</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_fiscale_struttura#%?!=#%?txt#%?#@?set#%?404430#%?.=#%?var#%?codice_fiscale_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>167</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?404433#%?=#%?txt#%?Tel. #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>168</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?var#%?telefono_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>169</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404439#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>170</cmp><cmp>cond4</cmp><cmp>inr#@?#@?oper#%?404512#%?num_ripetizione_fael#%?+#%?txt#%?1#%?</cmp></riga>
+<riga><cmp>171</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404519#%?=#%?txt#%?SI#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>172</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?425226#%?=#%?txt#%?nome del costo da considerare come tassa#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>173</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404447#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>174</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?telefono_struttura#%?!=#%?txt#%?#$?sito_web_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?txt#%? - #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>175</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?sito_web_struttura#%?!=#%?txt#%?#@?set#%?404433#%?.=#%?var#%?sito_web_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>176</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404443#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>180</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404431#%?=#%?var#%?nome#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>181</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404432#%?=#%?var#%?cognome#%?txt#%?&#%?txt#%?&amp;#%?</cmp></riga>
+<riga><cmp>183</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404432#%?=#%?var#%?cognome_fael#%?txt#%?<#%?txt#%?&lt;#%?</cmp></riga>
+<riga><cmp>184</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404455#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>185</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?numcivico#%?!=#%?txt#%?#@?set#%?404455#%?=#%?txt#%?, #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>186</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?numcivico#%?!=#%?txt#%?#@?set#%?404455#%?.=#%?var#%?numcivico#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>187</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404425#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>188</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?citta#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?var#%?citta#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>189</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?txt#%? (#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>190</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?var#%?regione#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>191</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?regione#%?!=#%?txt#%?#@?set#%?404425#%?.=#%?txt#%?)#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>192</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404426#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>193</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?cap#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?var#%?cap#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>194</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?cap#%?!=#%?txt#%?#$?nazione#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?txt#%? #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>195</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?nazione#%?!=#%?txt#%?#@?set#%?404426#%?.=#%?var#%?nazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>196</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404505#%?=#%?var#%?codice_fiscale#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>197</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404506#%?=#%?var#%?partita_iva#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>198</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?404507#%?=#%?var#%?via#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>199</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404508#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>200</cmp><cmp>cond4</cmp><cmp>ind#@?#@?set#%?404512#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>201</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404513#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>202</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?404514#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>203</cmp><cmp>cond4</cmp><cmp>inr#@?#@?set#%?425228#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>204</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425233#%?=#%?var#%?codice2_nazione#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>205</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?trunc#%?425233#%?2#%?#%?ini</cmp></riga>
+<riga><cmp>206</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_nazione_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>207</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?!=#%?txt#%?IT#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?var#%?codice_fiscale_fael#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>208</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?!=#%?txt#%?IT#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?404506#%?=#%?var#%?documento#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>209</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?partita_iva_fael#%?!=#%?txt#%?#@?set#%?404505#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>210</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?provincia_struttura_fael#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la sigla della provincia della struttura nella prima condizione di questo documento (da "configura e personalizza" nella sezione "documenti" cliccare sul numero del documento, nella pagina che si apre premere il bottone "variabili personalizzate e condizioni del documento" in fondo alla pagina, poi nella linea della prima condizione premere il bottone "modifica", infine inserire la sigla della provincia nel campo di testo accanto a "provincia_struttura_fael" e premere "modifica la condizione") .<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>211</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?partita_iva_struttura#%?=#%?txt#%?#$?email_struttura#%?=#%?txt#%?#$?indirizzo_struttura#%?=#%?txt#%?#$?CAP_struttura#%?=#%?txt#%?#$?comune_struttura#%?=#%?txt#%?#$?ragione_sociale_struttura#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la ragione sociale, l'indirizzo, il CAP, il comune, la partita iva e l'email (PEC) della struttura in "configura e personalizza".<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>212</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_fiscale_fael#%?=#%?txt#%?#$?partita_iva_fael#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la nazione di residenza e il numero di partita iva del cliente oppure il suo codice fiscale.<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>213</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?via#%?=#%?txt#%?#$?codice_nazione_fael#%?=#%?txt#%?#$?citta#%?=#%?txt#%?#$?cap#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Si deve inserire la residenza del cliente (indirizzo, CAP, città e nazione).<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>214</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?codice_nazione_fael#%?=#%?txt#%?IT#$?codice_regione#%?=#%?txt#%?#@?set#%?-1#%?.=#%?txt#%?Se il cliente risiede in Italia si deve inserire anche la provincia di residenza.<br>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>215</cmp><cmp>cond4</cmp><cmp>ind#@?#@?date#%?425235#%?oggi#%?is#%?0#%?g</cmp></riga>
+<riga><cmp>216</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425236#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>217</cmp><cmp>cond4</cmp><cmp>rpt#@?or#$?tipo_struttura#%?!=#%?txt#%?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?=#%?txt#%? presso #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>218</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?tipo_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?var#%?tipo_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>219</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?tipo_struttura#%?!=#%?txt#%?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?txt#%? #%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>220</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?nome_struttura#%?!=#%?txt#%?#@?set#%?425236#%?.=#%?var#%?nome_struttura#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>221</cmp><cmp>cond4</cmp><cmp>ind#@?or#$?email_struttura#%?!=#%?txt#%?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?=#%?txt#%?<ContattiTrasmittente>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>222</cmp><cmp>cond4</cmp><cmp>ind#@?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?<Telefono>numtel</Telefono>#%?txt#%?numtel#%?var#%?telefono_struttura#%?</cmp></riga>
+<riga><cmp>223</cmp><cmp>cond4</cmp><cmp>ind#@?#$?email_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?<Email>indem</Email>#%?txt#%?indem#%?var#%?email_struttura#%?</cmp></riga>
+<riga><cmp>224</cmp><cmp>cond4</cmp><cmp>ind#@?or#$?email_struttura#%?!=#%?txt#%?#$?telefono_struttura#%?!=#%?txt#%?#@?set#%?425241#%?.=#%?txt#%?</ContattiTrasmittente>#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>225</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425242#%?=#%?txt#%?0000000#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>226</cmp><cmp>cond4</cmp><cmp>rpt#@?#$?codice_nazione_fael#%?!=#%?txt#%?IT#@?set#%?425242#%?=#%?txt#%?XXXXXXX#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>227</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425244#%?=#%?var#%?email#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>228</cmp><cmp>cond4</cmp><cmp>rpt#@?#@?set#%?425243#%?=#%?txt#%?#%?txt#%?#%?txt#%?#%?</cmp></riga>
+<riga><cmp>229</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?pec_fael#%?{}#%?txt#%?@#$?cod_destinatario_fael#%?=#%?txt#%?0000000#@?set#%?425243#%?=#%?txt#%?<PECDestinatario>pec_fael</PECDestinatario>#%?txt#%?pec_fael#%?var#%?pec_fael#%?</cmp></riga>
+<riga><cmp>230</cmp><cmp>cond4</cmp><cmp>rpt#@?and#$?linea_pecdestinatario_fael#%?=#%?txt#%?#$?cod_destinatario_fael#%?=#%?txt#%?0000000#@?set#%?425242#%?=#%?var#%?pec_fael#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>25</cmp><cmp>cond2</cmp><cmp>rpt#@?#@?set#%?1127#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>26</cmp><cmp>cond2</cmp><cmp>rpt#@?and#$?iva_perc_vett_fatt(num_iva_fatt)#%?=#%?var#%?percentuale_tasse_tariffa#$?num_ripetizione_fatt#%?>#%?txt#%?1#@?set#%?1127#%?=#%?txt#%?1#%?txt#%?#%?txt#%?#%?</cmp></riga>
 <riga><cmp>27</cmp><cmp>cond2</cmp><cmp>rpt#@?#@?set#%?1128#%?=#%?txt#%?0#%?txt#%?#%?txt#%?#%?</cmp></riga>

@@ -661,6 +661,7 @@ echo "<small><small>".mex("situazione alle",$pag)." $ora ".mex("del",$pag)." $og
 
 unset($lista_prenota_contr);
 
+if (controlla_num_pos($mese) != "SI") $mese = 1;
 if ($anno_succ == "SI") $mese = $mese + 12;
 
 $data_inizio_periodi = esegui_query("select * from $tableperiodi where idperiodi = 1");

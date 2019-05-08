@@ -2723,6 +2723,10 @@ if ($versione_corrente < "2.31") {
 $aggiornato = "SI";
 } # fine if ($versione_corrente < "2.31")
 
+if ($versione_corrente < "2.32") {
+$aggiornato = "SI";
+} # fine if ($versione_corrente < "2.32")
+
 
 
 

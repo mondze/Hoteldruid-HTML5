@@ -194,6 +194,7 @@ $d_num_persone = 0;
 
 if ($canc_idprenota or $azzera) $id_prenota = "";
 if ($id_prenota) {
+if (controlla_num_pos($id_prenota) == "NO") $id_prenota = "";
 $id_prenota = aggslashdb($id_prenota);
 $dati_prenota = esegui_query("select * from $tableprenota where idprenota = '$id_prenota'");
 if (!numlin_query($dati_prenota)) $id_prenota = "";
@@ -424,7 +425,7 @@ $$id_periodi_costo = "inserire";
 for ($numca2 = 0 ; $numca2 <= $num_costo ; $numca2++) if (${"id_periodi_costo".$numca2}) echo "<input type=\"hidden\" name=\"id_periodi_costo$numca2\" value=\"".${"id_periodi_costo".$numca2}."\">";
 echo "<input type=\"hidden\" name=\"id_costi\" value=\"$id_costi_orig\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota\">
-<input type=\"hidden\" name=\"categoria\" value=\"$categoria\">
+<input type=\"hidden\" name=\"categoria\" value=\"".htmlspecialchars($categoria)."\">
 <button class=\"pos\" type=\"submit\" style=\"height: 60px; width: 140px; margin: 2px;\"><b>".mex("Continua",$pag)."</b></button>
 </div></form><hr align=\"left\" style=\"width: 30%; margin-left: 0; text-align: left;\">";
 $blocca_schermo = 1;
@@ -702,7 +703,7 @@ $metodi_pagamento = risul_query($metodi_pagamento,0,'valpersonalizza');
 if (($num_casse_attive > 1 or $metodi_pagamento) and !$id_cassa_sel) {
 $testo_azione = "<input type=\"hidden\" name=\"id_costi\" value=\"$id_costi\">
 <input type=\"hidden\" name=\"incassa\" value=\"1\">
-<input type=\"hidden\" name=\"categoria\" value=\"$categoria\">
+<input type=\"hidden\" name=\"categoria\" value=\"".htmlspecialchars($categoria)."\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota\">";
 if ($metodi_pagamento) {
 $testo_azione .= "<br>".mex("Metodo pagamento",$pag).":<br><br>
@@ -818,7 +819,7 @@ $select_prenota .= "<option value=\"$id_prenota\">$app_prenota$cliente_vedi</opt
 } # fine for $num1
 if ($select_prenota) {
 $testo_azione = "<input type=\"hidden\" name=\"id_costi\" value=\"$id_costi\">
-<input type=\"hidden\" name=\"categoria\" value=\"$categoria\">";
+<input type=\"hidden\" name=\"categoria\" value=\"".htmlspecialchars($categoria)."\">";
 /*if ($id_costi) {
 $costi = explode(",",$id_costi);
 $num_costi = count($costi);
@@ -835,7 +836,7 @@ else {
 if ($attiva_checkin == "SI") $testo_azione = "<br>".mex("Attualmente non ci sono prenotazioni che abbiano registrato l'entrata",$pag).".<br><br>";
 else $testo_azione = "<br>".mex("Oggi non ci sono prenotazioni",$pag).".<br><br>";
 $testo_azione .= "<input type=\"hidden\" name=\"id_costi\" value=\"$id_costi\">
-<input type=\"hidden\" name=\"categoria\" value=\"$categoria\">
+<input type=\"hidden\" name=\"categoria\" value=\"".htmlspecialchars($categoria)."\">
 <button class=\"pos\" type=\"submit\" style=\"height: 60px; width: 140px; margin: 2px;\"><b>".mex("OK",$pag)."</b></button>";
 } # fine else if ($select_prenota)
 } # fine if (!$id_prenota)
@@ -976,7 +977,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"punto_vendita.php#
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" id=\"id_costi\" name=\"id_costi\" value=\"$id_costi\">
 <input type=\"hidden\" name=\"id_prenota\" value=\"$id_prenota\">
-<input type=\"hidden\" id=\"nomecat\" name=\"categoria\" value=\"$categoria\">";
+<input type=\"hidden\" id=\"nomecat\" name=\"categoria\" value=\"".htmlspecialchars($categoria)."\">";
 for ($numca2 = 0 ; $numca2 < $num_costi ; $numca2++) if (${"id_periodi_costo".$numca2}) echo "<input type=\"hidden\" name=\"id_periodi_costo$numca2\" value=\"".${"id_periodi_costo".$numca2}."\">";
 echo "<div style=\"float: left; border: 1px solid black; width: 300px; height: 385px; margin: 0 2px 1px 1px;\">
 <div style=\" height: 276px; overflow: auto;\">

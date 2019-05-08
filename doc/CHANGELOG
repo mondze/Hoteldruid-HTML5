@@ -1,6 +1,15 @@
+2.3.2 (27/02/2019)
+======================
+-fixed bugs: multiple cross site scripting vulnerabilities in backend
+-fixed bug: sometimes reservations could not be moved if there were some rules 1 not for closure
+-fixed bug: errors when wiewing reservations table with extra beds and without people types
+-updated the format of default Italian document "fattura elettronica"
+-fixed bug: search dates not escaped in reservation payments page
+
+
 2.3.1 (20/02/2019)
 ======================
--new document variables for person types and person type for extra costs as extra bed
+-new document variables for person types and person type for extra costs as extra beds
 -extended custom person types support to availability check, webpages and reservations tables
 -fiexd bug: custom comments and client fields not defined in document conditions if not in Italian
 -updated the format of default Italian document "fattura elettronica"

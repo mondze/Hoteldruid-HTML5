@@ -409,7 +409,7 @@ if ($mess_letto) echo "".mex("[1]Ogni appartamento può contenere al <span class
 if ($num_id_prenota == 1) echo "".mex("Gli ospiti della prenotazione",$pag)." $id_prenota";
 else echo "".mex("Gli ospiti delle prenotazioni",$pag)." ".str_replace(",",", ",$id_prenota_int);
 echo " ".mex("sono stati modificati",$pag).".<br><br>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".htmlspecialchars($origine)."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
@@ -681,7 +681,7 @@ echo "<br><div style=\"text-align: center;\">
 
 
 echo "<hr style=\"width: 95%\"><br><div style=\"text-align: center;\">
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".htmlspecialchars($origine)."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">

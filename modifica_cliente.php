@@ -229,7 +229,7 @@ esegui_query("update $tableclienti set idclienti_compagni = '$idclienti_compagni
 esegui_query("delete from $tableclienti where idclienti = '$idclienti' ");
 esegui_query("delete from $tablerelclienti where idclienti = '$idclienti' ");
 echo mex("Cliente cancellato",$pag)."!<br>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".htmlspecialchars($origine)."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
@@ -1778,7 +1778,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$pag\"><div>
 } # fine if ($prenota_cliente_esistente != "SI")
 
 echo "<hr style=\"width: 95%\">
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".htmlspecialchars($origine)."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">

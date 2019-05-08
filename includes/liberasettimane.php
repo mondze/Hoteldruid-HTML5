@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -954,7 +954,7 @@ $n_prenota_in_app_sett[$numapp][$num3] = "";
 } # fine for $num3
 $app_assegnabili_id2 = $app_assegnabili_id[$idprenotainperiodo];
 $app_assegnabili_id[$idprenotainperiodo] = "";
-$ap_ric = "";
+$ap_ric = array();
 for ($num3 = 0 ; $num3 < $dati_app['totapp'] ; $num3++) {
 $numapp2 = $dati_app['posizione'][$num3];
 if ($da_scambiare[$idprenotainperiodo][$numapp2] == "SI") {

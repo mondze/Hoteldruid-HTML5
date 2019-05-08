@@ -2,7 +2,7 @@
 
 ##################################################################################
 #    HOTELDRUID
-#    Copyright (C) 2001-2018 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
+#    Copyright (C) 2001-2019 by Marco Maria Francesco De Santis (marco@digitaldruid.net)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -261,15 +261,15 @@ echo "</td></tr></table>";
 
 else {
 if ($cerca_inizioperiodo) {
-$cerca_inizioperiodo = $cerca_anno_inizioperiodo.$cerca_inizioperiodo;
+$cerca_inizioperiodo = htmlspecialchars($cerca_anno_inizioperiodo.$cerca_inizioperiodo);
 $cerca_inizioperiodo_f = formatta_data($cerca_inizioperiodo,$stile_data);
-$periodo_query = " and data_inserimento >= '$cerca_inizioperiodo'";
+$periodo_query = " and data_inserimento >= '".aggslashdb($cerca_inizioperiodo)."'";
 $frase_periodo = " ".mex("dal",$pag)." $cerca_inizioperiodo_f";
 } # fine if ($cerca_inizioperiodo)
 if ($cerca_fineperiodo) {
-$cerca_fineperiodo = $cerca_anno_fineperiodo.$cerca_fineperiodo;
+$cerca_fineperiodo = htmlspecialchars($cerca_anno_fineperiodo.$cerca_fineperiodo);
 $cerca_fineperiodo_f = formatta_data($cerca_fineperiodo,$stile_data);
-$periodo_query .= " and data_inserimento <= '$cerca_fineperiodo'";
+$periodo_query .= " and data_inserimento <= '".aggslashdb($cerca_fineperiodo)."'";
 $frase_periodo .= " ".mex("fino al",$pag)." $cerca_fineperiodo_f";
 } # fine if ($cerca_fineperiodo)
 } # fine else if (!$cerca_prenota)

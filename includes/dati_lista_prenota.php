@@ -174,7 +174,7 @@ if ($dati_cap[$numca]['settimane']) ${"giorni_costo_agg".$numca."_".$num_r} = $d
 else ${"giorni_costo_agg".$numca."_".$num_r} = ",";
 } # fine if ($dati_cap[$numca]['associasett'] == "s")
 else ${"giorni_costo_agg".$numca."_".$num_r} = "";
-if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num']) ${"tipo_persona_costo_agg".$numca."_".$num_r} = ($dati_cap[$numca]['cat_pers']['ord'][0] + 1);
+if ($dati_cap[$numca]['letto'] == "s" and $dati_cat_pers['num'] and $dati_cap[$numca]['cat_pers']['esist'][0]) ${"tipo_persona_costo_agg".$numca."_".$num_r} = ($dati_cap[$numca]['cat_pers']['ord'][0] + 1);
 else ${"tipo_persona_costo_agg".$numca."_".$num_r} = "";
 ${"data_inserimento_costo_agg".$numca."_".$num_r} = substr($dati_cap[$numca]['datainserimento'],0,10);
 ${"utente_inserimento_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['utente_inserimento'];

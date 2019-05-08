@@ -843,7 +843,7 @@ $frase_modifica<br>";
 
 
 echo "<hr style=\"width: 95%\"><br><div style=\"text-align: center;\">
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".str_replace("\"","",str_replace(">","",$origine))."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">";

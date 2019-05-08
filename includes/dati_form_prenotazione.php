@@ -27,8 +27,8 @@ $mess_dati_form .= "<input type=\"hidden\" name=\"cognome\" value=\"".htmlspecia
 } # fine if ($manda_cognome != "NO")
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
 if ($manda_dati_assegnazione != "NO") {
-$mess_dati_form .= "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"".${"inizioperiodo".$n_t}."\">
-<input type=\"hidden\" name=\"fineperiodo$n_t\" value=\"".${"fineperiodo".$n_t}."\">
+$mess_dati_form .= "<input type=\"hidden\" name=\"inizioperiodo$n_t\" value=\"".htmlspecialchars(${"inizioperiodo".$n_t})."\">
+<input type=\"hidden\" name=\"fineperiodo$n_t\" value=\"".htmlspecialchars(${"fineperiodo".$n_t})."\">
 <input type=\"hidden\" name=\"appartamento$n_t\" value=\"".htmlspecialchars(${"appartamento".$n_t})."\">
 <input type=\"hidden\" name=\"nometipotariffa$n_t\" value=\"".htmlspecialchars(${"nometipotariffa".$n_t})."\">
 <input type=\"hidden\" name=\"numpersone$n_t\" value=\"".htmlspecialchars(${"numpersone".$n_t})."\">

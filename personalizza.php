@@ -281,7 +281,7 @@ for ($num2 = ($num1 + 1) ; $num2 <= $max_tar ; $num2++) $opt_giu .= "<option val
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$pag#condizioni\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
 <input type=\"hidden\" name=\"cambia_ord_tariffe\" value=\"SI\">
 <input type=\"hidden\" name=\"lista_tar\" value=\"$lista_tar_ser\">
@@ -299,7 +299,7 @@ for ($num2 = ($num1 - 1) ; $num2 > 0 ; $num2--) $opt_su .= "<option value=\"$num
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$pag#condizioni\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
 <input type=\"hidden\" name=\"cambia_ord_tariffe\" value=\"SI\">
 <input type=\"hidden\" name=\"lista_tar\" value=\"$lista_tar_ser\">
@@ -316,7 +316,7 @@ echo "</table>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"./personalizza.php\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
 <input type=\"hidden\" name=\"cambia_ord_tariffe\" value=\"SI\">
 <input type=\"hidden\" name=\"lista_tar\" value=\"$lista_tar_ser\">
@@ -3123,7 +3123,7 @@ echo "<br>";
 } # fine if ($modifica_pers != "NO")
 
 
-if ($origine) $action = $origine;
+if ($origine) $action = controlla_pag_origine($origine);
 else {
 $action = $pag;
 if ($anchor) $action .= "#$anchor";

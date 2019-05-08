@@ -1901,6 +1901,7 @@ else $fatto_libera = "NO";
 if ($fatto_libera == "SI") {
 $occupare_app_agenzia = "NO";
 $app_prenota_id = $app_prenota_id2;
+$app_orig_prenota_id = $app_orig_prenota_id2;
 $prenota_in_app_sett = $prenota_in_app_sett2;
 for ($num_idpr = 0 ; $num_idpr < $num_id_prenota ; $num_idpr++) {
 $id_prenota = $id_prenota_idpr[$num_idpr];
@@ -3410,7 +3411,7 @@ if (substr($origine,0,13) == "tab_mese_drop") {
 $action = explode("#",$origine);
 $action = "tabella.php#rd_n".$action[1];
 } # fine if (substr($origine,0,13) == "tab_mese_drop")
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$action\"><div>";
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($action)."\"><div>";
 echo "<br><input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">
@@ -5673,7 +5674,7 @@ echo "</div></form>
 
 if (!$tipo_tabella) $tipo_tabella = "prenotazioni";
 echo "<table><tr><td style=\"height: 6px;\"></td></tr></table>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"".str_replace("\"","",str_replace(">","",str_replace("<","",$origine)))."\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno_origine\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"mese\" value=\"$mese\">

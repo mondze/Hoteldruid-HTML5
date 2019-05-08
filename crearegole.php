@@ -200,7 +200,7 @@ echo mex("Sei sicuro di voler cancellare tutte le regole del tipo 1",$pag)."?
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inserisci\" value=\"SI\">
-<input type=\"hidden\" name=\"canc_regola_1\" value=\"$canc_regola_1\">
+<input type=\"hidden\" name=\"canc_regola_1\" value=\"1\">
 <button class=\"crul\" type=\"submit\" name=\"gia_stato\" value=\"1\"><div>  ".mex("SI",$pag)."  </div></button></div></form><br>";
 } # fine else if ($gia_stato)
 } # fine if ($canc_regola_1)
@@ -240,7 +240,7 @@ $app_trovato = array();
 for ($num1 = 0 ; $num1 < $num_app ; $num1 = $num1 + 1) {
 if ($app_esistente[$vett_app[$num1]] != "SI") {
 $inserire = "NO";
-echo "<br>".mex("L'appartamento",'unit.php')." <b class=\"colwarn\">".$vett_app[$num1]."</b>".mex(" non esiste",$pag).".<br><br>";
+echo "<br>".mex("L'appartamento",'unit.php')." <b class=\"colwarn\">".htmlspecialchars($vett_app[$num1])."</b>".mex(" non esiste",$pag).".<br><br>";
 } # fine if ($app_esistente[$appartamento] != "SI")
 else {
 if ($app_trovato[$vett_app[$num1]]) $lista_app = substr(str_replace(",".$vett_app[$num1].",",",",",$lista_app,"),1,-1).",".$vett_app[$num1];
@@ -433,7 +433,7 @@ $aggiorna_ic_tar = 1;
 } # fine if ($regola_4)
 
 if ($tabelle_lock) unlock_tabelle($tabelle_lock);
-if ($origine) $azione = $origine;
+if ($origine) $azione = controlla_pag_origine($origine);
 else $azione = "crearegole.php";
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$azione\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
@@ -778,7 +778,7 @@ $array_maxocc
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inserisci\" value=\"SI\">
 <input type=\"hidden\" name=\"regola_2\" value=\"SI\">";
-if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 echo "".mex("Quando si sceglie la tariffa",$pag)."
 <select name=\"tipotariffa\" id=\"t2\" onchange=\"aggiorna_val_reg2()\">
 <option value=\"\" selected>----</option>";
@@ -831,7 +831,7 @@ echo "<br><br>
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inserisci\" value=\"SI\">
 <input type=\"hidden\" name=\"regola_2b\" value=\"SI\">";
-if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 echo "".mex("Eccezioni alla regola",$pag)." 2:<br>
 ".mex("Quando si sceglie la tariffa",$pag)."
 <select name=\"tipotariffa\" id=\"t2b\" onchange=\"aggiorna_val_reg2b()\">
@@ -980,7 +980,7 @@ echo "}
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"inserisci\" value=\"SI\">";
-if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+if ($origine) echo "<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 echo mex("Quando si sceglie la tariffa",$pag)."
 <select name=\"tipotariffa\" id=\"t4\" onchange=\"aggiorna_val_reg4()\">
 <option value=\"\" selected>----</option>";
@@ -1055,7 +1055,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle
 <br></div></form>";
 } # fine if (!$origine)
 else {
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <button class=\"gobk\" type=\"submit\"><div>".mex("Torna indietro",$pag)."</div></button>

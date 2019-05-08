@@ -327,6 +327,7 @@ if ($ordine_prenota != "iddatafine" and $ordine_prenota != "idprenota" and $ordi
 if ($ordine_prenota != "idprenota") $ordine_prenota .= ",idprenota";
 if ($priv_mod_prenota_iniziate != "s") $id_periodo_corrente = calcola_id_periodo_corrente($anno);
 if ($opz_cerc_pren != "arr" and $opz_cerc_pren != "part") $opz_cerc_pren = "";
+if ($sel_tab_prenota != "tutte" and $sel_tab_prenota != "correnti" and $sel_tab_prenota != "future" and $sel_tab_prenota != "partcorr") $sel_tab_prenota = "";
 $pag_pren_corr = htmlspecialchars($pag_pren_corr);
 $pag_pren_prec = htmlspecialchars($pag_pren_prec);
 $pag_pren_succ = htmlspecialchars($pag_pren_succ);
@@ -1582,7 +1583,7 @@ $tasse = $tasse * (double) $dati_tariffe['tasse_arrotond'];
 $tasse_TOT = (double) $tasse_TOT + (double) $tasse;
 } # fine if ($dati_cap[$numca]['tasseperc'])
 } # fine for $numca
-if ($num_letti_agg['max']) {
+if ($num_letti_agg['max'] and $dati_cat_pers['num']) {
 $cat_persone .= $num_letti_agg['catp'][$num_letti_agg['sett_max']];
 $cat_lettiagg_tot = $num_letti_agg['catp_tot'][$num_letti_agg['sett_max']];
 reset($cat_lettiagg_tot);
@@ -1594,7 +1595,7 @@ foreach ($cat_pers_ex as $cat_ex => $val2) $cat_persone_TOT['ex'][$cat_ex] += $v
 } # fine if ((string) $cat_corr == "ex")
 else $cat_persone_TOT[$cat_corr] += $val;
 } # fine foreach ($cat_lettiagg_tot as $cat_corr => $val)
-} # fine if ($num_letti_agg['max'])
+} # fine if ($num_letti_agg['max'] and $dati_cat_pers['num'])
 $n_letti_agg = $num_letti_agg['max'];
 
 $link_modifica = "SI";
@@ -3034,7 +3035,7 @@ $lingua_mex = $lingua_mex2;
 } # fine if ($mese_fine <= 48 and $mese_fine >= $mese_cont)
 
 $datafine_f = formatta_data($datafine,$stile_data);
-if ($origine) $azione = $origine;
+if ($origine) $azione = controlla_pag_origine($origine);
 else $azione = "visualizza_tabelle.php";
 echo mex("I periodi sono stati aggiunti fino al",$pag)." $datafine_f.<br>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"$azione\"><div>
@@ -3149,7 +3150,7 @@ echo mex("Sei sicuro di voler cancellare il costo aggiuntivo",$pag)." \"<b>$nome
 <form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle.php#tab_costi_agg\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"idntariffe\" value=\"$idntariffe\">
+<input type=\"hidden\" name=\"idntariffe\" value=\"".htmlspecialchars($idntariffe)."\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
 <input type=\"hidden\" name=\"d_nome_costo_agg\" value=\"".htmlspecialchars($nome_costo_agg)."\">
 <button class=\"cexc\" type=\"submit\" name=\"cancella\" value=\"".mex("SI",$pag)."\"><div>".mex("SI",$pag)."</div></button>
@@ -3685,7 +3686,7 @@ $aggiorna_tar = 1;
 if (@function_exists('pcntl_fork')) include("./includes/interconnect/aggiorna_ic_fork.php");
 else include("./includes/interconnect/aggiorna_ic.php");
 
-if ($origine) $azione = $origine;
+if ($origine) $azione = controlla_pag_origine($origine);
 else $azione = "visualizza_tabelle.php";
 if ($casella_sbagliata == "SI") echo "".mex("<div style=\"display: inline; color: red;\">Non</div> è stato possibile inserire alcuni prezzi",$pag).".<br>";
 echo "".mex("I prezzi sono stati aggiornati",$pag).".<br><br>
@@ -4446,7 +4447,7 @@ if (defined('C_URL_MOD_EXT_CARTE_CREDITO') and C_URL_MOD_EXT_CARTE_CREDITO != ""
 $limite_transazioni_vecchie = date("Y-m-d H:i:s",(time() - (15 * 60) + (C_DIFF_ORE * 3600)));
 esegui_query("delete from $tabletransazioni where ultimo_accesso <= '$limite_transazioni_vecchie' and tipo_transazione = 'cn_cc' ");
 } # fine if (defined('C_URL_MOD_EXT_CARTE_CREDITO') and C_URL_MOD_EXT_CARTE_CREDITO != "")
-unset($cancella_cliente_id);
+$cancella_cliente_id = array();
 $altre_tab_lock = array($tableanni);
 $num_lock = 1;
 for ($num1 = 0 ; $num1 < $num_anni ; $num1++) {
@@ -4572,7 +4573,7 @@ else {
 
 $mostra_tab_clienti = 0;
 if (!$origine) $azione = $pag;
-else $azione = $origine;
+else $azione = controlla_pag_origine($origine);
 $priv_key_cc = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'priv_key_cc' and idutente = '1'");
 unset($cancella_cliente_id);
 $anno_corr = $anno_corrente;
@@ -6515,7 +6516,7 @@ echo "
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".${"pagina_prenota".$num_contr}."\">
+<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".htmlspecialchars(${"pagina_prenota".$num_contr})."\">
 <input type=\"hidden\" name=\"canc_doc\" value=\"SI\">
 <input type=\"hidden\" name=\"num_contr\" value=\"$num_contr\">
 <input type=\"hidden\" name=\"anno_doc_canc\" value=\"$anno_doc_canc\">
@@ -6527,7 +6528,7 @@ echo "
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".${"pagina_prenota".$num_contr}."\">
+<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".htmlspecialchars(${"pagina_prenota".$num_contr})."\">
 <button class=\"gobk\" type=\"submit\"><div>".mex("NO",$pag)."</div></button>
 </div></form></td></tr></table><br>";
 } # fine if (!$continua)
@@ -6759,7 +6760,7 @@ $tab_contr .= "<td><form accept-charset=\"utf-8\" method=\"post\" action=\"visua
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"$pagina_prenota\">
+<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".htmlspecialchars($pagina_prenota)."\">
 <input type=\"hidden\" name=\"canc_doc\" value=\"SI\">
 <input type=\"hidden\" name=\"num_contr\" value=\"$num_contr\">
 <input type=\"hidden\" name=\"anno_doc_canc\" value=\"$anno_doc\">
@@ -6780,7 +6781,7 @@ echo "<tr><td colspan=\"4\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"$pagina_prenota\">
+<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".htmlspecialchars($pagina_prenota)."\">
 <input type=\"hidden\" name=\"upload_doc\" value=\"SI\">
 <input type=\"hidden\" name=\"num_contr\" value=\"$num_contr\">
 <input type=\"hidden\" name=\"anno_doc_upload\" value=\"$anno_doc\">
@@ -6811,7 +6812,7 @@ echo "<tr><td colspan=\"4\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"tipo_tabella\" value=\"$tipo_tabella\">
-<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"$pagina_prenota\">
+<input type=\"hidden\" name=\"pagina_prenota$num_contr\" value=\"".htmlspecialchars($pagina_prenota)."\">
 <input type=\"hidden\" name=\"upload_doc\" value=\"SI\">
 <input type=\"hidden\" name=\"num_contr\" value=\"$num_contr\">
 <input type=\"hidden\" name=\"anno_doc_upload\" value=\"$anno_doc\">

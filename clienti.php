@@ -210,7 +210,7 @@ $fax = htmlspecialchars($fax);
 $email = htmlspecialchars($email);
 $cod_fiscale = htmlspecialchars($cod_fiscale);
 $partita_iva = htmlspecialchars($partita_iva);
-$origine = htmlspecialchars($origine);
+#$origine = htmlspecialchars($origine);
 for ($num1 = 0 ; $num1 < $num_campi_pers ; $num1++) ${"campo_pers".$num1} = htmlspecialchars(${"campo_pers".$num1});
 
 $stile_data = stile_data();
@@ -251,7 +251,7 @@ $tablecostiprenota = $PHPR_TAB_PRE."costiprenota".$anno;
 if ($aggiungi_tipologie) {
 $manda_dati_assegnazione = "SI";
 $mostra_form_dati_cliente = "NO";
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
@@ -269,7 +269,7 @@ echo "<br>".mex("Nº di tipologie da aggiungere",$pag).":";
 echo "<input type=\"text\" name=\"num_tipologie_da_aggiungere\" size=\"2\" maxlength=\"2\" value =\"1\">
 <button class=\"plus\" type=\"submit\"><div>".mex("Aggiungi",$pag)."</div></button>
 </div></form><br><br>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
@@ -466,7 +466,7 @@ $dati_tariffe = dati_tariffe($tablenometariffe,"","",$tableregole);
 $dati_cat_pers = dati_cat_pers($id_utente,$tablepersonalizza,$lingua_mex,$priv_ins_num_persone);
 $num_categorie_persone = $dati_cat_pers['num'];
 $dati_ca = dati_costi_agg_ntariffe($tablenometariffe,"","NO","",$tableappartamenti);
-$numcostiagg_orig = $numcostiagg;
+$numcostiagg_orig = (int) $numcostiagg;
 
 dati_regole2($dati_r2,$app_regola2_predef,"","","",$id_periodo_corrente,$tipo_periodi,$anno,$tableregole);
 for ($n_t = 1 ; $n_t <= $num_tipologie ; $n_t++) {
@@ -831,7 +831,7 @@ echo ":<br>
 <form accept-charset=\"utf-8\" method=\"post\" action=\"clienti.php\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">";
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">";
 for ($num1 = $idinizioperiodo; $num1 <= $idfineperiodo; $num1++) ${"ck_sett".$num1} = "";
 if ($idmessaggi) {
 $id_periodi_mess = esegui_query("select dati_messaggio9,dati_messaggio10,dati_messaggio14 from $tablemessaggi where tipo_messaggio = 'rprenota' and idutenti $LIKE '%,$id_utente,%' and idmessaggi = '".aggslashdb($idmessaggi)."' ");
@@ -1811,7 +1811,7 @@ echo "<br><form accept-charset=\"utf-8\" method=\"post\" action=\"clienti.php\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 $form_riprova_no_vicini
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"nuovaprenotazione\" value=\"SI\">
 <input class=\"sbutton\" type=\"submit\" name=\"nuovaprenota_vedi\" value=\"".mex("Riprova senza cercare appartamenti vicini",'unit.php')."\">
 </div></form><br>";
@@ -1828,12 +1828,12 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"clienti.php\"><div
 $manda_dati_assegnazione = "NO";
 include("./includes/dati_form_prenotazione.php");
 echo "
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"nuovaprenotazione\" value=\"Continua lo stesso\">
 <input class=\"sbutton\" type=\"submit\" name=\"nuovaprenota_vedi\" value=\"".mex("Continua lo stesso",$pag)."\">
 </div></form><br>";
 } # fine if ((!$app_richiesti[',numero,'] and $id_utente == 1) or $fatto_libera2 == "SI")
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 $form_orig
@@ -1898,8 +1898,8 @@ else {
 if (!$nome) echo mex("Esistono i seguenti clienti con un cognome uguale o simile",$pag);
 else echo mex("Esistono i seguenti clienti con un cognome e nome uguale o simile",$pag);
 echo ":<br><br>
-<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 $select_prenotazioni = "";
@@ -1996,7 +1996,7 @@ echo "</div></div></form>";
 
 if ($inserimento_nuovi_clienti == "SI") {
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"clienti.php\"><div>
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 include("./includes/dati_form_prenotazione.php");
@@ -2012,8 +2012,8 @@ echo "<div style=\"text-align: center;\"><br>
 <hr style=\"width: 95%\">";
 } # fine if ($inserimento_nuovi_clienti == "SI")
 
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"id_transazione\" value=\"$id_transazione\">
@@ -2084,7 +2084,7 @@ $inserire = "NO";
 
 
 if ($inserire == "NO") {
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">";
 if ($nuovaprenotazione) echo $form_orig;
@@ -2149,7 +2149,7 @@ echo "<button class=\"mcli\" type=\"submit\"><div>".mex("Modifica i dati del cli
 </div></form>";
 } # fine if ($inserire != "NO")
 else echo mex("Non si è trovato nessun cliente chiamato",$pag)." $cognome.<br>";
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"idclienti\" value=\"$idclienti\">
@@ -2232,7 +2232,7 @@ $partita_iva = $dati_mess[24];
 } # fine if ($idmessaggi)
 
 if ($datiprenota) echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"98%\"><tr><td style=\"font-size: 80%;\" align=\"right\">
-<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"id_transazione\" value=\"$id_transazione\">
@@ -2241,10 +2241,10 @@ if ($datiprenota) echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" 
 </div></form></td></tr></table>";
 else echo "<br>";
 mostra_funzjs_cpval();
-echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"$origine\"><div class=\"linhbox\">
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"".controlla_pag_origine($origine)."\"><div class=\"linhbox\">
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
-<input type=\"hidden\" name=\"origine\" value=\"$origine\">
+<input type=\"hidden\" name=\"origine\" value=\"".htmlspecialchars($origine)."\">
 <hr style=\"width: 95%\">";
 $titoli_cliente = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'titoli_cliente' and idutente = '$id_utente'");
 if (numlin_query($titoli_cliente) == 1) $titoli_cliente = risul_query($titoli_cliente,0,"valpersonalizza");

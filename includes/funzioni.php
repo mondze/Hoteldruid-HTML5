@@ -53,8 +53,8 @@ $tablepersonalizza = $PHPR_TAB_PRE."personalizza";
 
 #@include("./includes/costanti.php");
 #@include(C_DATI_PATH."/costanti.php");
-define('C_PHPR_VERSIONE_NUM',2.31);
-define('C_PHPR_VERSIONE_TXT',"2.3.1");
+define('C_PHPR_VERSIONE_NUM',2.32);
+define('C_PHPR_VERSIONE_TXT',"2.3.2");
 
 if (!function_exists('utf8_encode')) {
 function utf8_encode ($testo) { return ($testo); }
@@ -306,7 +306,7 @@ $parti[1] = round($parti[1]);
 $num = $parti[0].".".$parti[1];
 settype ($num,'double');
 } # fine if ($parti[1])
-else $num = $parti[0];
+else $num = (int) $parti[0];
 } # fine if (count($parti) == 2)
 
 return $num;
@@ -931,34 +931,16 @@ if (function_exists('ob_flush')) ob_flush();
 
 
 
-/*
-function aggiorna_interconnessioni ($nome_funz1,$nome_funz2,$anno,$PHPR_TAB_PRE,$lock) {
+function controlla_pag_origine ($origine) {
 
-$file_interconnessioni = C_DATI_PATH."/dati_interconnessioni.php";
-if (@is_file($file_interconnessioni)) {
-include($file_interconnessioni);
-if (@is_array($ic_present)) {
-$interconn_dir = opendir("./includes/interconnect/");
-while ($mod_ext = readdir($interconn_dir)) {
-if ($mod_ext != "." and $mod_ext != ".." and @is_dir("./includes/interconnect/$mod_ext")) {
-include("./includes/interconnect/$mod_ext/name.php");
-if ($ic_present[$interconnection_name] == "SI") {
-$funz_agg_interconn = $nome_funz1.$interconnection_name;
-if (!function_exists($funz_agg_interconn)) include("./includes/interconnect/$mod_ext/functions.php");
-$funz_agg_interconn($file_interconnessioni,$anno,$PHPR_TAB_PRE,$lock);
-if ($nome_funz2) {
-$funz_agg_interconn = $nome_funz2.$interconnection_name;
-$funz_agg_interconn($file_interconnessioni,$anno,$PHPR_TAB_PRE,$lock);
-} # fine if ($nome_funz2)
-} # fine if ($ic_present[$interconnection_name] == "SI")
-} # fine if ($modello_ext != "." and $modello_ext != ".." and...
-} # fine while ($mod_ext = readdir($interconn_dir))
-closedir($interconn_dir);
-} # fine if (@is_array($ic_present))
-} # fine if (@is_file($file_interconnessioni))
+$origine = trim($origine);
+if (substr($origine,0,2) == "./") $origine = substr($origine,2);
+if (strstr($origine,"http") or strstr($origine,"..") or strstr($origine,"/") or strstr($origine,"\\")) $origine = "inizio.php";
 
-} # fine function aggiorna_interconnessioni
-*/
+return str_replace("\"","",str_replace(">","",str_replace("<","",$origine)));
+
+} # fine function controlla_pag_origine
+
 
 
 

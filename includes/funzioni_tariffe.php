@@ -437,21 +437,37 @@ $dati_cat_pers[$num1]['langs']['ita']['n_s'] = $n_cat_pers_v[0];
 $dati_cat_pers[$num1]['langs']['ita']['n_p'] = $n_cat_pers_v[1];
 } # fine for $num1
 } # fine if ($dati_cat_pers['lang'] != 'ita')
+if (strstr($altre_lingue,",")) {
+$lista_lingue = explode(",",$altre_lingue);
+$num_lingue = count($lista_lingue);
+} # fine if (strstr($altre_lingue,","))
+else {
+$lista_lingue = array();
+$num1 = 0;
 $lang_dir = opendir("./includes/lang/");
 while ($ini_lingua = readdir($lang_dir)) {
-if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and $ini_lingua != $dati_cat_pers['lang'] and @is_file("./includes/lang/$ini_lingua/l_n")) {
-$n_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($ini_lingua)."' and idutente = '$id_utente' ");
-if (numlin_query($n_cat_pers)) {
-$n_cat_pers = explode("<",risul_query($n_cat_pers,0,'valpersonalizza'));
-for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
-$n_cat_pers_v = explode(">",$n_cat_pers[$num1]);
-$dati_cat_pers[$num1]['langs'][$ini_lingua]['n_s'] = $n_cat_pers_v[0];
-$dati_cat_pers[$num1]['langs'][$ini_lingua]['n_p'] = $n_cat_pers_v[1];
-} # fine for $num1
-} # fine if (numlin_query($n_cat_pers))
+if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and @is_file("./includes/lang/$ini_lingua/l_n")) {
+$num1++;
+$lista_lingue[$num1] = $ini_lingua;
 } # fine if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and...
 } # fine while ($file = readdir($lang_dig))
 closedir($lang_dir);
+$num_lingue = ($num1 + 1);
+} # fine else if (strstr($altre_lingue,","))
+for ($num1 = 1 ; $num1 < $num_lingue ; $num1++) {
+$ini_lingua = $lista_lingue[$num1];
+if ($ini_lingua and $ini_lingua != $dati_cat_pers['lang']) {
+$n_cat_pers = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($ini_lingua)."' and idutente = '$id_utente' ");
+if (numlin_query($n_cat_pers)) {
+$n_cat_pers = explode("<",risul_query($n_cat_pers,0,'valpersonalizza'));
+for ($num2 = 0 ; $num2 < $dati_cat_pers['num'] ; $num2++) {
+$n_cat_pers_v = explode(">",$n_cat_pers[$num2]);
+$dati_cat_pers[$num2]['langs'][$ini_lingua]['n_s'] = $n_cat_pers_v[0];
+$dati_cat_pers[$num2]['langs'][$ini_lingua]['n_p'] = $n_cat_pers_v[1];
+} # fine for $num2
+} # fine if (numlin_query($n_cat_pers))
+} # fine if ($ini_lingua and $ini_lingua != $dati_cat_pers['lang'])
+} # fine for $num1
 } # fine if ($altre_lingue)
 
 for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {

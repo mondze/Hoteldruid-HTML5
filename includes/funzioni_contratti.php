@@ -366,6 +366,8 @@ $n_utenti = esegui_query("select idutenti,nome_utente from $tableutenti ");
 for ($num1 = 0 ; $num1 < numlin_query($n_utenti) ; $num1++) $n_utente_contr[risul_query($n_utenti,$num1,'idutenti')] = risul_query($n_utenti,$num1,'nome_utente');
 
 if (!$set_glob and $n_r > 100) $unset_glob = 1;
+if ($data_inizio_selezione and preg_replace("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/","",$data_inizio_selezione) != "") $data_inizio_selezione = "";
+if ($data_fine_selezione and preg_replace("/[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}/","",$data_fine_selezione) != "") $data_fine_selezione = "";
 $data_inizio_selezione_orig = $data_inizio_selezione;
 $data_fine_selezione_orig = $data_fine_selezione;
 for ($n_r = 1 ; $n_r <= $num_ripeti ; $n_r++) {

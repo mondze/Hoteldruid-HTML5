@@ -305,11 +305,11 @@ $headers .= "X-Priority: 3$mailh_nl";
 $headers .= "Return-Path: $mittente_email$mailh_nl";
 } # fine else if ($allegato_email and ${"allega".$num1} == "SI")
 #echo nl2br($headers.$testo_email)."QUI<br>";
-if (C_RESTRIZIONI_DEMO_ADMIN != "SI") {
+if (!defined('C_RESTRIZIONI_DEMO_ADMIN') or C_RESTRIZIONI_DEMO_ADMIN != "SI") {
 if (defined("C_MASCHERA_EMAIL") and C_MASCHERA_EMAIL != "") $maschera_envelope = C_MASCHERA_EMAIL;
 if ($maschera_envelope == "SI") $inviato = mail($destinatario_email,${"oggetto_email".$num1},$testo_email,$headers,"-f$mittente_email");
 else $inviato = mail($destinatario_email,${"oggetto_email".$num1},$testo_email,$headers);
-} # fine if (C_RESTRIZIONI_DEMO_ADMIN != "SI")
+} # fine if (!defined('C_RESTRIZIONI_DEMO_ADMIN') or C_RESTRIZIONI_DEMO_ADMIN != "SI")
 if ($inviato) {
 echo "<br>&nbsp;".mex("L'email a",$pag)." <b>$destinatario_email</b> ".mex("è stata inviata",$pag);
 if ($bcc_mittente == "SI" or $bcc_indirizzo) echo " (".mex("bcc a",$pag)." ";

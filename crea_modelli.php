@@ -139,6 +139,7 @@ $M_PHPR_LOAD_EXT = $PHPR_LOAD_EXT;
 $M_PHPR_TAB_PRE = $PHPR_TAB_PRE;
 } # fine if ($fonte_dati_conn == "attuali")
 if ($fonte_dati_conn == "nuovi") {
+if ($T_PHPR_DB_TYPE != "mysql" and $T_PHPR_DB_TYPE != "postgresql" and $T_PHPR_DB_TYPE != "sqlite") $T_PHPR_DB_TYPE = "sqlite";
 $M_PHPR_DB_TYPE = $T_PHPR_DB_TYPE;
 $M_PHPR_DB_NAME = $T_PHPR_DB_NAME;
 $M_PHPR_DB_HOST = $T_PHPR_DB_HOST;

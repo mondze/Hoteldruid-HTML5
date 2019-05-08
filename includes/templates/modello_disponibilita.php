@@ -207,6 +207,7 @@ ${"idcostoagg".$numca."_".$num_tipologie} = ${"idcostoagg_p2_".$numca."_".$numta
 ${"costoagg".$numca."_".$num_tipologie} = ${"costoagg_p2_".$numca."_".$numtariffa};
 ${"nummoltiplica_ca".$numca."_".$num_tipologie} = ${"nummoltiplica_ca_p2_".$numca."_".$numtariffa};
 ${"numsettimane".$numca."_".$num_tipologie} = ${"numsettimane_p2_".$numca."_".$numtariffa};
+${"catpers_ca".$numca."_".$num_tipologie} = ${"catpers_ca_p2_".$numca."_".$numtariffa};
 } # fine for $numca
 } # fine if (($aggiungi_tipologie_p2 == "SI" and ${"num_app_tipo_richiesti_p2_".$numtariffa}) or...
 if ($num_tipologie != $num_tipologie_prec) {
@@ -470,6 +471,7 @@ ${"num_app_tipo_richiesti".$n_t} = $num_app_tipo_richiesti;
 
 # prima parte dei controlli legati al numero di persone
 ${"aggiungi_costo_letto".$n_t} = "NO";
+${"catpers_costo_letto".$n_t} = "";
 if ($numpersone) {
 if (controlla_num_pos($numpersone) == "NO" or ($max_num_persone != 0 and $numpersone > $max_num_persone)) {
 $verificare = "NO";
@@ -528,7 +530,7 @@ ${"num_aggiungi_letti".$n_t} = ($numpersone - $max_capacita);
 $numpersone = $max_capacita;
 ${"numpersone".$n_t} = $numpersone;
 if ($dati_cat_pers['num']) {
-${"catpers_ca".$numca."_".$n_t} = $cat_pers_letto;
+${"catpers_costo_letto".$n_t} = $cat_pers_letto;
 $cat_numpers_orig[$n_t][$cat_pers_letto] = ${"cat$cat_pers_letto"."_numpers".$n_t};
 if ($numpersone_orig_nt[$n_t]) ${"cat$cat_pers_letto"."_numpers".$n_t} = ${"cat$cat_pers_letto"."_numpers".$n_t} - ($num_aggiungi_letti * $dati_r2['napp'][$tipotariffa]);
 else ${"cat$cat_pers_letto"."_numpers".$n_t} = ${"cat$cat_pers_letto"."_numpers".$n_t} - $num_aggiungi_letti;
@@ -1143,6 +1145,7 @@ ${"nummoltiplica_ca".$numcostiagg} = ${"num_aggiungi_letti".$n_t};
 ${"costoagg".$numcostiagg."_".$n_t} = "SI";
 ${"idcostoagg".$numcostiagg."_".$n_t} = $costo_aggiungi_letti;
 ${"nummoltiplica_ca".$numcostiagg."_".$n_t} = ${"num_aggiungi_letti".$n_t};
+${"catpers_ca".$numcostiagg."_".$n_t} = ${"catpers_costo_letto".$n_t};
 ${"numsettimane".$numcostiagg."_".$n_t} = "";
 ${"id_periodi_costo".$numcostiagg."_".$n_t} = "";
 if (!$dati_r2['napp'][$tipotariffa]) ${"numcostiagg_transazione".$n_t} = $numcostiagg;
@@ -3093,7 +3096,7 @@ echo "</select>";
 } # fine else if ($max_num_persone == 0)
 } # fine if (!$dati_cat_pers['num'])
 else {
-echo "<table id=\"perstype\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td>";
+echo "<table class=\"perstype\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td>";
 for ($num1 = 0 ; $num1 < $dati_cat_pers['num'] ; $num1++) {
 if ($framed) echo "<span class=\"ftxt_phr\">";
 echo ucfirst($dati_cat_pers[$num1]['n_plur']).":";
@@ -3119,7 +3122,6 @@ echo "</select>";
 if ($num1 != ($dati_cat_pers['num'] - 1)) echo ";</td><td style=\"width: 20px;\"></td><td>";
 } # for $num1
 echo ".</td></tr></table>";
-if ($n_t == 1) echo "<input type=\"hidden\" name=\"num_categorie_persone\" value=\"".$dati_cat_pers['num']."\">";
 } # fine else if (!$dati_cat_pers['num'])
 echo $chiusura_tag_font;
 if (!$framed) echo "</td></tr></table>";
