@@ -1,9 +1,9 @@
 <?php
 
-$lista_documentiid = "";
-$cod_documentiid = "";
-$cod2_documentiid = "";
-$cod3_documentiid = "";
+$lista_documentiid = array();
+$cod_documentiid = array();
+$cod2_documentiid = array();
+$cod3_documentiid = array();
 
 #$lista_documentiid[0] = "Passport";
 #$cod_documentiid[0] = "001";

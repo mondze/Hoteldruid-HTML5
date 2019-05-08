@@ -66,6 +66,7 @@ if ($priv_mod_prenotazioni == "g") $prendi_gruppi = "SI";
 $priv_mod_date = substr($priv_mod_prenota,1,1);
 $priv_mod_assegnazione_app = substr($priv_mod_prenota,2,1);
 $priv_mod_commento = substr($priv_mod_prenota,5,1);
+$priv_mod_tariffa = substr($priv_mod_prenota,3,1);
 $priv_mod_sconto = substr($priv_mod_prenota,6,1);
 $priv_mod_caparra = substr($priv_mod_prenota,7,1);
 $priv_mod_pagato = substr($priv_mod_prenota,10,1);
@@ -557,11 +558,11 @@ $dati_xml .= "\n-".mex("Nº di persone",$pag).": $num_persone ";
 if ($num_letti_agg['max']) $dati_xml .= "+ ".$num_letti_agg['max']." ";
 } # fine if ($num_persone or $num_letti_agg['max'])
 $tariffa = risul_query($dati_prn,0,'tariffa');
-if ($tariffa) {
+if ($tariffa and $priv_mod_tariffa != "n") {
 $tariffa = explode("#@&",$tariffa);
 $tariffa = $tariffa[0];
 $dati_xml .= "\n-".mex("Tipo di tariffa",$pag).": ".str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$tariffa))))." ";
-} # fine if ($tariffa)
+} # fine if ($tariffa and $priv_mod_tariffa != "n")
 $origine = risul_query($dati_prn,0,'origine');
 if ($origine) $dati_xml .= "\n-".mex("Origine",$pag).": ".str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$origine))))." ";
 $data_inserimento = formatta_data(substr($data_ins,0,-3),$stile_data);
@@ -574,6 +575,7 @@ $commento = $commento[0];
 } # fine if (strstr($commento,">"))
 if ($commento) $dati_xml .= "\n-".mex("Commento",$pag).": ".str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$commento))))." ";
 } # fine if ($priv_vedi_commento == "s")
+if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i") {
 $Euro = nome_valuta();
 $stile_soldi = stile_soldi();
 $tariffa_tot = risul_query($dati_prn,0,'tariffa_tot');
@@ -582,6 +584,7 @@ $pagato = risul_query($dati_prn,0,'pagato');
 $dati_xml .= "\n-".mex("Pagato",$pag).": ".punti_in_num($pagato,$stile_soldi)." $Euro ";
 $da_pagare = $tariffa_tot - $pagato;
 if ($da_pagare and $da_pagare != $tariffa_tot) $dati_xml .= "\n-".mex("Ancora da pagare",$pag).": ".punti_in_num($da_pagare,$stile_soldi)." $Euro ";
+} # fine if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i")
 $dati_xml .= "</txt>";
 $pag = $pag_orig;
 } # fine if ($link_modifica)

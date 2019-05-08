@@ -1,10 +1,10 @@
 <?php
 
-$lista_citta = "";
-$cod_citta = "";
-$cod2_citta = "";
-$cod3_citta = "";
-$cod_regione_citta = "";
+$lista_citta = array();
+$cod_citta = array();
+$cod2_citta = array();
+$cod3_citta = array();
+$cod_regione_citta = array();
 
 #$lista_citta[0] = "Madrid";
 #$cod_citta[0] = "000001";

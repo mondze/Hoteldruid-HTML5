@@ -303,9 +303,12 @@ if ($num_prenota_presenti_in_settimana >= $num_app_controlla_orig) {
 if (empty($app_richiesti)) { $tutti_occupati = "SI"; break; }
 else {
 $app_controlla = $app_richiesti;
+$n_app_controlla = $app_controlla;
 $uno_libero = "NO";
-reset($app_controlla);
-foreach ($app_controlla as $key => $val) {
+while (!empty($n_app_controlla)) {
+$app_controlla_tmp = array();
+reset($n_app_controlla);
+foreach ($n_app_controlla as $key => $val) {
 $prenotainperiodo = prenota_in_app_e_periodo($key,$num1,$num1,$prenota_in_app_sett,$fine_prenota_id,$num_pp);
 if (!$num_pp) { $uno_libero = "SI"; break; }
 $app_assegnabili_prenota = $app_assegnabili_id[$prenotainperiodo[1]];
@@ -316,9 +319,16 @@ break;
 if ($app_assegnabili_prenota) {
 $app_assegnabili_prenota = explode (",", $app_assegnabili_prenota);
 $n_app_assegnabili_prenota = count($app_assegnabili_prenota);
-for ($num2 = 0 ; $num2 < $n_app_assegnabili_prenota ; $num2++) if (!$app_controlla[$app_assegnabili_prenota[$num2]]) $app_controlla[$app_assegnabili_prenota[$num2]] = "SI";
+for ($num2 = 0 ; $num2 < $n_app_assegnabili_prenota ; $num2++) {
+if (!$app_controlla[$app_assegnabili_prenota[$num2]]) {
+$app_controlla[$app_assegnabili_prenota[$num2]] = "SI";
+$app_controlla_tmp[$app_assegnabili_prenota[$num2]] = "SI";
+} # fine if (!$app_controlla[$app_assegnabili_prenota[$num2]])
+} # fine for $num2
 } # fine if ($app_assegnabili_prenota)
-} # fine foreach ($app_controlla as $key => $val)
+} # fine foreach ($n_app_controlla as $key => $val)
+$n_app_controlla = $app_controlla_tmp;
+} # fine while (!empty($n_app_controlla))
 if ($uno_libero == "NO") { $tutti_occupati = "SI"; break; }
 } # fine else if (empty($app_richiesti))
 } # fine if ($num_prenota_presenti_in_settimana >= $num_app_controlla_orig)
@@ -654,10 +664,10 @@ if ($fatto != "SI") {
 $lista_prenota_periodo = array();
 $pren_pres_in_lista = "";
 $num_lista_pren_per = 0;
-if (!$limiti_var[s_ini]) {
+if (!$limiti_var['s_ini']) {
 lista_prenota_periodo($idinizio,$idfine,$dati_app,$prenota_in_app_sett,$pren_pres_in_lista,$lista_prenota_periodo,$num_lista_pren_per);
-$limiti_var[s_ini] = $idinizio;
-$limiti_var[s_fine] = $idfine;
+$limiti_var['s_ini'] = $idinizio;
+$limiti_var['s_fine'] = $idfine;
 } # fine if (!$limiti_var[s_ini])
 if ($limiti_var['s_ini'] > $idinizio) {
 lista_prenota_periodo($idinizio,($limiti_var['s_ini'] - 1),$dati_app,$prenota_in_app_sett,$pren_pres_in_lista,$lista_prenota_periodo,$num_lista_pren_per);

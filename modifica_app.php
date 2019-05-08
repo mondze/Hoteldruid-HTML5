@@ -586,7 +586,7 @@ for ($num2 = 0 ; $num2 < count($d_app_vicini_vett) ; $num2++) {
 $d_app_vicino = $d_app_vicini_vett[$num2];
 $app_reciprici = esegui_query("select * from $tableappartamenti where idappartamenti = '".aggslashdb($d_app_vicino)."' ");
 if (numlin_query($app_reciprici) == 1) {
-$app_reciprici = risul_query($app_reciprici,0,app_vicini);
+$app_reciprici = risul_query($app_reciprici,0,'app_vicini');
 $app_reciprici = substr(str_replace(",".$idappartamenti.",",",".$n_nome_app.",",",".$app_reciprici.","),1,-1);
 esegui_query("update $tableappartamenti set app_vicini = '".aggslashdb($app_reciprici)."' where idappartamenti = '".aggslashdb($d_app_vicino)."' ");
 } # fine if (numlin_query($app_reciprici) == 1)

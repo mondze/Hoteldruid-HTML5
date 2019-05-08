@@ -44,7 +44,7 @@ elseif ($utente_inserimento != $id_utente) $cont = "NO";
 if ($cont == "SI") {
 $num_r++;
 $lista_p[$num_r] = $lista_prenota[$num1];
-${"utente_inserimento_prenotazione_".$num_r} = $utente_inserimento;
+if ($priv_mod_utente_ins != "n") ${"utente_inserimento_prenotazione_".$num_r} = $utente_inserimento;
 ${"data_inserimento_prenotazione_".$num_r} = substr(risul_query($dati_prenota,0,'datainserimento'),0,16);
 if ($vedi_clienti != "NO") {
 $id_clienti = risul_query($dati_prenota,0,'idclienti');
@@ -115,13 +115,17 @@ ${"data_inizio_".$num_r} = risul_query(${"data_inizio_".$num_r},0,'datainizio');
 ${"num_periodi_".$num_r} = $id_data_fine - $id_data_inizio + 1;
 $tariffa = risul_query($dati_prenota,0,'tariffa');
 $tariffa = explode("#@&",$tariffa);
-${"nome_tariffa_".$num_r} = $tariffa[0];
 $costo_tariffa = (double) $tariffa[1];
-${"costo_tariffa_".$num_r} = $costo_tariffa;
-$sconto = (double) risul_query($dati_prenota,0,'sconto');
-if (strcmp($sconto,"")) ${"sconto_".$num_r} = $sconto;
+$tariffesettimanali = risul_query($dati_prenota,0,'tariffesettimanali');
+${"percentuale_tasse_tariffa_".$num_r} = 0;
+if ($priv_mod_tariffa != "n") {
+${"nome_tariffa_".$num_r} = $tariffa[0];
+if ($priv_mod_tariffa != "p") ${"costo_tariffa_".$num_r} = $costo_tariffa;
+${"tariffesettimanali_".$num_r} = $tariffesettimanali;
 if (strcmp(risul_query($dati_prenota,0,'tasseperc'),"")) ${"percentuale_tasse_tariffa_".$num_r} = risul_query($dati_prenota,0,'tasseperc');
-else ${"percentuale_tasse_tariffa_".$num_r} = 0;
+} # fine if ($priv_mod_tariffa != "n")
+$sconto = (double) risul_query($dati_prenota,0,'sconto');
+if (strcmp($sconto,"") and $priv_mod_sconto != "n") ${"sconto_".$num_r} = $sconto;
 if (strcmp(risul_query($dati_prenota,0,'commento'),"")) ${"commento_".$num_r} = risul_query($dati_prenota,0,'commento');
 if (strstr(${"commento_".$num_r},">")) {
 $comm = explode(">",${"commento_".$num_r});
@@ -135,26 +139,30 @@ if (strcmp($comm_pers[1],"")) ${"commento_personalizzato_".$comm_pers[0]."_".$nu
 } # fine if (strstr(${"commento_".$num_r},">"))
 if (strcmp(risul_query($dati_prenota,0,'origine'),"")) ${"origine_prenotazione_".$num_r} = risul_query($dati_prenota,0,'origine');
 $caparra = risul_query($dati_prenota,0,'caparra');
+if ($priv_mod_caparra != "n") {
 if (strcmp($caparra,"")) ${"caparra_".$num_r} = $caparra;
 if (strcmp(risul_query($dati_prenota,0,'commissioni'),"")) ${"commissioni_".$num_r} = risul_query($dati_prenota,0,'commissioni');
+} # fine if ($priv_mod_caparra != "n")
 $numpersone = risul_query($dati_prenota,0,'num_persone');
 if (strcmp($numpersone,"")) ${"num_persone_".$num_r} = $numpersone;
 ${"unita_occupata_".$num_r} = risul_query($dati_prenota,0,'idappartamenti');
 ${"unita_assegnabili_".$num_r} = risul_query($dati_prenota,0,'app_assegnabili');
-${"pagato_".$num_r} = risul_query($dati_prenota,0,'pagato');
-$tariffesettimanali = risul_query($dati_prenota,0,'tariffesettimanali');
-${"tariffesettimanali_".$num_r} = $tariffesettimanali;
-$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota);
+if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i") ${"pagato_".$num_r} = risul_query($dati_prenota,0,'pagato');
 unset($num_letti_agg);
 $costo_agg_tot = (double) 0;
+$dati_cap = dati_costi_agg_prenota($tablecostiprenota,$id_prenota);
 for ($numca = 0 ; $numca < $dati_cap['num'] ; $numca++) {
 aggiorna_letti_agg_in_periodi($dati_cap,$numca,$num_letti_agg,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],"","");
-$costo_agg_parziale = (double) calcola_prezzo_totale_costo($dati_cap,$numca,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costo_agg_tot - $sconto),$caparra,$numpersone);
+$costo_agg_parziale = (double) calcola_prezzo_totale_costo($dati_cap,$numca,$id_data_inizio,$id_data_fine,$dati_cap[$numca]['settimane'],$dati_cap[$numca]['moltiplica_costo'],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costo_agg_tot - $sconto),$caparra,$numpersone,0,1);
 $costo_agg_tot = (double) $costo_agg_tot + $costo_agg_parziale;
+if ($priv_mod_costi_agg != "n") {
 ${"nome_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['nome'];
+${"percentuale_tasse_costo_agg".$numca."_".$num_r} = 0;
+if ($priv_mod_costi_agg != "p") {
 ${"val_costo_agg".$numca."_".$num_r} = $costo_agg_parziale;
 if (strcmp($dati_cap[$numca]['tasseperc'],"")) ${"percentuale_tasse_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['tasseperc'];
-else ${"percentuale_tasse_costo_agg".$numca."_".$num_r} = 0;
+${"valore_giornaliero_max_costo_agg".$numca."_".$num_r} = $prezzi_giorn_costo;
+} # fine if ($priv_mod_costi_agg != "p")
 ${"moltiplica_max_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['moltiplica_costo'];
 if ($dati_cap[$numca]['associasett'] == "s") {
 if ($dati_cap[$numca]['settimane']) ${"giorni_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['settimane'];
@@ -163,15 +171,17 @@ else ${"giorni_costo_agg".$numca."_".$num_r} = ",";
 else ${"giorni_costo_agg".$numca."_".$num_r} = "";
 ${"data_inserimento_costo_agg".$numca."_".$num_r} = substr($dati_cap[$numca]['datainserimento'],0,10);
 ${"utente_inserimento_costo_agg".$numca."_".$num_r} = $dati_cap[$numca]['utente_inserimento'];
+} # fine if ($priv_mod_costi_agg != "n")
 } # fine for $numca
-${"num_costi_aggiuntivi_".$num_r} = $dati_cap['num'];
+if ($priv_mod_costi_agg != "n") ${"num_costi_aggiuntivi_".$num_r} = $dati_cap['num'];
+else ${"num_costi_aggiuntivi_".$num_r} = 0;
 ${"n_letti_agg_".$num_r} = $num_letti_agg['max'];
-${"costo_tot_".$num_r} = $costo_tariffa + $costo_agg_tot - $sconto;
+if ($priv_mod_pagato != "n" and $priv_mod_pagato != "i") ${"costo_tot_".$num_r} = $costo_tariffa + $costo_agg_tot - $sconto;
 ${"orario_entrata_stimato_".$num_r} = risul_query($dati_prenota,0,'checkin');
 if (!${"orario_entrata_stimato_".$num_r}) ${"orario_entrata_stimato_".$num_r} = risul_query($dati_prenota,0,'checkout');
 else ${"orario_entrata_stimato_".$num_r} = "";
 ${"id_anni_prec_".$num_r} = risul_query($dati_prenota,0,'id_anni_prec');
-if ($priv_vedi_tab_costi != "n") {
+if ($priv_vedi_tab_costi != "n" and $priv_mod_pagato != "n" and $priv_mod_pagato != "i") {
 $num_pagamenti = 0;
 if (${"id_anni_prec_".$num_r}) {
 if ($tabelle_lock) {
@@ -205,12 +215,21 @@ ${"saldo_paga".$num_pagamenti."_".$num_r} = risul_query($pagamenti,$num2,'saldo_
 $num_pagamenti++;
 } # fine for $num2
 ${"num_pagamenti_".$num_r} = $num_pagamenti;
-} # fine if ($priv_vedi_tab_costi != "n")
+} # fine if ($priv_vedi_tab_costi != "n" and $priv_mod_pagato != "n" and $priv_mod_pagato != "i")
 } # fine if ($id_data_inizio)
 } # fine if ($cont == "SI")
 } # fine if (numlin_query($dati_prenota) == 1)
 chiudi_query($dati_prenota);
 } # fine for $num1
+
+unset($tariffa);
+unset($costo_tariffa);
+unset($tariffesettimanali);
+unset($sconto);
+unset($caparra);
+unset($costo_agg_tot);
+unset($costo_agg_parziale);
+unset($utente_inserimento);
 
 $lista_prenota = $lista_p;
 $num_ripeti = $num_r;

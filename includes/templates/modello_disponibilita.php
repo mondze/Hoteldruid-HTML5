@@ -311,6 +311,7 @@ unset($nome_costo_reg);
 unset($val_costo_reg);
 unset($tasseperc_costo_reg);
 unset($moltmax_costo_reg);
+unset($valgiornmax_costo_reg);
 unset($giorni_costo_reg);
 unset($app_richiesti);
 unset($interrompi_vicine_ogni);
@@ -1312,6 +1313,7 @@ $costi_agg_tot_vett[$num1] = (double) 0;
 $costo_escludi_perc_vett[$num1] = (double) 0;
 } # fine for $num1
 unset($prezzo_costo);
+unset($valgiornmax_costo);
 for ($num_costo = 0 ; $num_costo < $dati_ca['num'] ; $num_costo++) {
 $idcostoagg = $dati_ca[$num_costo]['id'];
 $costo_trovato = "NO";
@@ -1319,7 +1321,8 @@ for ($numca = 1 ; $numca <= $numcostiagg ; $numca++) if ($idcostoagg == ${"idcos
 if ($costo_trovato != "NO") {
 $numca = $costo_trovato;
 if (${"costoagg".$numca} == "SI") {
-$prezzo_costo[$numca][1] = (double) calcola_prezzo_totale_costo($dati_ca,$num_costo,$idinizioperiodo[$n_t],$idfineperiodo[$n_t],$settimane_costo[$numca],$moltiplica_costo[$numca],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costi_agg_tot),$caparra,$numpersone,$costo_escludi_perc);
+$prezzo_costo[$numca][1] = (double) calcola_prezzo_totale_costo($dati_ca,$num_costo,$idinizioperiodo[$n_t],$idfineperiodo[$n_t],$settimane_costo[$numca],$moltiplica_costo[$numca],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costi_agg_tot),$caparra,$numpersone,$costo_escludi_perc,1);
+$valgiornmax_costo[$numca][1] = $prezzi_giorn_costo;
 $costi_agg_tot = $costi_agg_tot + $prezzo_costo[$numca][1];
 if ($dati_ca[$num_costo]['escludi_tot_perc'] == "s") $costo_escludi_perc = $costo_escludi_perc + $prezzo_costo[$numca][1];
 if ($num_app_reali_costo[$n_t][$numca]) $num_controlla_limite2 = $num_app_reali_costo[$n_t][$numca];
@@ -1335,7 +1338,8 @@ else {
 $costo_tariffa_corr = $costo_tariffa;
 $tariffesettimanali_corr = $tariffesettimanali;
 } # fine else if (strcmp($costo_tariffa_nr[$n_t][($num1 - 1)],""))
-$prezzo_costo[$numca][$num1] = (double) calcola_prezzo_totale_costo($dati_ca,$num_costo,$idinizioperiodo[$n_t],$idfineperiodo[$n_t],$settimane_costo[$numca],$moltiplica_costo_nr[$numca][($num1 - 1)],$costo_tariffa,$tariffesettimanali_corr,($costo_tariffa_corr + $costi_agg_tot_vett[$num1]),$caparra_reg[$n_t][$num1],$numpersone_corr,$costo_escludi_perc_vett[$num1]);
+$prezzo_costo[$numca][$num1] = (double) calcola_prezzo_totale_costo($dati_ca,$num_costo,$idinizioperiodo[$n_t],$idfineperiodo[$n_t],$settimane_costo[$numca],$moltiplica_costo_nr[$numca][($num1 - 1)],$costo_tariffa,$tariffesettimanali_corr,($costo_tariffa_corr + $costi_agg_tot_vett[$num1]),$caparra_reg[$n_t][$num1],$numpersone_corr,$costo_escludi_perc_vett[$num1],1);
+$valgiornmax_costo[$numca][$num1] = $prezzi_giorn_costo;
 $costi_agg_tot_vett[$num1] = $costi_agg_tot_vett[$num1] + $prezzo_costo[$numca][$num1];
 if ($dati_ca[$num_costo]['escludi_tot_perc'] == "s") $costo_escludi_perc_vett[$num1] = $costo_escludi_perc_vett[$num1] + $prezzo_costo[$numca][$num1];
 } # fine for $num1
@@ -1372,6 +1376,7 @@ if ($num1 == 1 or ($dati_r2['napp'][$tipotariffa] and $num1 <= $dati_r2['napp'][
 $val_costo_reg[$n_t][$num1][$num_costi_reg[$n_t][$num1]] = $prezzo_costo[$numca][$num1];
 $tasseperc_costo_reg[$n_t][$num1][$num_costi_reg[$n_t][$num1]] = $dati_ca[$num_costo]['tasseperc'];
 $moltmax_costo_reg[$n_t][$num1][$num_costi_reg[$n_t][$num1]] = $moltiplica_costo_nr[$numca][($num1 - 1)];
+$valgiornmax_costo_reg[$n_t][$num1][$num_costi_reg[$n_t][$num1]] = $valgiornmax_costo[$numca][$num1];
 if ($dati_ca[$num_costo]['associasett'] == "s") $giorni_costo_reg[$n_t][$num1][$num_costi_reg[$n_t][$num1]] = $settimane_costo[$numca];
 $costo_tariffa_tot_reg[$n_t][$num1] += $prezzo_costo[$numca][$num1];
 $num_costi_reg[$n_t][$num1]++;
@@ -2382,6 +2387,7 @@ ${"nome_costo_agg".$numca."_".$num_ripeti} = $nome_costo_reg[$n_t][$num1][$numca
 ${"val_costo_agg".$numca."_".$num_ripeti} = $val_costo_reg[$n_t][$num1][$numca];
 ${"percentuale_tasse_costo_agg".$numca."_".$num_ripeti} = $tasseperc_costo_reg[$n_t][$num1][$numca];
 ${"moltiplica_max_costo_agg".$numca."_".$num_ripeti} = $moltmax_costo_reg[$n_t][$num1][$numca];
+${"valore_giornaliero_max_costo_agg".$numca."_".$num_ripeti} = $valgiornmax_costo_reg[$n_t][$num1][$numca];
 ${"giorni_costo_agg".$numca."_".$num_ripeti} = $giorni_costo_reg[$n_t][$num1][$numca];
 ${"data_inserimento_costo_agg".$numca."_".$num_ripeti} = "";
 ${"utente_inserimento_costo_agg".$numca."_".$num_ripeti} = "";

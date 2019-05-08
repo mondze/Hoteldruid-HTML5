@@ -85,14 +85,14 @@ priv_ins_prenota(varchar20)	s-n			1 inserimento nuove prenotazioni si - no
 priv_mod_prenota(varchar35)	s-p-g-n			1 modifica prenotazioni si - solo proprie - solo dei suoi gruppi - no
 				s-n			2 modifica data iniziale/finale si-no
 				s-a-n			3 modifica assegnazione appartamento: si - solo spostamenti tra appartamenti già assegnati - no
-				s-r-n			4 modifica tariffa: si con regola2 a scelta - si sempre con regola2 - no
+				s-r-v-p-n		4 modifica tariffa: si con regola2 a scelta - si sempre con regola2 - no ma visibile - no ma visibile senza prezzi - no
 				s-n			5 modifica numero di persone si-no
 				s-n			6 modifica commento prenotazione si-no
-				s-n			7 modifica sconto si-no
-				s-n			8 modifica caparra e commissioni si-no
-				s-n			9 modifica costi aggiuntivi si-no
-				n			10 inutilizzato
-				s-c-n			11 modifica pagato e conferma: si - solo conferma - no
+				s-v-n			7 modifica sconto: si - no ma visibile - no
+				s-v-n			8 modifica caparra e commissioni: si - no ma visibili - no
+				s-v-p-n			9 modifica costi aggiuntivi: si - no ma costi visibili - no ma costi visibili senza prezzi - no
+				s-g-v-n			10 modifica l'utente che ha inserito: si - si mo solo utenti dei propri gruppi - no ma visibile - no
+				s-c-i-v-n		11 modifica pagato e conferma: si - solo conferma e prezzi visibili - solo conferma e prezzi invisibili - no ma prezzi visibili - no
 				s-n			12 modifica prenotazione già iniziate si-no
 				XXX			13-15 numero di ore in cui si può modificare dopo l'inserimento, 000 per disattivare
 				XXX			16-18 numero di ore in cui si può cancellare dopo l'inserimento, 000 per disattivare
@@ -622,9 +622,13 @@ $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_pren_comp\" value=\""
 if (${"modp_pren_comp".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare le <b>prenotazioni vicine</b> nel",$pag)." $anno_modifica.<br>";
 if (${"modp_pren_comp".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare le <b>prenotazioni vicine</b> nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,23,1) != ${"modp_pren_comp".$anno_modifica})
+if (${"modp_tariffa".$anno_modifica} == "n" and ${"modp_vedi_tariffa".$anno_modifica} == "SI") ${"modp_tariffa".$anno_modifica} = "v";
+if (${"modp_tariffa".$anno_modifica} == "n" and ${"modp_vedi_tariffa".$anno_modifica} == "VL") ${"modp_tariffa".$anno_modifica} = "p";
 if (substr($priv_mod_prenota,3,1) != ${"modp_tariffa".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_tariffa\" value=\"".${"modp_tariffa".$anno_modifica}."\">";
-if (${"modp_tariffa".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>tariffa</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
+if (${"modp_tariffa".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>tariffa</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrarla",$pag)."</em>).<br>";
+if (${"modp_tariffa".$anno_modifica} == "p") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>tariffa</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare il valore",$pag)."</em>).<br>";
+if (${"modp_tariffa".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>tariffa</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando il valore",$pag)."</em>).<br>";
 if (${"modp_tariffa".$anno_modifica} == "r") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare la <b>tariffa</b> delle prenotazioni, ma sempre associandola agli appartamenti della regola 2, nel",'unit.php')." $anno_modifica.<br>";
 if (${"modp_tariffa".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare la <b>tariffa</b> delle prenotazioni, scegliendo se utilizzare la regola 2, nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,3,1) != ${"modp_tariffa".$anno_modifica})
@@ -659,30 +663,37 @@ $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_checkin\" value=\"".$
 if (${"modp_checkin".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare l'orario di <b>entrata ed uscita</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 if (${"modp_checkin".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare l'orario di <b>entrata ed uscita</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,20,1) != ${"".$anno_modifica})
+if (${"modp_sconto".$anno_modifica} == "n" and ${"modp_vedi_sconto".$anno_modifica} == "SI") ${"modp_sconto".$anno_modifica} = "v";
 if (substr($priv_mod_prenota,6,1) != ${"modp_sconto".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_sconto\" value=\"".${"modp_sconto".$anno_modifica}."\">";
-if (${"modp_sconto".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare lo <b>sconto</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
+if (${"modp_sconto".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare lo <b>sconto</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare il valore",$pag)."</em>).<br>";
+if (${"modp_sconto".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare lo <b>sconto</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando il valore",$pag)."</em>).<br>";
 if (${"modp_sconto".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare lo <b>sconto</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,6,1) != ${"modp_sconto".$anno_modifica})
+if (${"modp_caparra".$anno_modifica} == "n" and ${"modp_vedi_caparra".$anno_modifica} == "SI") ${"modp_caparra".$anno_modifica} = "v";
 if (substr($priv_mod_prenota,7,1) != ${"modp_caparra".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_caparra\" value=\"".${"modp_caparra".$anno_modifica}."\">";
-if (${"modp_caparra".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>caparra</b> e le <b>commissioni</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
+if (${"modp_caparra".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>caparra</b> e le <b>commissioni</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare i valori",$pag)."</em>).<br>";
+if (${"modp_caparra".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>caparra</b> e le <b>commissioni</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando i valori",$pag)."</em>).<br>";
 if (${"modp_caparra".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare la <b>caparra</b> e le <b>commissioni</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,7,1) != ${"modp_caparra".$anno_modifica})
+if (${"modp_costi_agg".$anno_modifica} == "n" and ${"modp_vedi_prezzi_ca".$anno_modifica} == "SI") ${"modp_costi_agg".$anno_modifica} = "v";
+if (${"modp_costi_agg".$anno_modifica} == "n" and ${"modp_vedi_prezzi_ca".$anno_modifica} == "VL") ${"modp_costi_agg".$anno_modifica} = "p";
 if (substr($priv_mod_prenota,8,1) != ${"modp_costi_agg".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_costi_agg\" value=\"".${"modp_costi_agg".$anno_modifica}."\">";
-if (${"modp_costi_agg".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>costi aggiuntivi</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
+if (${"modp_costi_agg".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>costi aggiuntivi</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrarli",$pag)."</em>).<br>";
+if (${"modp_costi_agg".$anno_modifica} == "p") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>costi aggiuntivi</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare i valori",$pag)."</em>).<br>";
+if (${"modp_costi_agg".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>costi aggiuntivi</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando i valori",$pag)."</em>).<br>";
 if (${"modp_costi_agg".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare i <b>costi aggiuntivi</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,8,1) != ${"modp_costi_agg".$anno_modifica})
-#if (substr($priv_mod_prenota,9,1) != ${"modp_conferma".$anno_modifica}) {
-#$dati_da_modificare .= "<input type=\"hidden\" name=\"modp_conferma\" value=\"".${"modp_conferma".$anno_modifica}."\">";
-#if (${"modp_conferma".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
-#if (${"modp_conferma".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
-#} # fine if (substr($priv_mod_prenota,9,1) != ${"modp_conferma".$anno_modifica})
+if (${"modp_pagato".$anno_modifica} == "n" and ${"modp_nm_vedi_prezzi".$anno_modifica} == "SI") ${"modp_pagato".$anno_modifica} = "v";
+if (${"modp_pagato".$anno_modifica} == "c" and ${"modp_sc_vedi_prezzi".$anno_modifica} == "NO") ${"modp_pagato".$anno_modifica} = "i";
 if (substr($priv_mod_prenota,10,1) != ${"modp_pagato".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_pagato\" value=\"".${"modp_pagato".$anno_modifica}."\">";
-if (${"modp_pagato".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> e la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
-if (${"modp_pagato".$anno_modifica} == "c") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> ma solo la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
+if (${"modp_pagato".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> e la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare i valori",$pag)."</em>).<br>";
+if (${"modp_pagato".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> e la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando i valori",$pag)."</em>).<br>";
+if (${"modp_pagato".$anno_modifica} == "i") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> ma solo la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("senza mostrare i valori",$pag)."</em>).<br>";
+if (${"modp_pagato".$anno_modifica} == "c") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare i <b>soldi pagati</b> ma solo la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica (<em>".mex("mostrando i valori",$pag)."</em>).<br>";
 if (${"modp_pagato".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare i <b>soldi pagati</b> e la <b>conferma</b> delle prenotazioni nel",$pag)." $anno_modifica.<br>";
 } # fine if (substr($priv_mod_prenota,10,1) != ${"modp_pagato".$anno_modifica})
 if ($cassa_pagamenti != ${"modp_cassa_pagamenti".$anno_modifica}) {
@@ -692,6 +703,15 @@ else $nome_cassa = ${"modp_cassa_pagamenti".$anno_modifica};
 if (strcmp(${"modp_cassa_pagamenti".$anno_modifica},"")) echo mex("I pagamenti inseriti nelle prenotazioni dall'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("verranno anche registrati come entrate nella cassa chiamata",$pag)." \"<b>$nome_cassa</b>\" ".mex("nel",$pag)." $anno_modifica.<br>";
 else echo mex("I pagamenti inseriti nelle prenotazioni dall'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non verranno registrati in cassa nel",$pag)." $anno_modifica.<br>";
 } # fine if if ($cassa_pagamenti != ${"modp_cassa_pagamenti".$anno_modifica})
+if (${"modp_ut_ins".$anno_modifica} == "n" and ${"modp_vedi_utins".$anno_modifica} == "SI") ${"modp_ut_ins".$anno_modifica} = "v";
+if (${"modp_ut_ins".$anno_modifica} == "s" and ${"modp_utenti".$anno_modifica} == "SI") ${"modp_ut_ins".$anno_modifica} = "g";
+if (substr($priv_mod_prenota,9,1) != ${"modp_ut_ins".$anno_modifica}) {
+$dati_da_modificare .= "<input type=\"hidden\" name=\"modp_ut_ins\" value=\"".${"modp_ut_ins".$anno_modifica}."\">";
+if (${"modp_ut_ins".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel",$pag)." $anno_modifica (<em>".mex("senza mostrare l'utente",$pag)."</em>).<br>";
+if (${"modp_ut_ins".$anno_modifica} == "v") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel",$pag)." $anno_modifica (<em>".mex("mostrando l'utente",$pag)."</em>).<br>";
+if (${"modp_ut_ins".$anno_modifica} == "g") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel",$pag)." $anno_modifica (<em>".mex("solo con utenti dei suoi gruppi",$pag)."</em>).<br>";
+if (${"modp_ut_ins".$anno_modifica} == "s") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("potrà modificare l'<b>utente</b> che ha inserito la prenotazione nel",$pag)." $anno_modifica (<em>".mex("con tutti gli utenti",$pag)."</em>).<br>";
+} # fine if (substr($priv_mod_prenota,9,1) != ${"modp_ut_ins".$anno_modifica})
 if (substr($priv_mod_prenota,21,1) != ${"modp_codice".$anno_modifica}) {
 $dati_da_modificare .= "<input type=\"hidden\" name=\"modp_codice\" value=\"".${"modp_codice".$anno_modifica}."\">";
 if (${"modp_codice".$anno_modifica} == "n") echo mex("L'utente",$pag)." <i>$nome_utente_privilegi</i> ".mex("non potrà vedere e modificare il <b>codice prenotazione</b> nel",$pag)." $anno_modifica.<br>";
@@ -901,15 +921,15 @@ $nuovi_priv_mod_prenota = $priv_mod_prenota;
 if ($modp_prenota == "n" or $modp_prenota == "p" or $modp_prenota == "g" or $modp_prenota == "s") $nuovi_priv_mod_prenota = $modp_prenota.substr($nuovi_priv_mod_prenota,1);
 if ($modp_date_prenota == "n" or $modp_date_prenota == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,1).$modp_date_prenota.substr($nuovi_priv_mod_prenota,2);
 if ($modp_app_prenota == "n" or $modp_app_prenota == "s" or $modp_app_prenota == "a") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,2).$modp_app_prenota.substr($nuovi_priv_mod_prenota,3);
-if ($modp_tariffa == "n" or $modp_tariffa == "r" or $modp_tariffa == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,3).$modp_tariffa.substr($nuovi_priv_mod_prenota,4);
+if ($modp_tariffa == "n" or $modp_tariffa == "p" or $modp_tariffa == "v" or $modp_tariffa == "r" or $modp_tariffa == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,3).$modp_tariffa.substr($nuovi_priv_mod_prenota,4);
 if ($modp_num_persone == "n" or $modp_num_persone == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,4).$modp_num_persone.substr($nuovi_priv_mod_prenota,5);
 if ($modp_commento and ($modp_vedi_comm == "n" or ($modp_vedi_comm != "s" and substr($priv_mod_prenota,25,1) == "n"))) $modp_commento = "n";
 if ($modp_commento == "n" or $modp_commento == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,5).$modp_commento.substr($nuovi_priv_mod_prenota,6);
-if ($modp_sconto == "n" or $modp_sconto == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,6).$modp_sconto.substr($nuovi_priv_mod_prenota,7);
-if ($modp_caparra == "n" or $modp_caparra == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,7).$modp_caparra.substr($nuovi_priv_mod_prenota,8);
-if ($modp_costi_agg == "n" or $modp_costi_agg == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,8).$modp_costi_agg.substr($nuovi_priv_mod_prenota,9);
-#if ($modp_conferma == "n" or $modp_conferma == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,9).$modp_conferma.substr($nuovi_priv_mod_prenota,10);
-if ($modp_pagato == "n" or $modp_pagato == "c" or $modp_pagato == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,10).$modp_pagato.substr($nuovi_priv_mod_prenota,11);
+if ($modp_sconto == "n" or $modp_sconto == "v" or $modp_sconto == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,6).$modp_sconto.substr($nuovi_priv_mod_prenota,7);
+if ($modp_caparra == "n" or $modp_caparra == "v" or $modp_caparra == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,7).$modp_caparra.substr($nuovi_priv_mod_prenota,8);
+if ($modp_costi_agg == "n" or $modp_costi_agg == "p" or $modp_costi_agg == "v" or $modp_costi_agg == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,8).$modp_costi_agg.substr($nuovi_priv_mod_prenota,9);
+if ($modp_ut_ins == "n" or $modp_ut_ins == "v" or $modp_ut_ins == "g" or $modp_ut_ins == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,9).$modp_ut_ins.substr($nuovi_priv_mod_prenota,10);
+if ($modp_pagato == "n" or $modp_pagato == "v" or $modp_pagato == "c" or $modp_pagato == "i" or $modp_pagato == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,10).$modp_pagato.substr($nuovi_priv_mod_prenota,11);
 if ($modp_gia_iniziate == "n" or $modp_gia_iniziate == "s") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,11).$modp_gia_iniziate.substr($nuovi_priv_mod_prenota,12);
 if ($modp_attiva_ore_mod == "n") $nuovi_priv_mod_prenota = substr($nuovi_priv_mod_prenota,0,12)."000".substr($nuovi_priv_mod_prenota,15);
 if ($modp_attiva_ore_mod == "s") {
@@ -1017,6 +1037,13 @@ if ($mostra_form_iniziale != "NO") {
 
 
 echo "<h4>".mex("Privilegi dell'utente",$pag)." <b>$nome_utente_privilegi</b></h4><br>";
+
+function rowbgcolor () {
+global $rowbgcolor,$t2row1color,$t2row2color;
+if ($rowbgcolor == $t2row2color) $rowbgcolor = $t2row1color;
+else $rowbgcolor = $t2row2color;
+return $rowbgcolor;
+} # fine function rowbgcolor
 
 echo "<hr style=\"width: 90%\">
 <br><div style=\"text-align: center;\">".mex("Privilegi <b>globali</b>",$pag)."</div>
@@ -1127,8 +1154,8 @@ echo mex("Possibilità di vedere ed utilizzare nelle prenotazioni i clienti già
  <label><input type=\"radio\" name=\"vedi_clienti\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_clienti\" value=\"p\"$checked_PR>$b_PR".mex("Solo",$pag)."$b_slash_PR
  </label><select name=\"vedi_clienti_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("i propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("i propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"vedi_clienti\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1151,8 +1178,8 @@ echo "<table><tr><td style=\"width: 30px;\"></td><td>".mex("Modifica e cancellaz
  <label><input type=\"radio\" name=\"modifica_clienti\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modifica_clienti\" value=\"p\"$checked_PR>$b_PR".mex("Solo",$pag)."$b_slash_PR
  </label><select name=\"modifica_clienti_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("dei propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("dei propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"modifica_clienti\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1285,8 +1312,8 @@ echo mex("Possibilità di vedere i <i>beni dell'inventario</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_beni_inv\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_beni_inv\" value=\"p\"$checked_PR>$b_PR".mex("Solo",$pag)."$b_slash_PR
  </label><select name=\"vedi_beni_inv_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("i propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("i propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"vedi_beni_inv\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1321,8 +1348,8 @@ echo mex("Possibilità di vedere l'<i>inventario dei magazzini</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_inv_mag\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_inv_mag\" value=\"p\"$checked_PR>$b_PR".mex("Solo",$pag)."$b_slash_PR
  </label><select name=\"vedi_inv_mag_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("dei propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("dei propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"vedi_inv_mag\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1356,8 +1383,8 @@ echo mex("Possibilità di aggiungere e cancellare beni",$pag).":
  <label><input type=\"radio\" name=\"ins_beni_in_mag\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"ins_beni_in_mag\" value=\"p\"$checked_PR>$b_PR".mex("Solo in",$pag)."$b_slash_PR
  </label><select name=\"ins_beni_in_mag_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("magazzini propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("magazzini dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("magazzini propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("magazzini dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"ins_beni_in_mag\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1380,8 +1407,8 @@ echo mex("Possibilità di modificare le quantità dei beni",$pag).":
  <label><input type=\"radio\" name=\"mod_beni_in_mag\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"mod_beni_in_mag\" value=\"p\"$checked_PR>$b_PR".mex("Solo in",$pag)."$b_slash_PR
  </label><select name=\"mod_beni_in_mag_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("magazzini propri",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("magazzini dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("magazzini propri",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("magazzini dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"mod_beni_in_mag\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 echo "</td></tr></table>";
@@ -1405,8 +1432,8 @@ echo mex("Possibilità di vedere l'<i>inventario degli appartamenti</i>",'unit.p
  <label><input type=\"radio\" name=\"vedi_inv_app\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_inv_app\" value=\"p\"$checked_PR>$b_PR".mex("Solo appartamenti associati a regole consentite",'unit.php')."$b_slash_PR
  </label><select name=\"vedi_inv_app_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"vedi_inv_app\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1429,8 +1456,8 @@ echo "<table cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"width: 30px;\">
  <label><input type=\"radio\" name=\"ins_beni_in_app\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"ins_beni_in_app\" value=\"p\"$checked_PR>$b_PR".mex("Solo in appartamenti consentiti",'unit.php')."$b_slash_PR
  </label><select name=\"ins_beni_in_app_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"ins_beni_in_app\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1453,8 +1480,8 @@ echo mex("Possibilità di modificare le quantità dei beni",$pag).":
  <label><input type=\"radio\" name=\"mod_beni_in_app\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"mod_beni_in_app\" value=\"p\"$checked_PR>$b_PR".mex("Solo in appartamenti consentiti",'unit.php')."$b_slash_PR
  </label><select name=\"mod_beni_in_app_gr\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"mod_beni_in_app\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 echo "</td></tr></table>";
@@ -1572,14 +1599,14 @@ if (substr($regole1_consentite,1,1) == "f") { $checked_FISSINSEL = " checked"; $
 echo "<table><tr><td colspan=\"5\">
 ".str_replace(" ","&nbsp;",mex("Applica la regola 1",$pag))." ".mex("per appartamenti non chiusi",'unit.php').":</td>
 <tr><td style=\"width: 80px;\"></td>
-<td><input type=\"radio\" id=\"ar1_s\" name=\"avvisa_regola1$anno_mostra\" value=\"s\"$checked_SEMPRE></td>
-<td><label for=\"ar1_s\">$b_SEMPRE".mex("Sempre",$pag)."$b_slash_SEMPRE</label></td>
-<td><input type=\"radio\" id=\"ar1_n\" name=\"avvisa_regola1$anno_mostra\" value=\"n\"$checked_NONSEL></td>
-<td><label for=\"ar1_n\">$b_NONSEL".mex("Solo per regole non selezionate",$pag)."$b_slash_NONSEL</label></td></tr>
-<tr><td>&nbsp;</td><td><input type=\"radio\" id=\"ar1_m\" name=\"avvisa_regola1$anno_mostra\" value=\"m\"$checked_MAI></td>
-<td><label for=\"ar1_m\">$b_MAI".mex("Mai",$pag)."$b_slash_MAI</label></td>
-<td><input type=\"radio\" id=\"ar1_f\" name=\"avvisa_regola1$anno_mostra\" value=\"f\"$checked_FISSINSEL></td>
-<td><label for=\"ar1_f\">$b_FISSINSEL".mex("Mai, ma non spostare altre prenotazioni in periodi delle regole non selezionate se non vi si possono inserire prenotazioni",$pag)."$b_slash_FISSINSEL</label></td></tr>
+<td><input type=\"radio\" id=\"ar1_s$anno_mostra\" name=\"avvisa_regola1$anno_mostra\" value=\"s\"$checked_SEMPRE></td>
+<td><label for=\"ar1_s$anno_mostra\">$b_SEMPRE".mex("Sempre",$pag)."$b_slash_SEMPRE</label></td>
+<td><input type=\"radio\" id=\"ar1_n$anno_mostra\" name=\"avvisa_regola1$anno_mostra\" value=\"n\"$checked_NONSEL></td>
+<td><label for=\"ar1_n$anno_mostra\">$b_NONSEL".mex("Solo per regole non selezionate",$pag)."$b_slash_NONSEL</label></td></tr>
+<tr><td>&nbsp;</td><td><input type=\"radio\" id=\"ar1_m$anno_mostra\" name=\"avvisa_regola1$anno_mostra\" value=\"m\"$checked_MAI></td>
+<td><label for=\"ar1_m$anno_mostra\">$b_MAI".mex("Mai",$pag)."$b_slash_MAI</label></td>
+<td><input type=\"radio\" id=\"ar1_f$anno_mostra\" name=\"avvisa_regola1$anno_mostra\" value=\"f\"$checked_FISSINSEL></td>
+<td><label for=\"ar1_f$anno_mostra\">$b_FISSINSEL".mex("Mai, ma non spostare altre prenotazioni in periodi delle regole non selezionate se non vi si possono inserire prenotazioni",$pag)."$b_slash_FISSINSEL</label></td></tr>
 </table><br>";
 
 $tablenometariffe_mostra = $PHPR_TAB_PRE."ntariffe".$anno_mostra;
@@ -1896,8 +1923,8 @@ echo mex("Prenotazioni che possono essere <i>modificate</i>",$pag).":
  <label><input type=\"radio\" name=\"modp_prenota$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Tutte",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modp_prenota$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo",$pag)."$b_slash_PR
  </label><select name=\"modp_prenota_gr$anno_mostra\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("le proprie",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("le proprie",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"modp_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("Nessuna",$pag)."$b_slash_NO</label><br>
 <table cellspacing=0 cellpadding=0><tr><td style=\"width: 30px;\" rowspan=2></td><td colspan=2>";
@@ -1909,9 +1936,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,22,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,22,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di cambiare il cliente con un altro",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di cambiare il cliente con un altro",$pag).":
  <label><input type=\"radio\" name=\"modp_cliente$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_cliente$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_cliente$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1920,9 +1947,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,1,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,1,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare la data iniziale o finale",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare la data iniziale o finale",$pag).":
  <label><input type=\"radio\" name=\"modp_date_prenota$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_date_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_date_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1935,10 +1962,10 @@ unset($b_slash_AS);
 if (substr($priv_mod_prenota,2,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,2,1) == "a") { $checked_AS = " checked"; $b_AS = "<b>"; $b_slash_AS = "</b>"; }
 if (substr($priv_mod_prenota,2,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare gli appartamenti assegnati",'unit.php').":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare gli appartamenti assegnati",'unit.php').":
  <label><input type=\"radio\" name=\"modp_app_prenota$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modp_app_prenota$anno_mostra\" value=\"a\"$checked_AS>$b_AS".mex("Solo spostamenti tra quelli già assegnati",'unit.php')."$b_slash_AS</label>
- <label><input type=\"radio\" name=\"modp_app_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_app_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1947,9 +1974,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,23,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,23,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare le prenotazioni vicine",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare le prenotazioni vicine",$pag).":
  <label><input type=\"radio\" name=\"modp_pren_comp$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_pren_comp$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_pren_comp$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1959,13 +1986,24 @@ unset($b_slash_NO);
 unset($checked_RE);
 unset($b_RE);
 unset($b_slash_RE);
+unset($sel_PR);
+unset($sel_VL);
+unset($sel_GR);
 if (substr($priv_mod_prenota,3,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,3,1) == "r") { $checked_RE = " checked"; $b_RE = "<b>"; $b_slash_RE = "</b>"; }
-if (substr($priv_mod_prenota,3,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare la tariffa",$pag).":
+if (substr($priv_mod_prenota,3,1) == "v" or substr($priv_mod_prenota,3,1) == "p" or substr($priv_mod_prenota,3,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,3,1) == "v") $sel_PR = " selected";
+if (substr($priv_mod_prenota,3,1) == "p") $sel_VL = " selected";
+if (substr($priv_mod_prenota,3,1) == "n") $sel_GR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare la tariffa",$pag).":
  <label><input type=\"radio\" name=\"modp_tariffa$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si, con regola 2 a scelta",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modp_tariffa$anno_mostra\" value=\"r\"$checked_RE>$b_RE".mex("Si, sempre con regola 2",$pag)."$b_slash_RE</label>
- <label><input type=\"radio\" name=\"modp_tariffa$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_tariffa$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_vedi_tariffa$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpsn$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando il valore",$pag)."</option>
+ <option value=\"VL\"$sel_VL>".mex("senza mostrare il valore",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrarla",$pag)."</option>
+ </select></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1974,9 +2012,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,4,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,4,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare il numero delle persone",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare il numero delle persone",$pag).":
  <label><input type=\"radio\" name=\"modp_num_persone$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_num_persone$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_num_persone$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -1985,7 +2023,7 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,25,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,25,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di vedere il commento",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere il commento",$pag).":
  <label><input type=\"radio\" name=\"modp_vedi_comm$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modp_vedi_comm$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -1996,9 +2034,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,5,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,5,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "<div style=\"padding: 0 0 0 25px;\">".mex("Possibilità di modificare il commento",$pag).":
+echo "<div style=\"padding: 0 0 0 30px;\">".mex("Possibilità di modificare il commento",$pag).":
  <label><input type=\"radio\" name=\"modp_commento$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_commento$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
+ <label><input type=\"radio\" name=\"modp_commento$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2007,9 +2045,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,26,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,26,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di vedere e modificare i commenti personalizzati",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere e modificare i commenti personalizzati",$pag).":
  <label><input type=\"radio\" name=\"modp_comm_pers$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_comm_pers$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_comm_pers$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2018,9 +2056,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,24,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,24,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare l'origine",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare l'origine",$pag).":
  <label><input type=\"radio\" name=\"modp_origine_prenota$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_origine_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_origine_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2029,42 +2067,69 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,20,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,20,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare l'orario di entrata ed uscita",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare l'orario di entrata ed uscita",$pag).":
  <label><input type=\"radio\" name=\"modp_checkin$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_checkin$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_checkin$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
 unset($checked_NO);
 unset($b_NO);
 unset($b_slash_NO);
+unset($sel_PR);
+unset($sel_GR);
 if (substr($priv_mod_prenota,6,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
-if (substr($priv_mod_prenota,6,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare lo sconto",$pag).":
+if (substr($priv_mod_prenota,6,1) == "v" or substr($priv_mod_prenota,6,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,6,1) == "v") $sel_PR = " selected";
+else $sel_GR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare lo sconto",$pag).":
  <label><input type=\"radio\" name=\"modp_sconto$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_sconto$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input id=\"mpsn$anno_mostra\" type=\"radio\" name=\"modp_sconto$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_vedi_sconto$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpsn$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando il valore",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrare il valore",$pag)."</option>
+ </select></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
 unset($checked_NO);
 unset($b_NO);
 unset($b_slash_NO);
+unset($sel_PR);
+unset($sel_GR);
 if (substr($priv_mod_prenota,7,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
-if (substr($priv_mod_prenota,7,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare la caparra e le commissioni",$pag).":
+if (substr($priv_mod_prenota,7,1) == "v" or substr($priv_mod_prenota,7,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,7,1) == "v") $sel_PR = " selected";
+else $sel_GR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare la caparra e le commissioni",$pag).":
  <label><input type=\"radio\" name=\"modp_caparra$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_caparra$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input id=\"mpccn$anno_mostra\" type=\"radio\" name=\"modp_caparra$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_vedi_caparra$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpccn$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando i valori",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrare i valori",$pag)."</option>
+ </select></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
 unset($checked_NO);
 unset($b_NO);
 unset($b_slash_NO);
+unset($sel_PR);
+unset($sel_VL);
+unset($sel_GR);
 if (substr($priv_mod_prenota,8,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
-if (substr($priv_mod_prenota,8,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare i costi aggiuntivi",$pag).":
+if (substr($priv_mod_prenota,8,1) == "v" or substr($priv_mod_prenota,8,1) == "p" or substr($priv_mod_prenota,8,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,8,1) == "v") $sel_PR = " selected";
+if (substr($priv_mod_prenota,8,1) == "p") $sel_VL = " selected";
+if (substr($priv_mod_prenota,8,1) == "n") $sel_GR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare i costi aggiuntivi",$pag).":
  <label><input type=\"radio\" name=\"modp_costi_agg$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_costi_agg$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input id=\"mpcan$anno_mostra\" type=\"radio\" name=\"modp_costi_agg$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_vedi_prezzi_ca$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpcan$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando i valori",$pag)."</option>
+ <option value=\"VL\"$sel_VL>".mex("senza mostrare i valori",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrarli",$pag)."</option>
+ </select></div>";
 #if (substr($priv_mod_prenota,9,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 #if (substr($priv_mod_prenota,9,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
 #echo "".mex("Possibilità di modificare la conferma",$pag).":
@@ -2079,13 +2144,29 @@ unset($b_slash_CONF);
 unset($checked_NO);
 unset($b_NO);
 unset($b_slash_NO);
+unset($sel_PR);
+unset($sel_GR);
 if (substr($priv_mod_prenota,10,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
-if (substr($priv_mod_prenota,10,1) == "c") { $checked_CONF = " checked"; $b_CONF = "<b>"; $b_slash_CONF = "</b>"; }
-if (substr($priv_mod_prenota,10,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare i soldi pagati e la conferma",$pag).":
+if (substr($priv_mod_prenota,10,1) == "c" or substr($priv_mod_prenota,10,1) == "i") { $checked_CONF = " checked"; $b_CONF = "<b>"; $b_slash_CONF = "</b>"; }
+if (substr($priv_mod_prenota,10,1) == "v" or substr($priv_mod_prenota,10,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,10,1) == "c") $sel_PR = " selected";
+else $sel_GR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare i soldi pagati e la conferma",$pag).":
  <label><input type=\"radio\" name=\"modp_pagato$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_pagato$anno_mostra\" value=\"c\"$checked_CONF>$b_CONF".mex("Solo la conferma",$pag)."$b_slash_CONF</label>
- <label><input type=\"radio\" name=\"modp_pagato$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input id=\"mpvpc$anno_mostra\" type=\"radio\" name=\"modp_pagato$anno_mostra\" value=\"c\"$checked_CONF>$b_CONF".mex("Solo la conferma",$pag)."$b_slash_CONF
+ </label><select name=\"modp_sc_vedi_prezzi$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpvpc$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando i valori",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrare i valori",$pag)."</option>
+ </select>";
+unset($sel_PR);
+unset($sel_GR);
+if (substr($priv_mod_prenota,10,1) == "v") $sel_PR = " selected";
+else $sel_GR = " selected";
+echo " <label><input id=\"mpvpn$anno_mostra\" type=\"radio\" name=\"modp_pagato$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_nm_vedi_prezzi$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpvpn$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando i valori",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrare i valori",$pag)."</option>
+ </select><br>";
 $cassa_pagamenti = risul_query($privilegi_anno[$anno_mostra],0,'cassa_pagamenti');
 if (!strcmp($cassa_pagamenti,"")) $sel = " selected";
 else $sel = "";
@@ -2101,10 +2182,35 @@ if ($cassa_pagamenti == $nome_cassa) $sel = " selected";
 else $sel = "";
 $opt_casse .= "<option value=\"$nome_cassa\"$sel>$nome_cassa_vedi</option>";
 } # fine for $num2
-echo "</td></tr><tr><td style=\"width: 30px; padding: 0; border-collapse: collapse;\"></td><td>
-".mex("Inserire sempre i pagamenti delle prenotazioni nella cassa",$pag).":
- <select name=\"modp_cassa_pagamenti$anno_mostra\">$opt_casse</select>
-</td></tr><tr><td style=\"width: 30px;\" rowspan=2></td><td colspan=2>";
+echo "<div style=\"padding: 0 0 0 30px;\">".mex("Inserire sempre i pagamenti delle prenotazioni nella cassa",$pag).":
+ <select name=\"modp_cassa_pagamenti$anno_mostra\">$opt_casse</select></div></div>";
+unset($checked_SI);
+unset($b_SI);
+unset($b_slash_SI);
+unset($checked_NO);
+unset($b_NO);
+unset($b_slash_NO);
+unset($sel_PR);
+unset($sel_GR);
+if (substr($priv_mod_prenota,9,1) == "s" or substr($priv_mod_prenota,9,1) == "g") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
+if (substr($priv_mod_prenota,9,1) == "v" or substr($priv_mod_prenota,9,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
+if (substr($priv_mod_prenota,9,1) == "g") $sel_GR = " selected";
+else $sel_PR = " selected";
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare l'utente che ha inserito",$pag).":
+ <label><input id=\"mpuis$anno_mostra\" type=\"radio\" name=\"modp_ut_ins$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI
+ </label><select name=\"modp_utenti$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpuis$anno_mostra').checked='1';\">
+ <option value=\"NO\"$sel_PR>".mex("con tutti gli utenti",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("solo con utenti dei suoi gruppi",$pag)."</option>
+ </select>";
+unset($sel_PR);
+unset($sel_GR);
+if (substr($priv_mod_prenota,9,1) == "v") $sel_PR = " selected";
+else $sel_GR = " selected";
+echo " <label><input id=\"mpuin$anno_mostra\" type=\"radio\" name=\"modp_ut_ins$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO
+ </label><select name=\"modp_vedi_utins$anno_mostra\" style=\"font-size: x-small; padding: 0;\" onclick=\"document.getElementById('mpuin$anno_mostra').checked='1';\">
+ <option value=\"SI\"$sel_PR>".mex("mostrando l'utente",$pag)."</option>
+ <option value=\"NO\"$sel_GR>".mex("senza mostrare l'utente",$pag)."</option>
+ </select></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2113,9 +2219,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,21,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,21,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di vedere e modificare il codice prenotazione",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere e modificare il codice prenotazione",$pag).":
  <label><input type=\"radio\" name=\"modp_codice$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_codice$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_codice$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2124,9 +2230,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,11,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,11,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Possibilità di modificare prenotazioni già iniziate",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di modificare prenotazioni già iniziate",$pag).":
  <label><input type=\"radio\" name=\"modp_gia_iniziate$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_gia_iniziate$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_gia_iniziate$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 /*unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2167,7 +2273,7 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,12,3) != "000") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,12,3) == "000") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Prenotazioni non più modificabili dopo un certo numero di ore dopo l'inserzione",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Prenotazioni non più modificabili dopo un certo numero di ore dopo l'inserzione",$pag).":
  <label><input type=\"radio\" name=\"modp_attiva_ore_mod$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  (<input type=\"text\" name=\"modp_num_ore_mod$anno_mostra\" size=\"4\" maxlength=\"3\" value =\"".substr($priv_mod_prenota,12,3)."\">".mex("ore",$pag).")
  <label><input type=\"radio\" name=\"modp_attiva_ore_mod$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
@@ -2183,11 +2289,10 @@ unset($b_slash_FU);
 if (substr($priv_mod_prenota,18,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,18,1) == "f") { $checked_FU = " checked"; $b_FU = "<b>"; $b_slash_FU = "</b>"; }
 if (substr($priv_mod_prenota,18,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "</td></tr><tr><td style=\"width: 30px; padding: 0; border-collapse: collapse;\"></td><td>
-".mex("Possibilità di cancellare le prenotazioni",$pag).":
+echo "<div style=\"padding: 0 0 0 30px;\">".mex("Possibilità di cancellare le prenotazioni",$pag).":
  <label><input type=\"radio\" name=\"modp_canc$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"modp_canc$anno_mostra\" value=\"f\"$checked_FU>$b_FU".mex("Solo quelle non iniziate",$pag)."$b_slash_FU</label>
- <label><input type=\"radio\" name=\"modp_canc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_canc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2196,9 +2301,9 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,19,1) == "n") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,19,1) == "s") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Prenotazioni non più cancellabili dopo essere state confermate",$pag).":
+echo "<div style=\"padding: 0 0 0 30px;\">".mex("Prenotazioni non più cancellabili dopo essere state confermate",$pag).":
  <label><input type=\"radio\" name=\"modp_canc_dopo_conf$anno_mostra\" value=\"n\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"modp_canc_dopo_conf$anno_mostra\" value=\"s\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"modp_canc_dopo_conf$anno_mostra\" value=\"s\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2207,10 +2312,10 @@ unset($b_NO);
 unset($b_slash_NO);
 if (substr($priv_mod_prenota,15,3) != "000") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_mod_prenota,15,3) == "000") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo "".mex("Prenotazioni non più cancellabili dopo un certo numero di ore dopo l'inserzione",$pag).":
+echo "<div style=\"padding: 0 0 0 30px;\">".mex("Prenotazioni non più cancellabili dopo un certo numero di ore dopo l'inserzione",$pag).":
  <label><input type=\"radio\" name=\"modp_attiva_ore_canc$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  (<input type=\"text\" name=\"modp_num_ore_canc$anno_mostra\" size=\"4\" maxlength=\"3\" value =\"".substr($priv_mod_prenota,15,3)."\">".mex("ore",$pag).")
- <label><input type=\"radio\" name=\"modp_attiva_ore_canc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br><br>";
+ <label><input type=\"radio\" name=\"modp_attiva_ore_canc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div></div><br>";
 echo "</td></tr></table>";
 
 $priv_ins_costi = risul_query($privilegi_anno[$anno_mostra],0,'priv_ins_costi');
@@ -2296,8 +2401,8 @@ if (substr($priv_ins_tariffe,1,1) == "n") { $checked_NO = " checked"; $b_NO = "<
 echo mex("Possibilità di inserire <i>nuovi costi aggiuntivi</i>",$pag).":
  <label><input type=\"radio\" name=\"ins_costi_agg$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag).", ".mex("rendendoli disponibili",$pag)."$b_slash_SI
  </label><select name=\"ins_costi_agg_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("solo a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("a utenti dei suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("solo a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("a utenti dei suoi gruppi",$pag)."</option>
  </select>
  <label><input type=\"radio\" name=\"ins_costi_agg$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 unset($checked_SI);
@@ -2344,18 +2449,19 @@ else $sel_PPR = " selected";
 if (substr($priv_vedi_tab,0,1) == "r" or substr($priv_vedi_tab,0,1) == "g") $sel_AGR = " selected";
 else $sel_APR = " selected";
 if (substr($priv_vedi_tab,0,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella dei mesi</i>",$pag).":
+echo "<table cellspacing=0 cellpadding=0><tr><td>
+<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella dei mesi</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_mesi$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" id=\"vtm_p\" name=\"vedi_tab_mesi$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo con",$pag)."$b_slash_PR
+ <label><input type=\"radio\" id=\"vtm_p$anno_mostra\" name=\"vedi_tab_mesi$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo con",$pag)."$b_slash_PR</small>
  </label><select name=\"vedi_tab_mpren_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_PPR>".mex("prenotazioni proprie",$pag)."</otion>
- <option value=\"SI\"$sel_PGR>".mex("prenotazioni dai suoi gruppi",$pag)."</otion>
- </select><label for=\"vtm_p\">
- $b_PR".mex("e appartamenti consentiti",'unit.php')."$b_slash_PR
+ <option value=\"NO\"$sel_PPR>".mex("prenotazioni proprie",$pag)."</option>
+ <option value=\"SI\"$sel_PGR>".mex("prenotazioni dai suoi gruppi",$pag)."</option>
+ </select><label for=\"vtm_p$anno_mostra\">
+ <small>$b_PR".mex("e appartamenti consentiti",'unit.php')."$b_slash_PR</small>
  </label><select name=\"vedi_tab_mapp_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_APR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_AGR>".mex("ai suoi gruppi",$pag)."</otion>
- </select></small>
+ <option value=\"NO\"$sel_APR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_AGR>".mex("ai suoi gruppi",$pag)."</option>
+ </select>
  <label><input type=\"radio\" name=\"vedi_tab_mesi$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
 if (substr($priv_vedi_tab,8,1) == "o") $sel_OSC = " selected";
 else $sel_OSC = "";
@@ -2363,14 +2469,13 @@ if (substr($priv_vedi_tab,8,1) == "v") $sel_VUO = " selected";
 else $sel_VUO = "";
 if (substr($priv_vedi_tab,8,1) == "f") $sel_FUT = " selected";
 else $sel_FUT = "";
-echo "<table cellspacing=0 cellpadding=0><tr><td style=\"width: 30px;\" rowspan=2></td><td colspan=2>
+echo "<div style=\"padding: 0 0 0 30px;\">
 ".mex("Mostrare le prenotazioni non permesse come",$pag).":
  <select name=\"oscura_tab_mesi$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"o\"$sel_OSC>".mex("oscurate",$pag)."</otion>
- <option value=\"v\"$sel_VUO>".mex("periodi vuoti",$pag)."</otion>
- <option value=\"f\"$sel_FUT>".mex("oscurate",$pag)." (".mex("solo correnti e future",$pag).")</otion>
- </select>
-</td></tr></table>";
+ <option value=\"o\"$sel_OSC>".mex("oscurate",$pag)."</option>
+ <option value=\"v\"$sel_VUO>".mex("periodi vuoti",$pag)."</option>
+ <option value=\"f\"$sel_FUT>".mex("oscurate",$pag)." (".mex("solo correnti e future",$pag).")</option>
+ </select></div></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2387,14 +2492,14 @@ if (substr($priv_vedi_tab,1,1) == "p" or substr($priv_vedi_tab,1,1) == "g") { $c
 if (substr($priv_vedi_tab,1,1) == "g") $sel_GR = " selected";
 else $sel_PR = " selected";
 if (substr($priv_vedi_tab,1,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella con tutte le prenotazioni</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella con tutte le prenotazioni</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_tutte_prenota$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_tab_tutte_prenota$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo con",$pag)."$b_slash_PR
  </label><select name=\"vedi_tab_tpren_gr$anno_mostra\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("prenotazioni proprie",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("prenotazioni dai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("prenotazioni proprie",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("prenotazioni dai suoi gruppi",$pag)."</option>
  </select>
- <label><input type=\"radio\" name=\"vedi_tab_tutte_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"vedi_tab_tutte_prenota$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2411,14 +2516,14 @@ if (substr($priv_vedi_tab,2,1) == "p" or substr($priv_vedi_tab,2,1) == "g") { $c
 if (substr($priv_vedi_tab,2,1) == "g") $sel_GR = " selected";
 else $sel_PR = " selected";
 if (substr($priv_vedi_tab,2,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere le <i>tabelle con le entrate e le uscite</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere le <i>tabelle con le entrate e le uscite</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_costi$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_tab_costi$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo con",$pag)."$b_slash_PR
  </label><select name=\"vedi_tab_cos_gr$anno_mostra\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("entrate/uscite proprie",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("entrate/uscite dai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("entrate/uscite proprie",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("entrate/uscite dai suoi gruppi",$pag)."</option>
  </select>
- <label><input type=\"radio\" name=\"vedi_tab_costi$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"vedi_tab_costi$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2435,14 +2540,14 @@ if (substr($priv_vedi_tab,3,1) == "p" or substr($priv_vedi_tab,3,1) == "g") { $c
 if (substr($priv_vedi_tab,3,1) == "g") $sel_GR = " selected";
 else $sel_PR = " selected";
 if (substr($priv_vedi_tab,3,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella con i periodi e le tariffe</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella con i periodi e le tariffe</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_tariffe$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_tab_tariffe$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo con tariffe consentite",$pag)."$b_slash_PR
  </label><select name=\"vedi_tab_tar_gr$anno_mostra\" style=\"font-size: x-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</otion>
+ <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</option>
  </select>
- <label><input type=\"radio\" name=\"vedi_tab_tariffe$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"vedi_tab_tariffe$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2455,10 +2560,10 @@ unset($b_slash_PR);
 if (substr($priv_vedi_tab,4,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_vedi_tab,4,1) == "p") { $checked_PR = " checked"; $b_PR = "<b>"; $b_slash_PR = "</b>"; }
 if (substr($priv_vedi_tab,4,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella con le regole di assegnazione</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella con le regole di assegnazione</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_regole$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_tab_regole$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo con regole consentite",$pag)." ".mex("a lui",$pag)."$b_slash_PR</label>
- <label><input type=\"radio\" name=\"vedi_tab_regole$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"vedi_tab_regole$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2475,14 +2580,14 @@ if (substr($priv_vedi_tab,5,1) == "p" or substr($priv_vedi_tab,5,1) == "g") { $c
 if (substr($priv_vedi_tab,5,1) == "g") $sel_GR = " selected";
 else $sel_PR = " selected";
 if (substr($priv_vedi_tab,5,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella con gli appartamenti</i>",'unit.php').":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella con gli appartamenti</i>",'unit.php').":
  <label><input type=\"radio\" name=\"vedi_tab_appartamenti$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" name=\"vedi_tab_appartamenti$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo appartamenti associati a regole consentite",'unit.php')."$b_slash_PR
+ <label><input type=\"radio\" name=\"vedi_tab_appartamenti$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo appartamenti associati a regole consentite",'unit.php')."$b_slash_PR</small>
  </label><select name=\"vedi_tab_app_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</otion>
- </select></small>
- <label><input type=\"radio\" name=\"vedi_tab_appartamenti$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <option value=\"NO\"$sel_PR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_GR>".mex("ai suoi gruppi",$pag)."</option>
+ </select>
+ <label><input type=\"radio\" name=\"vedi_tab_appartamenti$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2495,10 +2600,10 @@ unset($b_slash_PR);
 if (substr($priv_vedi_tab,7,1) == "s") { $checked_SI = " checked"; $b_SI = "<b>"; $b_slash_SI = "</b>"; }
 if (substr($priv_vedi_tab,7,1) == "p") { $checked_PR = " checked"; $b_PR = "<b>"; $b_slash_PR = "</b>"; }
 if (substr($priv_vedi_tab,7,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere la <i>tabella con i documenti salvati</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere la <i>tabella con i documenti salvati</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_doc$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
  <label><input type=\"radio\" name=\"vedi_tab_doc$anno_mostra\" value=\"p\"$checked_PR>$b_PR".mex("Solo con documenti consentiti",$pag)." ".mex("a lui",$pag)."$b_slash_PR</label>
- <label><input type=\"radio\" name=\"vedi_tab_doc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <label><input type=\"radio\" name=\"vedi_tab_doc$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
 unset($checked_SI);
 unset($b_SI);
 unset($b_slash_SI);
@@ -2519,19 +2624,20 @@ else $sel_PPR = " selected";
 if (substr($priv_vedi_tab,6,1) == "r" or substr($priv_vedi_tab,6,1) == "g") $sel_AGR = " selected";
 else $sel_APR = " selected";
 if (substr($priv_vedi_tab,6,1) == "n") { $checked_NO = " checked"; $b_NO = "<b>"; $b_slash_NO = "</b>"; }
-echo mex("Possibilità di vedere <i>le statistiche</i>",$pag).":
+echo "<div style=\"background-color: ".rowbgcolor().";\">".mex("Possibilità di vedere <i>le statistiche</i>",$pag).":
  <label><input type=\"radio\" name=\"vedi_tab_stat$anno_mostra\" value=\"s\"$checked_SI>$b_SI".mex("Si",$pag)."$b_slash_SI</label>
- <label><input type=\"radio\" id=\"vts_p\" name=\"vedi_tab_stat$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo con",$pag)."$b_slash_PR
+ <label><input type=\"radio\" id=\"vts_p$anno_mostra\" name=\"vedi_tab_stat$anno_mostra\" value=\"p\"$checked_PR><small>$b_PR".mex("Solo con",$pag)."$b_slash_PR</small>
  </label><select name=\"vedi_tab_spren_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_PPR>".mex("prenotazioni proprie",$pag)."</otion>
- <option value=\"SI\"$sel_PGR>".mex("prenotazioni dai suoi gruppi",$pag)."</otion>
- </select><label for=\"vts_p\">
- $b_PR".mex("e appartamenti consentiti",'unit.php')."$b_slash_PR
+ <option value=\"NO\"$sel_PPR>".mex("prenotazioni proprie",$pag)."</option>
+ <option value=\"SI\"$sel_PGR>".mex("prenotazioni dai suoi gruppi",$pag)."</option>
+ </select><label for=\"vts_p$anno_mostra\">
+ <small>$b_PR".mex("e appartamenti consentiti",'unit.php')."$b_slash_PR</small>
  </label><select name=\"vedi_tab_sapp_gr$anno_mostra\" style=\"font-size: xx-small; padding: 0;\">
- <option value=\"NO\"$sel_APR>".mex("a lui",$pag)."</otion>
- <option value=\"SI\"$sel_AGR>".mex("ai suoi gruppi",$pag)."</otion>
- </select></small>
- <label><input type=\"radio\" name=\"vedi_tab_stat$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label><br>";
+ <option value=\"NO\"$sel_APR>".mex("a lui",$pag)."</option>
+ <option value=\"SI\"$sel_AGR>".mex("ai suoi gruppi",$pag)."</option>
+ </select>
+ <label><input type=\"radio\" name=\"vedi_tab_stat$anno_mostra\" value=\"n\"$checked_NO>$b_NO".mex("No",$pag)."$b_slash_NO</label></div>";
+echo "</td></tr></table>";
 
 
 echo "<br><div style=\"text-align: center;\">

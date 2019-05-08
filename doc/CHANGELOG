@@ -1,3 +1,21 @@
+2.2.4 (01/10/2018)
+======================
+-added new document variable [extra_cost_max_daily_value] with daily price in repetitons of costs
+-fixed bug: reservations not inserted when using "continue anyway" with an "ask before" rule 1
+-new italian default document for "fattura elettronica" (alpha version)
+-fixed bug: sometimes (empty) documents were saved even if there was an error message
+-fixed bug: when creating new year, dates of imported rate prices not updated
+-privileges to don't show money when modifying a reservation
+-privilege to view and modify inserting reservation user
+-Italian document "file alloggiatiweb" now replaces non-ascii characters for names and surnames
+-better display of calendars to pick dates on mobile devices
+-fixed bug: error when inserting an extra cost with no characteristics that could be mantained
+-fixed bug: normal user without priviles to modify all rates could not modify imported prices
+-fixed bug: saved documents not displayed correctly in reservations table
+-fixed bug: sometimes reservations could not be moved with automatic assignment (from 2.2.3)
+-fixed bug: rule 1 not working if room name had special html characters
+
+
 2.2.3 (04/06/2018)
 ======================
 -mantain confirmation status when modifying reservations as a group and only some are confirmed

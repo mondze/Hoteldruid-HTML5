@@ -1,15 +1,16 @@
 version 3.0
--different custom person types (adults, children 3-10, etc.) for persons in rates (influences only the price, not the total number of people which is the sum of all types) (new document variables for each person type with the number as value)
+-different custom person types (adults, children 3-10, etc.) for persons in rates (influences only the price, not the total number of people which is the sum of all types) (new document variables for each person type with the number as value) (possibly different for each user, possibility for types to don't sum in total people)
 -possibility to make costs as extra beds compatible only with some person types, so they are added automatically when searching availability only if that person type is requested
--multicurrency: insert exchange rate for each new currency and choose currency when inserting and showing prices (or select the currency for each rate/cost and store current exchange rate in reservation?) (only registerd in reservation payments?)
--multicurrency website pages
+-possibility to multiply extra costs by a person type (multiple types?) instead of total people
+-multicurrency: insert exchange rate for each new currency and choose currency when inserting and showing prices (or select the currency for each rate/cost and store current exchange rate in reservation?) (store in each payment the currency used and current exchange rate, so amunt paid can be recalculated in actual currency) (only registerd in reservation payments?)
+-multicurrency website pages and interconnections
 -when there is a repetition [r3] (or other) in the middle of a [r] repetition with conditions applied only inside the repetiton [r3] then don't apply again conditions of [r] after [/r3] (also happens with conditions not applied only in [r3]?) (affects current default docuemnts? add a "use legacy behaviour" option?) (if first part is null then apply conditions to second part, or first part even if null?)
 -bug: wrong roundig of operators with more than 2 decimals in operations in documents
 -interchange code 1 with code 2 in default nations and documents. When inserting default nations and there is a nation with same code 1 in administrator, then use same code 2 and code 3 (if these codes are not in default values)
--for italian document "file alloggiatiweb" replace non-ascii characters (like done in rtf documents) (also bug "codice ospite" 19 for gaudiosi instead of 20, see file in dev)
--new italian default document for "fattura elettronica" (check service offered by fatturaelettronica.infocamere.it)
--possibility to keep the data of cancelled reservations (move them in a new table "prenotacanc", import on new year) (privilege to delete permanently or not or choose)
+-new default documents "welcome email" with links to web checkin
+-possibility to keep the data of cancelled reservations (move them in a new table "prenotacanc", import on new year) (privilege to delete permanently or not or choose) (possibility to keep showing them in reservations table, for guests that arrive and leave on the same date)
 -possibility to insert a reservation of the same type (and client) from the "modify reservation" page, also for deleted reservations
+-"modify" links in rules 1 table like available in rule 2 table (new process to modify rule 1)
 
 
 version 3.0.1
@@ -18,7 +19,7 @@ version 3.0.1
 -when modifying inventory quantites, after display also modified quantites with +0
 -after an item is added to inventory (with or without extra cost) show the quantity added
 -warning when an inventory item is added and there is already an existing item with the same name
--check that default invoice documents work when called from point of sale
+-check that default invoice documents work when called from point of sale: when inserting on reservation give the possibility (drop-down menu?) to show document only for inserted costs (default?), instead of all extra costs of reservation
 -add a "point of sale" receipt or invoice(?) with the list of extra costs and prices to default documents (error if reservation number is present)
 -show taxes of rates in default invoices
 -add an html invoice showing "base price"(, "taxes %") and taxes on the same line
@@ -40,23 +41,24 @@ version 3.0.2
 -client number in documents variables and do not show doubles in "export clients data" document
 -show client name in documents table (if client number is present)
 -add "email2" to client fields and for email documents possibility to send them to "email", "email2" or both
+-add "email2" to structure data (certified or PEC) and corresponding document variable, update with it default Italian document "fattura elettronica"
+-add "region/province" to structure data pad possibility to use nation/region/city codes derived from structure values in documents and update "fattura elettronica"
 -possibility to insert issuing date for documents in clients data
+-possibility to use a variable of the document as the name of the file when the document is downloaded (once the document is created store it in filename or inside the file in case the document is opened from documents table)
 -link the titular client with guests of the reservation even if he's not a guest himself (?)
 
 
 version 3.1
 -possibility to select "always" as the period for rule 1
--possibility to select "all rooms" or "all rooms from rate X" when inserting rule 1
--in the page where rules are inserted show already inserted rules 1 with possibility to modify them (same as imported rates) (hidden by button with javascript?) or "modify" links in rules 1 table like rule 2
+-possibility to select "all rooms" or "all rooms from rate X" (or select rooms like rule 2) when inserting rule 1
 -when periods are added also import assignment rules 1, dates in menus and periods of imported rates
 -privilege to view only some rooms (replaces current one based on assignment rule 2, with rule 1 still useful to select only some periods)
 -privilege for users to insert assignment rules 1 and/or 2
 -privilege for users to add periods (show button at months end, 4 months missing in main menu, etc.)
 -possibility to select only one group (also if user doesn't belog to it?) instead of all users' groups for each privilege in user privileges
 -minimum number of people for each rate (added to rule 4?)
--privilege(s) to don't show money when modifying a reservation (?)
 -global privilege for users to create webpages (if enabled re-create webpage when changing minimum stay from rate table and show option when adding extra costs)
--privilege to view and modify inserting reservation user
+-privilege to see only alredy inserted extra costs permitted to user (instead of all) when modifying a reservation (new line below extra costs privilege line with 2 options)
 -show room as grey in rooms table if it's currently closed with rule 1
 -add interface for a module for gender guessing (gender.c --> gender executable, path in a costant?), select if enable only for secure matches or also "mostly X" in "conf and cust" (use it for default selection when inserting client/guest and also in interconnections and webpages if gender not asked)
 -possibility to use external smtp server instead of php mail() function in configure and customize
@@ -81,8 +83,12 @@ version 3.1.2
 -possibility for daily extra costs with specific days for being applied only on day X of the reservation
 -possibility to indicate the number of nights for final date (javascript in simple theme?), also in webpages
 -possibility to select day and month-year for dates, also in webpages
+-in check availability webpage (and instant and confirm) possibility to add custom html different for each step, just before the second part of custom html
+-check if normal user has privileges to manage password when viewing credit card and password has expired
 -by default (or when not activated) subordination should import only current and future years
 -enable possibility to don't use password in download of email messages (ask it each time they are downloaded)
+-show exceptions to rule 2 in indicative availability overviews (main menu check, calendar template, single rate page)
+-in single rate table show correctly minimum stay from daily extra costs applied only to some weekdays
 
 
 version 3.2
@@ -106,6 +112,7 @@ version 3.2.1
 -when a room is added ask which extra costs (already incompatible with other rooms) it must be incompatible with, which rates it must be associated with rule2
 -when a rate is added ask which extra costs (already automatically assigned to some rates) it must be assigned automatically (with days and type), default deposit/commissions, rooms for rule2, which users (with only selected rates) enable, and if assignment rules 1 must be imported from another rate
 -possibility to have incompatible rooms with combined extra costs (previously check if the cost will be affected by permitted periods and incompatible rates)
+-when a webpage of the same kind is present in another language, give the possibility to change language
 
 
 version 3.2.2
@@ -229,6 +236,8 @@ version 3.2.x
 -manual page in html (in doc folder) about editing documents: document types, default variables description, repetitons description, custom variables and conditions
 -explanation of rules in rules table
 -if a constant with photos directory is set then give the possibility to upload the photos for rates and rooms (set the links according to other constats, for exmple to first domain shown when webpages are created)
+-if a rate has no prices in any period then show also the "per person" input when clicking on rates table and single rate table
+-optional "note" when inserting reservation payments 
 
 
 version 4.0
@@ -312,6 +321,10 @@ future versions
 -rates priority
 -possibility to change the order of columns in all reservations table
 -custom colors for rooms
+-possibility to refund a payment by calling an external URL with payment details (initial payments API)
+-top clients (number of days reserved in a period) in statistics
 -day table with graphical layout of rooms, showing occupied ones
 -possibility for administrator user to change inserting user when inserting a reservation
+-possibility for extra costs to add inventory goods instead of only removing them (or moving them from a room/stockroom to another one)
+-search clients also by fiscal code
 -help on line

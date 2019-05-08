@@ -437,6 +437,7 @@ $num_persone = 0;
 $persone_cercate = array();
 
 if (!is_array($lingue)) {
+$lingue = array();
 if (is_dir("./includes/lang/en")) {
 $lingue[0] = "en";
 $num_lingue = 1;

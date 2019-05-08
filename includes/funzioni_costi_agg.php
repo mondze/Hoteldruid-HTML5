@@ -226,7 +226,7 @@ return $periodo_costo_trovato;
 
 
 
-function calcola_prezzo_totale_costo ($dati_ca,$num_costo,$idinizioperiodo,$idfineperiodo,$settimane_costo,$moltiplica,$costo_tariffa,$lista_tariffe,$costo_prenota_tot,$caparra,$numpersone,$costo_escludi_perc=0) {
+function calcola_prezzo_totale_costo ($dati_ca,$num_costo,$idinizioperiodo,$idfineperiodo,$settimane_costo,$moltiplica,$costo_tariffa,$lista_tariffe,$costo_prenota_tot,$caparra,$numpersone,$costo_escludi_perc=0,$prezzi_giorn=0) {
 
 $prezzo_costo_fisso = (double) $dati_ca[$num_costo]['valore'];
 if ($dati_ca[$num_costo]['tipo_val'] != "f") $prezzo_costo_perc = (double) $dati_ca[$num_costo]['valore_perc'];
@@ -244,6 +244,11 @@ for ($num1 = 0 ; $num1 < count($lista_tariffep) ; $num1++) $costo_tariffap += (d
 else for ($num1 = 0 ; $num1 < count($lista_tariffe) ; $num1++) $lista_tariffep[$num1] = (double) 0;
 } # fine if ($dati_ca[$num_costo]['tipo_val'] == "q" or $dati_ca[$num_costo]['tipo_val'] == "s")
 } # fine if ($dati_ca[$num_costo]['associasett'] == "s" or...
+
+if ($prezzi_giorn) {
+global $prezzi_giorn_costo;
+$prezzi_giorn_costo = "";
+} # fine if ($prezzi_giorn)
 
 if ($dati_ca[$num_costo]['tipo'] == "u") {
 if ($dati_ca[$num_costo]['tipo_val'] == "p") $prezzo_costo_perc = ($costo_tariffa * $prezzo_costo_perc) / 100;
@@ -274,15 +279,45 @@ if ($numpersone) $prezzo_costo_sett = (($lista_tariffep[$num_lista_tariffe] / (d
 else $prezzo_costo_sett = 0;
 } # fine if ($dati_ca[$num_costo]['tipo_val'] == "s")
 $prezzo_costo_perc_tot = $prezzo_costo_perc_tot + ($prezzo_costo_sett * $moltiplica[$num_sett]);
+if ($prezzi_giorn) {
+$prezzo_costo_sett2 = $prezzo_costo_sett;
+if ($dati_ca[$num_costo]['tipo_val'] != "f") $prezzo_costo_sett2 = floor($prezzo_costo_sett2 / $dati_ca[$num_costo]['arrotonda']) * $dati_ca[$num_costo]['arrotonda'];
+$prezzo_giorn_costo_corr = $prezzo_costo_fisso + $prezzo_costo_sett2;
+if (!$prezzo_giorn_costo_max or $prezzo_giorn_costo_corr > $prezzo_giorn_costo_max) $prezzo_giorn_costo_max = $prezzo_giorn_costo_corr;
+$prezzi_giorn_costo .= ($prezzo_giorn_costo_corr * $moltiplica[$num_sett]).",";
+} # fine if ($prezzi_giorn)
 $num_sett++;
 } # fine if (str_replace(",".$num1.",","",$settimane_costo) != $settimane_costo)
 $num_lista_tariffe++;
 } # fine for $num1
 $prezzo_costo_fisso = $prezzo_costo_fisso_tot;
 $prezzo_costo_perc = $prezzo_costo_perc_tot;
+if ($prezzi_giorn) $prezzi_giorn_costo .= $prezzo_giorn_costo_max;
 } # fine if ($dati_ca[$num_costo]['associasett'] == "s")
-else $prezzo_costo_fisso = $prezzo_costo_fisso * $settimane_costo;
-} # fine if ($dati_ca[$num_costo][tipo] == "s")
+else {
+if ($prezzi_giorn) {
+$prezzi_giorn_costo = $prezzo_costo_fisso;
+if ($dati_ca[$num_costo]['numsett'] != "t") $prezzi_giorn_costo = "$settimane_costo,$prezzi_giorn_costo";
+} # fine if ($prezzi_giorn)
+$prezzo_costo_fisso = $prezzo_costo_fisso * $settimane_costo;
+} # fine else if ($dati_ca[$num_costo]['associasett'] == "s")
+} # fine if ($dati_ca[$num_costo]['tipo'] == "s")
+elseif ($prezzi_giorn) {
+$prezzo_costo_perc2 = $prezzo_costo_perc;
+if ($dati_ca[$num_costo]['tipo_val'] != "f") $prezzo_costo_perc2 = floor($prezzo_costo_perc2 / $dati_ca[$num_costo]['arrotonda']) * $dati_ca[$num_costo]['arrotonda'];
+$prezzo_costo = $prezzo_costo_fisso + $prezzo_costo_perc2;
+$numper = ($idfineperiodo - $idinizioperiodo + 1);
+$prezzi_giorn_costo = ($prezzo_costo / $numper);
+if (strstr($prezzi_giorn_costo,".")) {
+if (!strstr($prezzo_costo,".") and $prezzo_costo >= $numper) $arrotond_giorn = 1;
+else $arrotond_giorn = 0.01;
+$prezzi_giorn_costo = floor((double) $prezzi_giorn_costo / $arrotond_giorn) * $arrotond_giorn;
+if ((double) ($prezzi_giorn_costo * $numper) < (double) $prezzo_costo) {
+$num_giorni_resto = floor(((double) $prezzo_costo - ($prezzi_giorn_costo * $numper)) / $arrotond_giorn);
+$prezzi_giorn_costo = "$arrotond_giorn"."r$num_giorni_resto,".($prezzi_giorn_costo + $arrotond_giorn);
+} # fine if ((double) ($prezzi_giorn_costo * $numper) < (double) $prezzo_costo)
+} # fine if (strstr($prezzi_giorn_costo,"."))
+} # fine elseif ($prezzi_giorn)
 
 if ($dati_ca[$num_costo]['associasett'] != "s") {
 $prezzo_costo_fisso = $prezzo_costo_fisso * $moltiplica;
@@ -356,6 +391,7 @@ if ($dati_ca[$num_costo]['moltiplica'] == "t") {
 $letti_agg_max = 0;
 if ($dati_ca[$num_costo]['tipo'] == "s" and $dati_ca[$num_costo]['associasett'] == "s") {
 for ($num1 = $idinizioperiodo; $num1 <= $idfineperiodo; $num1++) {
+if (!strcmp($num_letti_agg[$num1],"")) $num_letti_agg[$num1] = 0;
 if ($num_letti_agg[$num1] > $letti_agg_max) $letti_agg_max = $num_letti_agg[$num1];
 if ($settimane_costo != str_replace(",$num1,","",$settimane_costo)) $moltiplica .= ",".max(($numpersone + $num_letti_agg[$num1] + $dati_ca[$num_costo]['molt_agg']),0);
 } # fine for $num1

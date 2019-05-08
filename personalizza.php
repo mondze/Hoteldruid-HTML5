@@ -517,6 +517,145 @@ if ($file_tariffe_cambiati) echo "<br><span class=\"colwarn\">".mex("Attenzione"
 } # fine if ($max_tar > 0)
 } # fine if ($cambia_ord_tariffe)
 
+
+if ($cambianumcatpers) {
+if (controlla_num_pos($nuovo_num_cat_presone) == "NO" or $nuovo_num_cat_presone < 1 or (defined('C_MASSIMO_NUM_UTENTI') and $nuovo_num_cat_presone > C_MASSIMO_NUM_UTENTI)) echo "<br>".mex("Il numero di categorie delle persone è sbagliato",$pag).".<br>";
+else {
+$tabelle_lock = array($tablepersonalizza);
+$tabelle_lock = lock_tabelle($tabelle_lock);
+$num_categorie_persone = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '1'");
+$perc_cat_persone = risul_query($num_categorie_persone,0,'valpersonalizza');
+$num_categorie_persone = risul_query($num_categorie_persone,0,'valpersonalizza_num');
+if ($nuovo_num_cat_presone != $num_categorie_persone) {
+function mex2 ($messaggio,$pagina,$lingua) {
+if ($lingua != "ita") {
+include("./includes/lang/$lingua/$pagina");
+} # fine if ($lingua != "ita")
+return $messaggio;
+} # fine function mex2
+$n_ling = 0;
+$l_ling = array($n_ling => 'ita');
+$lang_dir = opendir("./includes/lang/");
+while ($ini_lingua = readdir($lang_dir)) {
+if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and is_file("./includes/lang/$ini_lingua/l_n")) {
+$n_ling++;
+$l_ling[$n_ling] = $ini_lingua;
+} # fine if ($file != "." and $file != ".." and strlen($ini_lingua) < 4 and is_file("./includes/lang/$ini_lingua/l_n"))
+} # fine while ($file = readdir($lang_dig))
+closedir($lang_dir);
+for ($num1 = $num_categorie_persone ; $num1 < $nuovo_num_cat_presone ; $num1++) {
+if (!$perc_cat_persone) $perc_cat_persone = "n%100r1";
+else $perc_cat_persone .= ";n%100r1";
+for ($num2 = 0 ; $num2 <= $n_ling ; $num2++) {
+if ($num1 == 1) esegui_query("insert into $tablepersonalizza (idpersonalizza,valpersonalizza,idutente) values ('nomi_cat_pers_".aggslashdb($l_ling[$num2])."','".aggslashdb(htmlspecialchars(mex2("adulto",$pag,$l_ling[$num2]))."#@?".htmlspecialchars(mex2("adulti",$pag,$l_ling[$num2]))."#@%".htmlspecialchars(mex2("bambino",$pag,$l_ling[$num2]))."#@?".htmlspecialchars(mex2("bambini",$pag,$l_ling[$num2])))."','1') ");
+else {
+$nomi_cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+$nomi_cat_pers = risul_query($nomi_cat_pers,0,'valpersonalizza');
+$nome_presente = array();
+$nomi_cat_pers_vett = explode("#@%",$nomi_cat_pers);
+for ($num3 = 0 ; $num3 < count($nomi_cat_pers_vett) ; $num3++) {
+$nomi_corr = explode("#@?",$nomi_cat_pers_vett[$num3]);
+$nome_presente[$nomi_corr[0]] = 1;
+$nome_presente[$nomi_corr[1]] = 1;
+} # fine for $num3
+$n_nome_s = htmlspecialchars(mex2("bambino",$pag,$l_ling[$num2]))." ";
+$n_nome_p = htmlspecialchars(mex2("bambini",$pag,$l_ling[$num2]))." ";
+$num_corr = $num1;
+while ($nome_presente[$n_nome_s.$num_corr] or $nome_presente[$n_nome_p.$num_corr]) $num_corr++;
+esegui_query("update $tablepersonalizza set valpersonalizza = '".aggslashdb($nomi_cat_pers."#@%".$n_nome_s.$num_corr."#@?".$n_nome_p.$num_corr)."' where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+} # fine else if ($num1 == 1)
+} # fine for $num2
+} # fine for $num1
+for ($num1 = $num_categorie_persone ; $num1 > $nuovo_num_cat_presone ; $num1--) {
+if ($nuovo_num_cat_presone == 1) $perc_cat_persone = "";
+else {
+$perc_cat_pers_vett = explode(";",$perc_cat_persone);
+$perc_cat_persone = substr($perc_cat_persone,0,(-1 * (strlen($perc_cat_pers_vett[(count($perc_cat_pers_vett) - 1)]) + 1)));
+} # fine else if ($nuovo_num_cat_presone == 1)
+for ($num2 = 0 ; $num2 <= $n_ling ; $num2++) {
+if ($nuovo_num_cat_presone == 1) esegui_query("delete from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+else {
+$nomi_cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+$nomi_cat_pers = risul_query($nomi_cat_pers,0,'valpersonalizza');
+$nomi_cat_pers_vett = explode("#@%",$nomi_cat_pers);
+$nomi_cat_pers = substr($nomi_cat_pers,0,(-1 * (strlen($nomi_cat_pers_vett[(count($nomi_cat_pers_vett) - 1)]) + 3)));
+esegui_query("update $tablepersonalizza set valpersonalizza = '".aggslashdb($nomi_cat_pers)."' where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+} # fine else if ($nuovo_num_cat_presone == 1)
+} # fine for $num2
+} # fine for $num1
+esegui_query("update $tablepersonalizza set valpersonalizza = '".aggslashdb($perc_cat_persone)."', valpersonalizza_num = '$nuovo_num_cat_presone' where idpersonalizza = 'num_categorie_persone' and idutente = '1' ");
+echo "<br>".mex("Il numero di categorie delle persone è stato cambiato",$pag).".<br>";
+} # fine if ($nuovo_num_cat_presone != $num_categorie_persone)
+unlock_tabelle($tabelle_lock);
+} # fine else if (controlla_num_pos($nuovo_num_cat_presone) == "NO" or $nuovo_num_cat_presone < 1 or...
+} # fine if ($cambianumcatpers)
+
+
+if ($cambiacatpers) {
+$tabelle_lock = array($tablepersonalizza);
+$tabelle_lock = lock_tabelle($tabelle_lock);
+$num_categorie_persone = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '1'");
+$perc_cat_persone = risul_query($num_categorie_persone,0,'valpersonalizza');
+$num_categorie_persone = risul_query($num_categorie_persone,0,'valpersonalizza_num');
+if ($num_categorie_persone > 1) {
+$n_ling = 0;
+$l_ling = array($n_ling => 'ita');
+$lang_dir = opendir("./includes/lang/");
+while ($ini_lingua = readdir($lang_dir)) {
+if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and is_file("./includes/lang/$ini_lingua/l_n")) {
+$n_ling++;
+$l_ling[$n_ling] = $ini_lingua;
+} # fine if ($file != "." and $file != ".." and strlen($ini_lingua) < 4 and is_file("./includes/lang/$ini_lingua/l_n"))
+} # fine while ($file = readdir($lang_dig))
+closedir($lang_dir);
+$cambiato = 0;
+$errore = 0;
+$n_perc_cat_persone = "";
+$n_nomi_cat_pers = array();
+for ($num1 = 1 ; $num1 <= $num_categorie_persone ; $num1++) {
+if ($num1 > 1) {
+if (${"osp_princ_$num1"}) $osp_princ = "s";
+else $osp_princ = "n";
+${"arrotond_cat_$num1"} = formatta_soldi(${"arrotond_cat_$num1"});
+if (controlla_soldi(${"arrotond_cat_$num1"}) != "SI") $errore = 1;
+if (${"perc_cat_$num1"} < 0 or !strcmp(${"perc_cat_$num1"},"") or preg_replace("/[0-9]/","",${"perc_cat_$num1"}) != "") $errore = 1;
+$n_perc_cat_persone .= $osp_princ."%".${"perc_cat_$num1"}."r".${"arrotond_cat_$num1"}.";";
+} # fine ($num1 > 1)
+for ($num2 = 0 ; $num2 <= $n_ling ; $num2++) {
+if (get_magic_quotes_gpc()) {
+${"nome_sing_".$l_ling[$num2]."_$num1"} = stripslashes(${"nome_sing_".$l_ling[$num2]."_$num1"});
+${"nome_plur_".$l_ling[$num2]."_$num1"} = stripslashes(${"nome_plur_".$l_ling[$num2]."_$num1"});
+} # fine if (get_magic_quotes_gpc())
+if (!strcmp(${"nome_sing_".$l_ling[$num2]."_$num1"},"") or !strcmp(${"nome_plur_".$l_ling[$num2]."_$num1"},"")) $errore = 1;
+$n_nomi_cat_pers[$num2] .= htmlspecialchars(${"nome_sing_".$l_ling[$num2]."_$num1"})."#@?".htmlspecialchars(${"nome_plur_".$l_ling[$num2]."_$num1"})."#@%";
+} # fine for $num2
+if ($errore) {
+echo "<br>".mex("I dati inseriti non sono corretti",$pag).".<br>";
+$torna_invece_di_ok = "SI";
+break;
+} # fine if ($errore)
+} # fine for $num1
+if (!$errore) {
+$n_perc_cat_persone = substr($n_perc_cat_persone,0,-1);
+if ($n_perc_cat_persone != $perc_cat_persone) {
+$cambiato = 1;
+esegui_query("update $tablepersonalizza set valpersonalizza = '".aggslashdb($n_perc_cat_persone)."' where idpersonalizza = 'num_categorie_persone' and idutente = '1' ");
+} # fine if ($n_perc_cat_persone != $perc_cat_persone)
+for ($num1 = 0 ; $num1 <= $n_ling ; $num1++) {
+$n_nomi_cat_pers[$num1] = substr($n_nomi_cat_pers[$num1],0,-3);
+$nomi_cat_pers = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num1])."' and idutente = '1' ");
+$nomi_cat_pers = risul_query($nomi_cat_pers,0,'valpersonalizza');
+if ($n_nomi_cat_pers[$num1] != $nomi_cat_pers) {
+$cambiato = 1;
+esegui_query("update $tablepersonalizza set valpersonalizza = '".aggslashdb($n_nomi_cat_pers[$num1])."' where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num1])."' and idutente = '1' ");
+} # fine if ($n_nomi_cat_pers[$num1] != $nomi_cat_pers)
+} # fine for $num1
+} # fine if (!$errore)
+if ($cambiato) echo "<br>".mex("Le categorie delle persone sono state modificate",$pag).".<br>";
+} # fine if ($num_categorie_persone > 1)
+unlock_tabelle($tabelle_lock);
+} # fine if ($cambiacatpers)
+
 } # fine if ($id_utente == 1)
 
 
@@ -524,7 +663,7 @@ if ($priv_gest_pass_cc == "s" and function_exists('openssl_pkey_new') and (!defi
 
 if ($attiva_pass_cc) {
 $nascondi_pers_utente_mod = 1;
-$tabelle_lock = array("$tablepersonalizza");
+$tabelle_lock = array($tablepersonalizza);
 $tabelle_lock = lock_tabelle($tabelle_lock);
 $cert_cc = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'cert_cc' and idutente = '1'");
 if (!numlin_query($cert_cc)) {
@@ -3065,6 +3204,8 @@ echo "</tr></table><hr style=\"width: 95%\">";
 } # fine if ($id_utente == 1 or ($priv_crea_backup == "s" and...
 
 
+$stile_soldi = stile_soldi();
+
 if ($id_utente == 1) {
 
 unset($option_select_utenti);
@@ -3118,6 +3259,80 @@ echo mex("Cambia il numero delle tariffe",$pag)." ".mex("per l'anno",$pag)." $an
 <button class=\"plum\" type=\"submit\"><div>".mex("Aggiungi periodi",'visualizza_tabelle.php')."</div></button>
 </div></form></td></tr></table>
 <hr style=\"width: 95%\">";
+
+/*$perc_cat_persone = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '1'");
+$num_categorie_persone = risul_query($perc_cat_persone,0,'valpersonalizza_num');
+echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"./personalizza.php\"><div>
+<input type=\"hidden\" name=\"anno\" value=\"$anno\">
+<input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
+<input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
+".mex("Numero di categorie delle persone",$pag).": 
+ <input type=\"text\" name=\"nuovo_num_cat_presone\" size=\"2\" value=\"$num_categorie_persone\">
+<button class=\"edtm\" type=\"submit\" name=\"cambianumcatpers\" value=\"1\"><div>".mex("Cambia",$pag)."</div></button>
+</div></form>";
+if ($num_categorie_persone > 1) {
+$perc_cat_persone = explode(";",risul_query($perc_cat_persone,0,'valpersonalizza'));
+$n_ling = 0;
+$l_ling = array();
+$nl_ling = array();
+if ($lingua_mex != 'ita') {
+$l_ling[$n_ling] = $lingua_mex;
+$nl_ling[$n_ling] = togli_acapo(implode("",file("./includes/lang/$lingua_mex/l_n")));
+$n_ling++;
+} # fine if ($lingua_mex != 'ita')
+$l_ling[$n_ling] = 'ita';
+$nl_ling[$n_ling] = 'italiano';
+$lang_dir = opendir("./includes/lang/");
+while ($ini_lingua = readdir($lang_dir)) {
+if ($ini_lingua != "." and $ini_lingua != ".." and strlen($ini_lingua) < 4 and $ini_lingua != $lingua_mex and is_file("./includes/lang/$ini_lingua/l_n")) {
+$n_ling++;
+$l_ling[$n_ling] = $ini_lingua;
+$nl_ling[$n_ling] = togli_acapo(implode("",file("./includes/lang/$ini_lingua/l_n")));
+} # fine if ($file != "." and $file != ".." and strlen($ini_lingua) < 4 and...
+} # fine while ($file = readdir($lang_dig))
+closedir($lang_dir);
+echo "<div style=\"height: 8px;\"></div>
+<form accept-charset=\"utf-8\" method=\"post\" action=\"./personalizza.php\"><div>
+<input type=\"hidden\" name=\"anno\" value=\"$anno\">
+<input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
+<input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
+<input type=\"hidden\" name=\"cambia_cat_pers\" value=\"1\">
+<div class=\"tab_cont\">
+<table class=\"t2\" style=\"text-align: center;\" border=1 cellspacing=0 cellpadding=1>
+<tr><td>&nbsp;</td><td><small><small>".mex("Può essere ospite principale",$pag)."</small></small></td>
+<td><small><small>".mex("Prezzo in percentuale del prezzo per persona",$pag)."</small></small></td>";
+for ($num1 = 0 ; $num1 <= $n_ling ; $num1++) echo "<td><small>".ucfirst($nl_ling[$num1])."</small></td>";
+echo "</tr>";
+$nomi_cat_pers = array();
+for ($num1 = 1 ; $num1 <= $num_categorie_persone ; $num1++) {
+echo "<tr><td>".mex("Categoria",$pag)."&nbsp;$num1</td>";
+if ($num1 == 1) {
+echo "<td><input type=\"checkbox\" style=\"width: 14px; height: 12px;\" onclick=\"return false;\" readonly checked></td><td>100%</td>";
+for ($num2 = 0 ; $num2 <= $n_ling ; $num2++) {
+$nomi_cat_pers[$num2] = esegui_query("select * from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($l_ling[$num2])."' and idutente = '1' ");
+$nomi_cat_pers[$num2] = explode("#@%",risul_query($nomi_cat_pers[$num2],0,'valpersonalizza'));
+} # fine for $num2
+} # fine if ($num1 == 1)
+else {
+if (substr($perc_cat_persone[($num1 - 2)],0,1) == "n") $checked = "";
+else $checked = " checked";
+$perc_corr = explode("r",substr($perc_cat_persone[($num1 - 2)],2));
+echo "<td><input type=\"checkbox\" name=\"osp_princ_$num1\" value=\"1\" style=\"width: 14px; height: 12px;\"$checked></td>
+<td><input type=\"text\" name=\"perc_cat_$num1\" size=\"3\" value=\"".$perc_corr[0]."\"><small>%
+ ".mex("arrotondato a",$pag)." </small><input type=\"text\" name=\"arrotond_cat_$num1\" size=\"3\" value=\"".virgola_in_num($perc_corr[1],$stile_soldi)."\"></td>";
+} # fine else if ($num1 == 1)
+for ($num2 = 0 ; $num2 <= $n_ling ; $num2++) {
+$nomi_corr = explode("#@?",$nomi_cat_pers[$num2][($num1 - 1)]);
+echo "<td>".ucfirst(substr(mex("singolare",$pag),0,1)).".<input type=\"text\" name=\"nome_sing_".$l_ling[$num2]."_$num1\" size=\"9\" value=\"".$nomi_corr[0]."\"><br>
+".ucfirst(substr(mex("plurale",$pag),0,1)).".<input type=\"text\" name=\"nome_plur_".$l_ling[$num2]."_$num1\" size=\"9\" value=\"".$nomi_corr[1]."\"></td>";
+} # fine for $num2
+echo "</tr>";
+} # fine for $num1
+echo "</table></div><div style=\"height: 2px;\"></div>
+<button class=\"edtm\" type=\"submit\" name=\"cambiacatpers\" value=\"1\"><div>".mex("Modifica le categorie delle persone",$pag)."</div></button>
+<div style=\"height: 4px;\"></div></div></form>";
+} # fine if ($num_categorie_persone > 1)
+echo "<hr style=\"width: 95%\">";*/
 
 if (!defined('C_CREA_NUOVI_APP') or C_CREA_NUOVI_APP != "NO") {
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"visualizza_tabelle.php\"><div>
@@ -3695,8 +3910,6 @@ closedir($temi_dir);
 echo "</select>
 <button class=\"edtm\" type=\"submit\" name=\"cambiatema\" value=\"1\"><div>".mex("cambia",$pag)."</div></button><br>
 </div></form><hr style=\"width: 95%\">";
-
-$stile_soldi = stile_soldi();
 
 echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"./personalizza.php\"><div>
 <input type=\"hidden\" name=\"anno\" value=\"$anno\">
@@ -5026,7 +5239,7 @@ echo "<form accept-charset=\"utf-8\" method=\"post\" action=\"./personalizza.php
 <input type=\"hidden\" name=\"id_sessione\" value=\"$id_sessione\">
 <input type=\"hidden\" name=\"id_utente_mod\" value=\"$id_utente_mod\">
 <input type=\"hidden\" name=\"aggiorna_qualcosa\" value=\"SI\">
-<div style=\"text-align: center;\"><table style=\"margin-left: auto; margin-right: auto;\" border=1 cellspacing=1 cellpadding=1>";
+<div style=\"text-align: center;\"><table class=\"t2\" style=\"margin-left: auto; margin-right: auto;\" border=1 cellspacing=1 cellpadding=1>";
 $num_colonna = 1;
 for ($num_contratto = 1 ; $num_contratto <= $max_contr ; $num_contratto++) {
 if ($attiva_contratti_consentiti == "n" or $contratti_consentiti_vett[$num_contratto] == "SI") {

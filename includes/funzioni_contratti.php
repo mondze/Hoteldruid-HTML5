@@ -89,7 +89,7 @@ return $dir_salva;
 
 
 function trova_nomi_contratti (&$max_contr,$id_utente,$tablecontratti,$tablepersonalizza,$LIKE,$pag) {
-unset($nomi_contratti);
+$nomi_contratti = array();
 $max_contr = esegui_query("select max(numero) from $tablecontratti where tipo $LIKE 'contr%'");
 $max_contr = risul_query($max_contr,0,0);
 for ($num1 = 1 ; $num1 <= $max_contr ; $num1++) $nomi_contratti[$num1] = mex("documento",$pag)."$num1";
@@ -1895,12 +1895,14 @@ $nome_costo_agg_tsel = "nome_costo_agg".$numca."_tsel".$tariffa_selezionata."_".
 $val_costo_agg_tsel = "val_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
 $perc_tasse_costo_agg_tsel = "percentuale_tasse_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
 $molt_max_costo_agg_tsel = "moltiplica_max_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
+$val_giorn_max_costo_agg_tsel = "valore_giornaliero_max_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
 $giorni_costo_agg_tsel = "giorni_costo_agg".$numca."_tsel".$tariffa_selezionata."_".$n_r;
-global $$nome_costo_agg_tsel,$$val_costo_agg_tsel,$$perc_tasse_costo_agg_tsel,$$molt_max_costo_agg_tsel,$$giorni_costo_agg_tsel;
+global $$nome_costo_agg_tsel,$$val_costo_agg_tsel,$$perc_tasse_costo_agg_tsel,$$molt_max_costo_agg_tsel,$$val_giorn_max_costo_agg_tsel,$$giorni_costo_agg_tsel;
 ${"nome_costo_agg".$numca."_".$n_r} = $$nome_costo_agg_tsel;
 ${"val_costo_agg".$numca."_".$n_r} = $$val_costo_agg_tsel;
 ${"percentuale_tasse_costo_agg".$numca."_".$n_r} = $$perc_tasse_costo_agg_tsel;
 ${"moltiplica_max_costo_agg".$numca."_".$n_r} = $$molt_max_costo_agg_tsel;
+${"valore_giornaliero_max_costo_agg".$numca."_".$n_r} = $$val_giorn_max_costo_agg_tsel;
 ${"giorni_costo_agg".$numca."_".$n_r} = trasforma_id_in_date($$giorni_costo_agg_tsel,$date_id,$tableperiodi);
 } # fine for $numca
 } # fine if ($$num_costi_aggiuntivi_tsel)
@@ -1932,6 +1934,7 @@ $nome_costo_agg = "nome_costo_agg".$numca."_".$n_r;
 $val_costo_agg = "val_costo_agg".$numca."_".$n_r;
 $percentuale_tasse_costo_agg = "percentuale_tasse_costo_agg".$numca."_".$n_r;
 $moltiplica_max_costo_agg = "moltiplica_max_costo_agg".$numca."_".$n_r;
+$valore_giornaliero_max_costo_agg = "valore_giornaliero_max_costo_agg".$numca."_".$n_r;
 $giorni_costo_agg = "giorni_costo_agg".$numca."_".$n_r;
 $data_inserimento_costo_agg = "data_inserimento_costo_agg".$numca."_".$n_r;
 $utente_inserimento_costo_agg = "utente_inserimento_costo_agg".$numca."_".$n_r;
@@ -1940,6 +1943,7 @@ $$nome_costo_agg = $GLOBALS[$nome_costo_agg];
 $$val_costo_agg = $GLOBALS[$val_costo_agg];
 $$percentuale_tasse_costo_agg = $GLOBALS[$percentuale_tasse_costo_agg];
 $$moltiplica_max_costo_agg = $GLOBALS[$moltiplica_max_costo_agg];
+$$valore_giornaliero_max_costo_agg = $GLOBALS[$valore_giornaliero_max_costo_agg];
 $$giorni_costo_agg = $GLOBALS[$giorni_costo_agg];
 $$data_inserimento_costo_agg = $GLOBALS[$data_inserimento_costo_agg];
 $$utente_inserimento_costo_agg = $n_utente_contr[$GLOBALS[$utente_inserimento_costo_agg]];
@@ -1948,6 +1952,7 @@ unset($GLOBALS[$nome_costo_agg]);
 unset($GLOBALS[$val_costo_agg]);
 unset($GLOBALS[$percentuale_tasse_costo_agg]);
 unset($GLOBALS[$moltiplica_max_costo_agg]);
+unset($GLOBALS[$valore_giornaliero_max_costo_agg]);
 unset($GLOBALS[$giorni_costo_agg]);
 unset($GLOBALS[$data_inserimento_costo_agg]);
 unset($GLOBALS[$utente_inserimento_costo_agg]);
@@ -1957,6 +1962,7 @@ $nome_costo_agg = $$nome_costo_agg;
 $val_costo_agg = $$val_costo_agg;
 $percentuale_tasse_costo_agg = $$percentuale_tasse_costo_agg;
 $moltiplica_max_costo_agg = $$moltiplica_max_costo_agg;
+$valore_giornaliero_max_costo_agg = $$valore_giornaliero_max_costo_agg;
 $$giorni_costo_agg = trasforma_id_in_date($$giorni_costo_agg,$date_id,$tableperiodi);
 $giorni_costo_agg = $$giorni_costo_agg;
 $data_inserimento_costo_agg = $$data_inserimento_costo_agg;
@@ -1966,11 +1972,16 @@ $tutti_i_costi_agg .= "$nome_costo_agg: $val_costo_agg$tag_acapo";
 $tutti_i_costi_agg_p .= "$nome_costo_agg: $val_costo_agg_p$tag_acapo";
 $valore_tutti_costi_agg = (double) $valore_tutti_costi_agg + (double) $val_costo_agg;
 calcola_tasse_contr($val_costo_agg,$percentuale_tasse_costo_agg,$arrotond_tasse,$tasse_costo_agg,$tasse_costo_agg_p,$val_costo_agg_senza_tasse,$val_costo_agg_senza_tasse_p,$stile_soldi);
-if (str_replace(",","",$moltiplica_max_costo_agg) != $moltiplica_max_costo_agg) {
+if (strstr($moltiplica_max_costo_agg,",")) {
 $moltiplica_max_costo_agg = explode(",",$moltiplica_max_costo_agg);
 rsort($moltiplica_max_costo_agg);
 $moltiplica_max_costo_agg = $moltiplica_max_costo_agg[0];
-} # fine if (str_replace(",","",$moltiplica_max_costo_agg) != $moltiplica_max_costo_agg)
+} # fine if (strstr($moltiplica_max_costo_agg,","))
+if (strstr($valore_giornaliero_max_costo_agg,",")) {
+$valore_giornaliero_max_costo_agg = explode(",",$valore_giornaliero_max_costo_agg);
+$valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg[(count($valore_giornaliero_max_costo_agg) - 1)];
+} # fine if (strstr($valore_giornaliero_max_costo_agg,","))
+$valore_giornaliero_max_costo_agg_p = punti_in_num($valore_giornaliero_max_costo_agg,$stile_soldi);
 if ($num_costo_agg_sel == $numca) {
 $nome_costo_agg_sel = $nome_costo_agg;
 $valore_costo_agg_sel = $val_costo_agg;
@@ -1979,6 +1990,8 @@ $percentuale_tasse_costo_agg_sel = $percentuale_tasse_costo_agg;
 $tasse_costo_agg_sel = $tasse_costo_agg;
 $tasse_costo_agg_sel_p = $tasse_costo_agg_p;
 $moltiplica_max_costo_agg_sel = $moltiplica_max_costo_agg;
+$valore_giornaliero_max_costo_agg_sel = $valore_giornaliero_max_costo_agg;
+$valore_giornaliero_max_costo_agg_sel_p = $valore_giornaliero_max_costo_agg_p;
 } # fine if ($num_costo_agg_sel == $numca)
 } # fine for $numca
 $valore_tutti_costi_agg_p = punti_in_num($valore_tutti_costi_agg,$stile_soldi);
@@ -2334,6 +2347,7 @@ $nome_costo_agg = "nome_costo_agg".$numca."_".$n_r;
 $val_costo_agg = "val_costo_agg".$numca."_".$n_r;
 $percentuale_tasse_costo_agg = "percentuale_tasse_costo_agg".$numca."_".$n_r;
 $moltiplica_max_costo_agg = "moltiplica_max_costo_agg".$numca."_".$n_r;
+$valore_giornaliero_max_costo_agg = "valore_giornaliero_max_costo_agg".$numca."_".$n_r;
 $giorni_costo_agg = "giorni_costo_agg".$numca."_".$n_r;
 $data_inserimento_costo_agg = "data_inserimento_costo_agg".$numca."_".$n_r;
 $utente_inserimento_costo_agg = "utente_inserimento_costo_agg".$numca."_".$n_r;
@@ -2341,6 +2355,7 @@ $nome_costo_agg = $$nome_costo_agg;
 $valore_costo_agg = $$val_costo_agg;
 $percentuale_tasse_costo_agg = $$percentuale_tasse_costo_agg;
 $moltiplica_max_costo_agg = $$moltiplica_max_costo_agg;
+$valore_giornaliero_max_costo_agg = $$valore_giornaliero_max_costo_agg;
 $giorni_costo_agg = $$giorni_costo_agg;
 if ($ripeti_prenota_data and $giorni_costo_agg and !strstr($giorni_costo_agg,",$ripeti_prenota_data,")) $mostra_ripetizione = 0;
 $data_inserimento_costo_agg = $$data_inserimento_costo_agg;
@@ -2349,12 +2364,14 @@ $valore_costo_agg_p = punti_in_num($valore_costo_agg,$stile_soldi);
 calcola_tasse_contr($valore_costo_agg,$percentuale_tasse_costo_agg,$arrotond_tasse,$tasse_costo_agg,$tasse_costo_agg_p,$valore_costo_agg_senza_tasse,$valore_costo_agg_senza_tasse_p,$stile_soldi);
 if (str_replace(",","",$moltiplica_max_costo_agg) != $moltiplica_max_costo_agg and $mostra_ripetizione) {
 $moltiplica_max_costo_agg = explode(",",$moltiplica_max_costo_agg);
+$valore_giornaliero_max_costo_agg = explode(",",$valore_giornaliero_max_costo_agg);
 if ($ripeti_prenota_data and $giorni_costo_agg) {
 $var_if = explode(",",$giorni_costo_agg);
 $num2 = count($var_if);
 for ($num1 = 1 ; $num1 < $num2 ; $num1++) {
 if ($var_if[$num1] == $ripeti_prenota_data) {
 $moltiplica_max_costo_agg = $moltiplica_max_costo_agg[$num1];
+$valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg[($num1 - 1)];
 break;
 } # fine if ($var_if[$num1] == $ripeti_prenota_data)
 } # fine for $num1
@@ -2362,8 +2379,44 @@ break;
 else {
 rsort($moltiplica_max_costo_agg);
 $moltiplica_max_costo_agg = $moltiplica_max_costo_agg[0];
+$valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg[(count($valore_giornaliero_max_costo_agg) - 1)];
 } # fine else if ($ripeti_prenota_data and $giorni_costo_agg)
 } # fine if (str_replace(",","",$moltiplica_max_costo_agg) != $moltiplica_max_costo_agg and $mostra_ripetizione)
+elseif ($mostra_ripetizione) {
+if (strstr($valore_giornaliero_max_costo_agg,",")) {
+$valore_giornaliero_max_costo_agg = explode(",",$valore_giornaliero_max_costo_agg);
+$var_if = $valore_giornaliero_max_costo_agg[0];
+$valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg[(count($valore_giornaliero_max_costo_agg) - 1)];
+} # fine if (strstr($valore_giornaliero_max_costo_agg,","))
+else $var_if = "";
+if ($ripeti_prenota_data) {
+if ($ripeti_prenota_data == $data_fine) $valore_giornaliero_max_costo_agg = 0;
+else {
+if ($var_if) {
+if (strstr($var_if,"r")) {
+$num2 = explode("r",$var_if);
+$var_if = $num2[0];
+$num2 = $num2[1];
+} # fine if (strstr($var_if,"r"))
+else {
+$num2 = $var_if;
+$var_if = 0;
+} # fine else if (strstr($var_if,"r"))
+$data_trovata = 0;
+for ($num1 = 0 ; $num1 < $num2 ; $num1++) {
+if (date("Y-m-d",mktime(0,0,0,substr($data_inizio,5,2),(substr($data_inizio,8,2) + $num1),(int) substr($data_inizio,0,4))) == $ripeti_prenota_data) {
+$data_trovata = 1;
+break;
+} # fine if (date("Y-m-d",mktime(0,0,0,substr($data_inizio,5,2),(substr($data_inizio,8,2) + $num1),(int) substr($data_inizio,0,4))) == $ripeti_prenota_data)
+} # fine for $num1
+if (!$var_if and !$data_trovata) $valore_giornaliero_max_costo_agg = 0;
+if ($var_if and !$data_trovata) $valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg - $var_if;
+} # fine if ($var_if)
+$valore_giornaliero_max_costo_agg = $valore_giornaliero_max_costo_agg * $moltiplica_max_costo_agg;
+} # fine else if ($ripeti_prenota_data == $data_fine)
+} # fine if ($ripeti_prenota_data)
+} # fine elseif ($mostra_ripetizione)
+$valore_giornaliero_max_costo_agg_p = punti_in_num($valore_giornaliero_max_costo_agg,$stile_soldi);
 if ($num_condizioni_rip_c) {
 $condizioni_alternative = 1;
 $num_condizioni_corr = $num_condizioni_rip_c;
@@ -2380,6 +2433,8 @@ $percentuale_tasse_costo_agg = 0;
 $tasse_costo_agg = 0;
 $resto_tasse_costo_agg = 0;
 $moltiplica_max_costo_agg = 0;
+$valore_giornaliero_max_costo_agg = 0;
+$valore_giornaliero_max_costo_agg_p = 0;
 $giorni_costo_agg = "";
 $data_inserimento_costo_agg = "";
 $utente_inserimento_costo_agg = "";
@@ -2470,6 +2525,8 @@ $percentuale_tasse_costo_agg = 0;
 $tasse_costo_agg = 0;
 $resto_tasse_costo_agg = 0;
 $moltiplica_max_costo_agg = 0;
+$valore_giornaliero_max_costo_agg = 0;
+$valore_giornaliero_max_costo_agg_p = 0;
 $giorni_costo_agg = "";
 $data_inserimento_costo_agg = "";
 $utente_inserimento_costo_agg = "";
@@ -3050,7 +3107,7 @@ $cognome_ospite = "";
 
 if (!$errore_ripetizione) $contratto .= $apertura_rip_contr.$contratto_ripetizione.$chiusura_rip_contr;
 
-if (!empty($filecontr) and $ripeti_tutto and !$messaggio_di_errore) {
+if (!empty($filecontr) and $ripeti_tutto) {
 if ($tipo_contratto == "contrrtf") {
 $contratto = str_replace("&quot;","\"",$contratto);
 $contratto = str_replace("&#039;","'",$contratto);
@@ -3176,7 +3233,7 @@ $contratto = str_replace("Ě","\u282\'3f",$contratto);
 $contratto = str_replace("Ů","\u366\'3f",$contratto);
 } # fine if ($tipo_contratto == "contrrtf")
 
-if ($incr_np) {
+if ($incr_np and !$messaggio_di_errore) {
 if ($numero_progressivo_documento > ($num_prog_contr[$n_r] + 1)) {
 $val_if = $numero_progressivo_documento - 1;
 for ($num1 = strlen($val_if) ; $num1 < 5 ; $num1++) $val_if = "0".$val_if;
@@ -3198,8 +3255,9 @@ else {
 $filecontr[$n_r] = fopen($dir_salva."/".$nome_file_contr[$n_r],"w+");
 flock($filecontr[$n_r],2);
 } # fine else if ($nomi_contratti['compress'][$numero_contratto])
-} # fine if ($incr_np)
+} # fine if ($incr_np and !$messaggio_di_errore)
 
+if (!$messaggio_di_errore or !$incr_np) {
 if ($nomi_contratti['compress'][$numero_contratto]) {
 gzwrite($filecontr[$n_r],$contratto);
 gzclose($filecontr[$n_r]);
@@ -3210,8 +3268,10 @@ fwrite($filecontr[$n_r],$contratto);
 flock($filecontr[$n_r],3);
 fclose($filecontr[$n_r]);
 } # fine else if ($nomi_contratti['compress'][$numero_contratto])
+if ($messaggio_di_errore) unlink($dir_salva."/".$nome_file_contr[$n_r]);
+} # fine if (!$messaggio_di_errore or !$incr_np)
 $contratto = "";
-} # fine if (!empty($filecontr) and $ripeti_tutto and !$messaggio_di_errore)
+} # fine if (!empty($filecontr) and $ripeti_tutto)
 
 } # fine if (!$ripeti_prenota_data or...
 } # fine for $n_r
@@ -3563,8 +3623,8 @@ $contratto = str_replace("Ů","\u366\'3f",$contratto);
 } # fine if ($tipo_contratto == "contrrtf")
 
 
-if (!empty($filecontr) and !$ripeti_tutto and !$messaggio_di_errore) {
-if ($incr_np) {
+if (!empty($filecontr) and !$ripeti_tutto) {
+if ($incr_np and !$messaggio_di_errore) {
 if ($numero_progressivo_documento > ($num_prog_contr[1] + 1)) {
 $val_if = $numero_progressivo_documento - 1;
 for ($num1 = strlen($val_if) ; $num1 < 5 ; $num1++) $val_if = "0".$val_if;
@@ -3580,8 +3640,9 @@ else {
 $filecontr[1] = fopen($dir_salva."/".$nome_file_contr[1],"w+");
 flock($filecontr[1],2);
 } # fine else if ($nomi_contratti['compress'][$numero_contratto])
-} # fine if ($incr_np)
+} # fine if ($incr_np and !$messaggio_di_errore)
 
+if (!$messaggio_di_errore or !$incr_np) {
 if ($nomi_contratti['compress'][$numero_contratto]) {
 gzwrite($filecontr[1],$contratto);
 gzclose($filecontr[1]);
@@ -3592,7 +3653,9 @@ fwrite($filecontr[1],$contratto);
 flock($filecontr[1],3);
 fclose($filecontr[1]);
 } # fine else if ($nomi_contratti['compress'][$numero_contratto])
-} # fine if (!empty($filecontr) and !$ripeti_tutto and !$messaggio_di_errore)
+if ($messaggio_di_errore) unlink($dir_salva."/".$nome_file_contr[1]);
+} # fine if (!$messaggio_di_errore or !$incr_np)
+} # fine if (!empty($filecontr) and !$ripeti_tutto)
 
 if ($incr_np) {
 flock($filelock,3);

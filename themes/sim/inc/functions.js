@@ -90,6 +90,13 @@ iLeft += elementi.offsetLeft;
 elementi = elementi.offsetParent;
 }
 
+var dbutw = document.querySelector('.dbutton');
+dbutw = getComputedStyle(dbutw);
+dbutw = dbutw.getPropertyValue('width');
+if (dbutw.substr(0,2) > 20) {
+iLeft = iLeft - 124;
+if (iLeft < 0) iLeft = 0;
+}
 lcal.style.left = (iLeft + 2) + 'px';
 lcal.style.top = (iTop + elementoid.offsetHeight + 2) + 'px';
 var data_sel = document.getElementById('id_sdm'+ncal);

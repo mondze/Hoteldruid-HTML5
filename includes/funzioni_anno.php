@@ -682,7 +682,28 @@ $nome_nuova_tariffa = "tariffa" . $num1;
 $colonne .= ",$nome_nuova_tariffa";
 } # fine for $num1
 esegui_query("insert into $tablenometariffe ($colonne) select $colonne from $tablenometariffe_prec");
-$costi_agg_importati = esegui_query("select * from $tablenometariffe where idntariffe > 10 ");
+$prezzi_tar_importati = esegui_query("select * from $tablenometariffe where idntariffe = '6' ");
+if (numlin_query($prezzi_tar_importati)) {
+for ($num1 = 1 ; $num1 <= $num_tariffe_tab ; $num1++) {
+$prezzi_imp_int = risul_query($prezzi_tar_importati,0,"tariffa$num1");
+$prezzi_imp = explode(">",$prezzi_imp_int);
+$pi_nuovi = $prezzi_imp[0];
+for ($num2 = 1 ; $num2 < count($prezzi_imp) ; $num2++) {
+$prezzo_imp = explode(";",$prezzi_imp[$num2]);
+$per_imp = explode("-",$prezzo_imp[5]);
+if ($per_imp[1] >= $id_data_ini_periodi_prec and $per_imp[0] <= $id_data_fine_periodi_prec) {
+if ($per_imp[0] < $id_data_ini_periodi_prec) $per_imp[0] = $id_data_ini_periodi_prec;
+if ($per_imp[1] > $id_data_fine_periodi_prec) $per_imp[1] = $id_data_fine_periodi_prec;
+$per_imp[0] = $per_imp[0] - $id_data_ini_periodi_prec + 1;
+$per_imp[1] = $per_imp[1] - $id_data_ini_periodi_prec + 1;
+$prezzo_imp[5] = $per_imp[0]."-".$per_imp[1];
+$pi_nuovi .= ">".implode(";",$prezzo_imp);
+} # fine if ($per_imp[1] >= $id_data_ini_periodi_prec and $per_imp[0] <= $id_data_fine_periodi_prec)
+if ($pi_nuovi != $prezzi_imp_int) esegui_query("update $tablenometariffe set tariffa$num1 = '".aggslashdb($pi_nuovi)."' where idntariffe = '6'");
+} # fine for $num2
+} # fine for $num1
+} # fine if (numlin_query($prezzi_tar_importati))
+$costi_agg_importati = esegui_query("select * from $tablenometariffe where idntariffe > '10' ");
 $num_costi_agg_importati = numlin_query($costi_agg_importati);
 for ($num1 = 0 ; $num1 < $num_costi_agg_importati ; $num1++) {
 $idntariffe = risul_query($costi_agg_importati,$num1,'idntariffe');
@@ -771,7 +792,7 @@ unlock_tabelle($tabelle_lock);
 if ($silenzio != "SI") echo "<br> ".mex("Anno ",$pag).$anno.mex(" creato",$pag)."! <br><br>";
 
 
-if ($importa_anno_prec == "SI" and C_RESTRIZIONI_DEMO_ADMIN != "SI") {
+if ($importa_anno_prec == "SI" and (!defined('C_RESTRIZIONI_DEMO_ADMIN') or C_RESTRIZIONI_DEMO_ADMIN != "SI")) {
 if ($silenzio != "SI") $silenzio_mod = "SI";
 else $silenzio_mod = "totale";
 global $anno_modello_presente,$num_periodi_date,$modello_esistente,$cambia_frasi,$lingua_modello,$percorso_cartella_modello,$nome_file;
@@ -864,7 +885,7 @@ closedir($lang_dir);
 closedir($templates_dir);
 $pag = $pag_orig;
 if ($silenzio != "SI") echo "<br>";
-} # fine if ($importa_anno_prec == "SI" and C_RESTRIZIONI_DEMO_ADMIN != "SI")
+} # fine if ($importa_anno_prec == "SI" and (!defined('C_RESTRIZIONI_DEMO_ADMIN') or C_RESTRIZIONI_DEMO_ADMIN != "SI"))
 
 
 } # fine if ($crea_tab)

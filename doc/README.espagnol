@@ -6,7 +6,7 @@
 #                                                         #
 ###########################################################
 
-HOTELDRUID versión 2.2.3
+HOTELDRUID versión 2.2.4
 Programa para la gestión de habitaciones de hotel o de 
 alquiler semanal y diario de apartamentos.
 
@@ -261,6 +261,22 @@ Datos de la reserva:
 [lista_unidades]	lista de la habitaciones o  apartamentos 
  			asignables, separados por comas
 [pagado]		quanto ha sido pagado hasta ahora
+[nombre_coste_agna]	nombre del coste añadido, definido solo
+ 			dentro de las repeticiones de los costes
+[valor_coste_agna]	valor del coste añadido, definido solo
+			dentro de las repeticiones de los costes
+[multiplicado_max_coste_agna]	máximo número por el que se
+			multiplica el coste, definido solo en
+			las repeticiones de los costes. Si 
+			también dentro de una repetición de un
+			array de días, representa el número por
+			el cual el coste se multiplica ese día
+[valor_diario_max_coste_agna]	máximo valor diario (no 
+			multiplicado) del coste, definido solo en
+			las repeticiones de los costes. Si 
+			también dentro de una repetición de un
+			array de días, representa el valor del
+			coste (ya multiplicado) en ese día
 [todos_costes_agnadidos]lista con todos los costes añadidos con 
 			los respectivos valores
 [nombre_coste_agna_sel]	nobre del coste añadido seleccionado 

@@ -1796,9 +1796,11 @@ $costi_agg_tot_vett[$num1] = (double) 0;
 $costo_escludi_perc_vett[$num1] = (double) 0;
 } # fine for $num1
 unset($prezzo_costo);
+unset($valgiornmax_costo);
 for ($numca = 0 ; $numca < $dati_ca['num'] ; $numca++) {
 if ($ca_associato[$numca] == "SI") {
-$prezzo_costo[$numca][0] = (double) calcola_prezzo_totale_costo($dati_ca,$numca,$idinizioperiodo,$idfineperiodo,$settimane_costo[$numca],$moltiplica_costo[$numca],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costi_agg_tot),$caparra,$numpersone,$costo_escludi_perc);
+$prezzo_costo[$numca][0] = (double) calcola_prezzo_totale_costo($dati_ca,$numca,$idinizioperiodo,$idfineperiodo,$settimane_costo[$numca],$moltiplica_costo[$numca],$costo_tariffa,$tariffesettimanali,($costo_tariffa + $costi_agg_tot),$caparra,$numpersone,$costo_escludi_perc,1);
+$valgiornmax_costo[$numca][0] = $prezzi_giorn_costo;
 $costi_agg_tot = $costi_agg_tot + $prezzo_costo[$numca][0];
 if ($dati_ca[$numca]['escludi_tot_perc'] == "s") $costo_escludi_perc = $costo_escludi_perc + $prezzo_costo[$numca][0];
 if ($num_app_reali_costo[$numca]) $num_controlla_limite2 = $num_app_reali_costo[$numca];
@@ -1818,7 +1820,8 @@ $costo_tariffa_corr = $costo_tariffa;
 $tariffesettimanali_corr = $tariffesettimanali;
 $caparra_corr = $caparra;
 } # fine else if (strcmp($costo_tariffa_nr[$numtariffa][$num1],""))
-$prezzo_costo[$numca][$num1] = (double) calcola_prezzo_totale_costo($dati_ca,$numca,$idinizioperiodo,$idfineperiodo,$settimane_costo[$numca],$moltiplica_costo_nr[$numca][$num1],$costo_tariffa_corr,$tariffesettimanali_corr,($costo_tariffa_corr + $costi_agg_tot_vett[$num1]),$caparra_corr,$numpersone_corr,$costo_escludi_perc_vett[$num1]);
+$prezzo_costo[$numca][$num1] = (double) calcola_prezzo_totale_costo($dati_ca,$numca,$idinizioperiodo,$idfineperiodo,$settimane_costo[$numca],$moltiplica_costo_nr[$numca][$num1],$costo_tariffa_corr,$tariffesettimanali_corr,($costo_tariffa_corr + $costi_agg_tot_vett[$num1]),$caparra_corr,$numpersone_corr,$costo_escludi_perc_vett[$num1],1);
+$valgiornmax_costo[$numca][$num1] = $prezzi_giorn_costo;
 $costi_agg_tot_vett[$num1] = $costi_agg_tot_vett[$num1] + $prezzo_costo[$numca][$num1];
 if ($dati_ca[$numca]['escludi_tot_perc'] == "s") $costo_escludi_perc_vett[$num1] = $costo_escludi_perc_vett[$num1] + $prezzo_costo[$numca][$num1];
 $prezzo_costo_corr += (double) $prezzo_costo[$numca][$num1];
@@ -1996,6 +1999,7 @@ $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"nome_costo_agg$num_ca_tot"
 <input type=\"hidden\" name=\"val_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$prezzo_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"percentuale_tasse_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$dati_ca[$numca]['tasseperc']."\">
 <input type=\"hidden\" name=\"moltiplica_max_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$moltiplica_costo_nr[$numca][$num1]."\">
+<input type=\"hidden\" name=\"valore_giornaliero_max_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"".$valgiornmax_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_$num_ripeti_contr\" value=\"$giorni_costo_agg\">";
 $num_ca_tot++;
 } # fine if ($ca_associato[$numca] == "SI")
@@ -2025,6 +2029,7 @@ $dati_tutte_tariffe .= "<input type=\"hidden\" name=\"nome_costo_agg$num_ca_tot"
 <input type=\"hidden\" name=\"val_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$prezzo_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"percentuale_tasse_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$dati_ca[$numca]['tasseperc']."\">
 <input type=\"hidden\" name=\"moltiplica_max_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$moltiplica_costo_nr[$numca][$num1]."\">
+<input type=\"hidden\" name=\"valore_giornaliero_max_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"".$valgiornmax_costo[$numca][$num1]."\">
 <input type=\"hidden\" name=\"giorni_costo_agg$num_ca_tot"."_tsel$numtariffa"."_1\" value=\"$giorni_costo_agg\">";
 $num_ca_tot++;
 } # fine if ($ca_associato[$numca] == "SI")

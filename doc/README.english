@@ -19,7 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.	         #
 ##########################################################################################
 
-HotelDruid version 2.2.3
+HotelDruid version 2.2.4
 Program for hotel rooms management or weekly and daily rental 
 of apartments.
 
@@ -256,6 +256,22 @@ Reservation's data:
 [units_list]		list of rooms or apartments that can be  
 			assigned, separated by commas
 [paid]			what has been paid until now
+[extra_cost_name]	name of the extra cost, defined only
+			inside costs repetitions
+[extra_cost_value]	value of the extra cost, defined only
+			inside costs repetitions
+[extra_cost_max_multiply]	maximum number by which a cost
+			is multiplied, defined only inside
+			costs repetitions. If also inside a
+			repetition of an array with days, then
+			represents the value by which the cost
+			is multiplied on that day
+[extra_cost_max_daily_value]	maximum daily value (not
+			multiplied) of the cost, defined only
+			inside costs repetitions. If also inside
+			a repetition of an array with days, then
+			represents the value of the cost
+			(already multiplied) on that day
 [all_extra_costs]	list with all the extra costs and their
 			respective values
 [sel_extra_cost_name]	name of the extra cost selected before 

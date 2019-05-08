@@ -625,7 +625,7 @@ if (str_replace("[r]","",$n_contratto) != $n_contratto or str_replace("[/r]","",
 $anchor = "#contr_txtbox$lingua_contr";
 } # fine if (substr($vecchio_contr,0,7) == "#!mln!#")
 else $multilingua = 0;
-if (C_RESTRIZIONI_DEMO_ADMIN == "SI") $n_contratto = htmlspecialchars($n_contratto);
+if (defined('C_RESTRIZIONI_DEMO_ADMIN') and C_RESTRIZIONI_DEMO_ADMIN == "SI") $n_contratto = htmlspecialchars($n_contratto);
 $contr_controlla_int = str_replace("[r4]","[r4\\]",$n_contratto);
 $contr_controlla_int = preg_replace("/\\[r4 array=\"[A-Za-z]+[A-Za-z0-9_]*\"\\]/","[r4]",$contr_controlla_int);
 $contr_controlla = explode("[",$contr_controlla_int);

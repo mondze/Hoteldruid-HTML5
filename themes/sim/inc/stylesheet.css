@@ -49,6 +49,7 @@ a.nonav { cursor: default }
 
 
 table.t1, table.m2, table.me1 { border-radius: 8px; }
+table.t2 { border-radius: 6px; }
 table.t1 tr:first-child td:first-child, table.m2 tr:first-child td:first-child, table.me1 tr:first-child td:first-child { border-top-left-radius: 8px; }
 table.t1 tr:first-child td:last-child, table.m2 tr:first-child td:last-child, table.me1 tr:first-child td:last-child { border-top-right-radius: 8px; }
 table.t1 tr:last-child td:last-child, table.m2 tr:last-child td:last-child, table.me1 tr:last-child td:last-child { border-bottom-right-radius: 8px; }

@@ -6,7 +6,7 @@
 #                                                 #
 ###################################################
 
-HOTELDRUID versione 2.2.3
+HOTELDRUID versione 2.2.4
 Programma per la gestione di camere di hotel o di affitti 
 settimanali e giornalieri di appartamenti.
 
@@ -267,6 +267,23 @@ Dati della prenotazione:
 [unita_assegnabili]	lista delle camere o appartamenti  
 			assegnabili, separati da virgole
 [pagato]		quanto e' stato pagato finora
+[nome_costo_agg]	nome del costo aggiuntivo, definito solo
+			all'interno delle ripetizioni dei costi
+[valore_costo_agg]	valore del costo aggiuntivo, definito
+			all'interno delle ripetizioni dei costi
+[moltiplica_max_costo_agg]	massimo numero per cui viene
+			moltiplicato un costo, definito solo
+			all'interno delle ripetizioni dei costi.
+			Se anche in ripetizione di un array dei 
+			giorni, rappresenta il valore per cui il
+			costo è moltiplicato in quel giorno	
+[valore_giornaliero_max_costo_agg]    massimo valore giornaliero
+			(non moltiplicato) di un costo, definito
+			solo all'interno delle ripetizioni dei
+			costi. Se anche in ripetizione di un 
+			array dei giorni, rappresenta il valore
+			del costo in quel giorno (già
+			moltiplicato)
 [tutti_i_costi_agg]	lista con tutti i costi aggiuntivi con i
 			rispettivi valori
 [nome_costo_agg_sel]	nome del costo aggiuntivo selezionato 

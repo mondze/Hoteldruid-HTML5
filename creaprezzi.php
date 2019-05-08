@@ -388,8 +388,8 @@ if ($importa_tariffa == "canc" or $importa_tariffa == "mod") $importa_tariffa = 
 if ($tar_importa_canc and !$mod_importa) {
 $errore = 0;
 if (controlla_num_pos($tar_importa_canc) != "SI") $errore = 1;
+if ($attiva_tariffe_consentite != "n" and $tariffe_consentite_vett[$tar_importa_canc] != "SI") $errore = 1;
 $tar_imp_canc = "tariffa$tar_importa_canc";
-if ($attiva_tariffe_consentite != "n" and $tariffe_consentite_vett[$tar_imp_canc] != "SI") $errore = 1;
 if (!$errore) {
 $tabelle_lock = array($tablenometariffe,$tableperiodi);
 $tabelle_lock = lock_tabelle($tabelle_lock);
@@ -1330,14 +1330,16 @@ if ($indietro) $passo--;
 if ($indietro and $tipo_ca != "s" and $passo == 4) $passo--;
 if ($passo > 1) {
 $mostra_form_iniziale = "NO";
-if ($passo >= 12) {
+if ($passo == 11 and !$valore_p_ca and ($tipo_ca != "s" or $numsett_ca == "c") and $moltiplica_ca == "c" and $beni_inv_elimina == "nessuno" and $periodi_permessi == "tutti" and $associa_tariffe == "n" and $app_incompatibili != "SI" and $tariffe_incompatibili != "SI" and $combina_ca != "s") $salta_passo_11 = 1;
+else $salta_passo_11 = 0;
+if ($passo >= 12 or ($salta_passo_11 and $id_utente != 1 and !$indietro)) {
 $tabelle_lock = array($tablenometariffe,$tableprivilegi);
 $altre_tab_lock = array($tableanni,$tableperiodi,$tableappartamenti,$tableregole,$tablepersonalizza,$tableutenti,$tablebeniinventario,$tablemagazzini);
-} # fine if ($passo >= 12)
+} # fine if ($passo >= 12 or ($salta_passo_11 and $id_utente != 1 and !$indietro))
 else {
 $tabelle_lock = array();
 $altre_tab_lock = array($tablenometariffe,$tableperiodi,$tableappartamenti,$tableregole,$tablepersonalizza,$tableprivilegi,$tablebeniinventario,$tablemagazzini);
-} # fine if ($passo >= 12)
+} # fine else if ($passo >= 12 or ($salta_passo_11 and $id_utente != 1 and !$indietro))
 $tabelle_lock = lock_tabelle($tabelle_lock,$altre_tab_lock);
 
 if (defined("C_MASSIMO_NUM_COSTI_AGG") and C_MASSIMO_NUM_COSTI_AGG != 0) {
@@ -1746,7 +1748,7 @@ else $passo++;
 } # fine if ($passo == 9)
 
 if ($passo == 11) {
-if (!$valore_p_ca and ($tipo_ca != "s" or $numsett_ca == "c") and $moltiplica_ca == "c" and $beni_inv_elimina == "nessuno" and $periodi_permessi == "tutti" and $associa_tariffe == "n" and $app_incompatibili != "SI" and $tariffe_incompatibili != "SI" and $combina_ca != "s") {
+if ($salta_passo_11 and $id_utente != 1) {
 if ($indietro) $passo--;
 else $passo++;
 $mantenere_percentuale = "n";
@@ -1758,7 +1760,7 @@ $mantenere_tariffea = "n";
 $mantenere_appi = "n";
 $mantenere_tariffei = "n";
 $mantenere_comb = "n";
-} # fine if (!$valore_p_ca and ($tipo_ca != "s" or $numsett_ca == "c") and $moltiplica_ca == "c" and...
+} # fine if ($salta_passo_11 and $id_utente != 1)
 } # fine if ($passo == 11)
 
 # Processo dei passi
@@ -2422,6 +2424,7 @@ echo "<label><input type=\"radio\" id=\"li_s\" name=\"limite_ca\" value=\"s\"$ch
 } # fine if ($passo == 10)
 
 if ($passo == 11) {
+if (!$salta_passo_11) {
 echo mex("Caratteristiche del costo da mantenere quando si modifica una prenotazione",$pag).":
 <table>";
 if ($valore_p_ca) {
@@ -2496,6 +2499,7 @@ echo "<tr><td style=\"width: 30px;\"></td><td colspan=2><label><input type=\"che
 ".mex("Costi combinati",$pag)."</label></td></tr>";
 } # fine if ($combina_ca == "s")
 echo "</table><br>";
+} # fine if (!$salta_passo_11)
 if ($id_utente == 1) {
 echo "<br>";
 if (numlin_query($utenti_attiva_costi_sel)) {
@@ -2649,6 +2653,7 @@ echo "</div></form>
  <button class=\"exco\" type=\"submit\"><div>".mex("Modifica il costo",$pag)."</div></button>
 </div></form><br>";
 if ($agg_modelli == "s") {
+unlock_tabelle($tabelle_lock);
 function aggiorna_var_modello () {
 global $idntariffe,$var_mod,$num_var_mod,$crea_modello;
 $crea_modello = 0;

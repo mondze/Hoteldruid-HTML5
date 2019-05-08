@@ -261,11 +261,11 @@ if ($adesso > $limite) $priv_mod_prenotazioni = "n";
 } # fine if ($priv_mod_prenota_ore != "000")
 } # fine for $num_idpr
 
-if (defined("C_MASSIMO_NUM_STORIA_SOLDI") and C_MASSIMO_NUM_STORIA_SOLDI != 0) {
+if ($priv_mod_pagato == "s" and defined("C_MASSIMO_NUM_STORIA_SOLDI") and C_MASSIMO_NUM_STORIA_SOLDI != 0) {
 $num_soldi_esistenti = esegui_query("select idsoldi from $tablesoldi");
 $num_soldi_esistenti = numlin_query($num_soldi_esistenti);
-if ($num_soldi_esistenti >= (C_MASSIMO_NUM_STORIA_SOLDI + 1)) $priv_mod_pagato = "n";
-} # fine if (defined("C_MASSIMO_NUM_STORIA_SOLDI") and C_MASSIMO_NUM_STORIA_SOLDI != 0)
+if ($num_soldi_esistenti >= (C_MASSIMO_NUM_STORIA_SOLDI + 1)) $priv_mod_pagato = "c";
+} # fine if ($priv_mod_pagato == "s" and defined("C_MASSIMO_NUM_STORIA_SOLDI") and C_MASSIMO_NUM_STORIA_SOLDI != 0)
 
 } # fine function controlla_id_prenota
 
@@ -500,7 +500,7 @@ $n_host_inserimento_idpr[$id_prenota] = risul_query($dati_prenota_modifica,0,'ho
 function esegui_modifiche_prenotazione (&$inserire,&$cancellata,$id_prenota_int,$id_prenota_idpr,$num_id_prenota,$id_transazione,$id_sessione,$anno,$id_nuovo_utente_inserimento,$n_stima_checkin,$n_met_paga_caparra,$n_origine_prenota,$n_pagato,$n_confermato,$tipo_commento,$n_commento,$n_cancella_commento,$tableprenota_da_aggiornare,$tipo_sposta,$dati_da_anno_prec,$prenota_in_anno_succ,$tra_anni,$PHPR_TAB_PRE) {
 global $id_utente,$priv_mod_checkin,$attiva_regole1_consentite,$regole1_consentite,$attiva_tariffe_consentite,$tariffe_consentite_vett,$priv_mod_date,$priv_ins_periodi_passati,$priv_mod_commento,$priv_mod_commenti_pers,$priv_mod_sconto,$priv_mod_caparra,$priv_mod_pagato,$priv_mod_orig_prenota,$d_commento,$cassa_pagamenti,$nome_utente;
 global $dati_ca,$d_id_utente_inserimento_idpr,$d_appartamento_idpr,$d_id_data_inizio_idpr,$d_nome_tariffa_idpr,$d_app_eliminati_costi_idpr,$d_checkin_idpr,$d_checkout_idpr,$d_prenota_comp_idpr,$fineperiodo_orig,$comm_pers_presenti;
-global $id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$stile_data,$tipo_n_app;
+global $id_prenota_orig,$tableperiodi_orig,$tableprenota_orig,$tablecostiprenota_orig,$tableperiodi_prec,$tableprenota_prec,$tablecostiprenota_prec,$stile_data,$tipo_n_app,$priv_mod_utente_ins,$utenti_gruppi;
 
 $pag = "modifica_prenota.php";
 $tablenometariffe = $PHPR_TAB_PRE."ntariffe".$anno;
@@ -872,7 +872,7 @@ if ($metodo_trovato == "NO") $inserire = "NO";
 } # fine if (${"metodo_pagamento".$id_prenota})
 } # fine if ($n_met_paga_caparra or ${"metodo_pagamento".$id_prenota})
 
-if ($priv_mod_pagato == "n" and $n_confermato != "") $inserire = "NO";
+if (($priv_mod_pagato == "n" or $priv_mod_pagato == "v") and $n_confermato != "") $inserire = "NO";
 if ($n_confermato and $n_confermato != "S" and $n_confermato != "N") $inserire = "NO";
 
 if ($priv_mod_pagato != "s" and $n_pagato != "") $inserire = "NO";
@@ -894,11 +894,11 @@ for ($num1 = 0 ; $num1 < count($origini_prenota) ; $num1++) if ($origini_prenota
 if ($origine_trovata == "NO") $inserire = "NO";
 } # fine if ($n_origine_prenota)
 
-if ($id_nuovo_utente_inserimento != "" and $id_utente == 1) {
+if ($id_nuovo_utente_inserimento != "" and ($priv_mod_utente_ins == "s" or ($priv_mod_utente_ins == "g" and $utenti_gruppi[$id_nuovo_utente_inserimento]))) {
 $id_nuovo_utente_inserimento = aggslashdb($id_nuovo_utente_inserimento);
 $verifica_utente = esegui_query("select * from $tableutenti where idutenti = '$id_nuovo_utente_inserimento'");
 if (numlin_query($verifica_utente) != 1) $inserire = "NO";
-} # fine if ($id_nuovo_utente_inserimento != "" and $id_utente == 1)
+} # fine if ($id_nuovo_utente_inserimento != "" and ($priv_mod_utente_ins == "s" or ($priv_mod_utente_ins == "g" and $utenti_gruppi[$id_nuovo_utente_inserimento])))
 
 if ($n_commento != "") {
 if (get_magic_quotes_gpc()) $n_commento = stripslashes($n_commento);
@@ -1117,7 +1117,7 @@ $n_confermato = $n_confermato_idpr[$id_prenota];
 
 
 $id_utente_inserimento = $d_id_utente_inserimento;
-if ($id_nuovo_utente_inserimento != "" and $id_utente == 1) {
+if ($id_nuovo_utente_inserimento != "" and ($priv_mod_utente_ins == "s" or ($priv_mod_utente_ins == "g" and $utenti_gruppi[$id_nuovo_utente_inserimento]))) {
 esegui_query("update $tableprenota set utente_inserimento = '$id_nuovo_utente_inserimento' where idprenota = '$id_prenota' ");
 esegui_query("update $tablecostiprenota set utente_inserimento = '$id_nuovo_utente_inserimento' where idprenota = '$id_prenota' ");
 $id_utente_inserimento = $id_nuovo_utente_inserimento;
@@ -1125,7 +1125,7 @@ if ($prenota_in_anno_succ) {
 esegui_query("update $tableprenota_orig set utente_inserimento = '$id_nuovo_utente_inserimento' where idprenota = '$id_prenota_orig' ");
 esegui_query("update $tablecostiprenota_orig set utente_inserimento = '$id_nuovo_utente_inserimento' where idprenota = '$id_prenota_orig' ");
 } # fine if ($prenota_in_anno_succ)
-} # fine if ($id_nuovo_utente_inserimento != "" and $id_utente == 1)
+} # fine if ($id_nuovo_utente_inserimento != "" and ($priv_mod_utente_ins == "s" or ($priv_mod_utente_ins == "g" and $utenti_gruppi[$id_nuovo_utente_inserimento])))
 
 if ($n_inizioperiodo != "") {
 esegui_query("update $tableprenota set iddatainizio = '$n_inizioperiodo' where idprenota = '$id_prenota' ");

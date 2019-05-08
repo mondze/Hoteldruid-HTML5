@@ -477,7 +477,7 @@ return $var_se;
 } # fine function controlla_var_se
 function controlla_testo_input ($var_txt) {
 if (@get_magic_quotes_gpc()) $var_txt = stripslashes($var_txt);
-if (C_RESTRIZIONI_DEMO_ADMIN == "SI") $var_txt = htmlspecialchars($var_txt);
+if (defined('C_RESTRIZIONI_DEMO_ADMIN') and C_RESTRIZIONI_DEMO_ADMIN == "SI") $var_txt = htmlspecialchars($var_txt);
 $var_txt = str_replace("#%?","#?",$var_txt);
 $var_txt = str_replace("#@?","#?",$var_txt);
 $var_txt = str_replace("#$?","#?",$var_txt);
@@ -952,7 +952,7 @@ if (${"cond".$num2} == "{}") ${"cond".$num2} = "con";
 if (${"cond".$num2} == "{A}") ${"cond".$num2} = "cmm";
 ${"tipo_val_se".$num2} = $se_cond_corr[2];
 if ($se_cond_corr[2] == "var") ${"val_se_sel".$num2} = $se_cond_corr[3];
-else ${"val_se_txt".$num2} = htmlspecialchars($se_cond_corr[3]);
+else ${"val_se_txt".$num2} = $se_cond_corr[3];
 } # fine if ($num_cond_mod == $num_cond)
 } # fine for $num2
 $str_cond .= mex("allora",$pag)." ";
@@ -985,13 +985,13 @@ $oper_str = $azione[2];
 $var_allora = $azione[1];
 $tipo_val_allora = $azione[3];
 if ($azione[3] == "var") $val_allora_sel = $azione[4];
-else $val_allora_txt = htmlspecialchars($azione[4]);
+else $val_allora_txt = $azione[4];
 $tipo_val_sost1 = $azione[5];
 if ($azione[5] == "var") $val_sost1_sel = $azione[6];
-else $val_sost1_txt = htmlspecialchars($azione[6]);
+else $val_sost1_txt = $azione[6];
 $tipo_val_sost2 = $azione[7];
 if ($azione[7] == "var") $val_sost2_sel = $azione[8];
-else $val_sost2_txt = htmlspecialchars($azione[8]);
+else $val_sost2_txt = $azione[8];
 $oper_allora_sel = $azione[9];
 } # fine if ($num_cond_mod == $num_cond)
 } # fine if ($azione[0] == "set")
@@ -1010,7 +1010,7 @@ $str_cond .= ")";
 if ($num_cond_mod == $num_cond) {
 $var_trunc = $azione[1];
 $val_trunc = $azione[2];
-$val_trunc2 = htmlspecialchars($azione[3]);
+$val_trunc2 = $azione[3];
 $pos_trunc2 = $azione[4];
 } # fine if ($num_cond_mod == $num_cond)
 } # fine if ($azione[0] == "trunc")
@@ -1092,7 +1092,7 @@ if ($azione[2] == "cop") $str_cond .= mex("i valori dell'array",$pag)." [".$nome
 if ($num_cond_mod == $num_cond) {
 $array = $azione[1];
 $tipo_arr = $azione[2];
-if ($azione[2] == "val") $lista_val = htmlspecialchars($azione[3]);
+if ($azione[2] == "val") $lista_val = $azione[3];
 if ($azione[2] == "cop") $array2 = $azione[3];
 } # fine if ($num_cond_mod == $num_cond)
 } # fine if ($azione[0] == "array")
@@ -1367,7 +1367,7 @@ echo "<td>$fr_se</td><td><select name=\"var_se$num1\">
 </select></td><td><b style=\"font-size: 260%;\">{</b></td><td>
 <table cellspacing=\"0\"><tr><td>
 <input type=\"radio\" id=\"val_se_txt$num1\" name=\"tipo_val_se$num1\" value=\"txt\"$chk_txt></td><td>
-<input type=\"text\" name=\"val_se_txt$num1\" value=\"".${"val_se_txt".$num1}."\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_se_txt$num1').checked='1'\">
+<input type=\"text\" name=\"val_se_txt$num1\" value=\"".htmlspecialchars(${"val_se_txt".$num1})."\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_se_txt$num1').checked='1'\">
 </td></tr><tr><td><input type=\"radio\" id=\"val_se_sel$num1\" name=\"tipo_val_se$num1\" value=\"var\"$chk_var></td><td>
 <select name=\"val_se_sel$num1\" onfocus=\"document.getElementById('val_se_sel$num1').checked='1'\">
 ".str_replace("\"".${"val_se_sel".$num1}."\">","\"".${"val_se_sel".$num1}."\" selected>",$option_var_predef)."
@@ -1417,7 +1417,7 @@ echo "<table onclick=\"document.getElementById('az_set').checked='1'\"><tr><td>
 <td><b style=\"font-size: 260%;\">{</b></td><td>
 <table cellspacing=\"0\"><tr><td>
 <input type=\"radio\" id=\"val_all_txt\" name=\"tipo_val_allora\" value=\"txt\"$chk_txt></td><td>
-<input type=\"text\" name=\"val_allora_txt\" value=\"$val_allora_txt\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_all_txt').checked='1'\">
+<input type=\"text\" name=\"val_allora_txt\" value=\"".htmlspecialchars($val_allora_txt)."\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_all_txt').checked='1'\">
 </td></tr><tr><td><input type=\"radio\" id=\"val_all_sel\" name=\"tipo_val_allora\" value=\"var\"$chk_var></td><td>
 <select name=\"val_allora_sel\" onfocus=\"document.getElementById('val_all_sel').checked='1'\">
 ".str_replace("\"$val_allora_sel\">","\"$val_allora_sel\" selected>",$option_var_predef)."
@@ -1434,7 +1434,7 @@ echo "<table onclick=\"document.getElementById('az_set').checked='1'\"><tr><td>
 <b style=\"font-size: 260%;\">{</b></td><td>
 <table cellspacing=\"0\"><tr><td>
 <input type=\"radio\" id=\"val_s1_txt\" name=\"tipo_val_sost1\" value=\"txt\"$chk_txt_s1></td><td>
-<input type=\"text\" name=\"val_sost1_txt\" value=\"$val_sost1_txt\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_s1_txt').checked='1'\">
+<input type=\"text\" name=\"val_sost1_txt\" value=\"".htmlspecialchars($val_sost1_txt)."\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_s1_txt').checked='1'\">
 </td></tr><tr><td><input type=\"radio\" id=\"val_s1_sel\" name=\"tipo_val_sost1\" value=\"var\"$chk_var_s1></td><td>
 <select name=\"val_sost1_sel\" onfocus=\"document.getElementById('val_s1_sel').checked='1'\">
 ".str_replace("\"$val_sost1_sel\">","\"$val_sost1_sel\" selected>",$option_var_predef)."
@@ -1443,7 +1443,7 @@ echo "<table onclick=\"document.getElementById('az_set').checked='1'\"><tr><td>
 <b style=\"font-size: 260%;\">{</b></td><td>
 <table cellspacing=\"0\"><tr><td>
 <input type=\"radio\" id=\"val_s2_txt\" name=\"tipo_val_sost2\" value=\"txt\"$chk_txt_s2></td><td>
-<input type=\"text\" name=\"val_sost2_txt\" value=\"$val_sost2_txt\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_s2_txt').checked='1'\">
+<input type=\"text\" name=\"val_sost2_txt\" value=\"".htmlspecialchars($val_sost2_txt)."\" size=\"20\" maxlength=\"750\" onfocus=\"document.getElementById('val_s2_txt').checked='1'\">
 </td></tr><tr><td><input type=\"radio\" id=\"val_s2_sel\" name=\"tipo_val_sost2\" value=\"var\"$chk_var_s2></td><td>
 <select name=\"val_sost2_sel\" onfocus=\"document.getElementById('val_s2_sel').checked='1'\">
 ".str_replace("\"$val_sost2_sel\">","\"$val_sost2_sel\" selected>",$option_var_predef)."
@@ -1463,7 +1463,7 @@ echo "<table onclick=\"document.getElementById('az_trunc').checked='1'\"><tr><td
 <input type=\"text\" name=\"val_trunc\" value=\"$val_trunc\" size=\"3\" maxlength=\"12\"></td><td>
 ".str_replace(" ","&nbsp;",mex("caratteri",$pag))."</td><td>
 <td>(".str_replace(" ","&nbsp;",mex("se mancanti riempire con",$pag))."</td><td>
-<input type=\"text\" name=\"val_trunc2\" value=\"$val_trunc2\" size=\"10\" maxlength=\"750\"></td>
+<input type=\"text\" name=\"val_trunc2\" value=\"".htmlspecialchars($val_trunc2)."\" size=\"10\" maxlength=\"750\"></td>
 <td>".str_replace(" ","&nbsp;",mex("la parte",$pag))."</td><td>
 <select name=\"pos_trunc2\">
 <option value=\"ini\"$sel_ini>".mex("iniziale",$pag)."</option>
@@ -1635,7 +1635,7 @@ echo "<table onclick=\"document.getElementById('az_array').checked='1'\"><tr><td
 <input type=\"radio\" id=\"arr_val\" name=\"tipo_arr\" value=\"val\"$chk_val></td><td>
 <table cellspacing=\"0\"><tr><td>
 ".str_replace(" ","&nbsp;",mex("una lista di valori predefiniti",$pag)).":</td>
-<td><input type=\"text\" name=\"lista_val\" value=\"$lista_val\" size=\"26\"></td>
+<td><input type=\"text\" name=\"lista_val\" value=\"".htmlspecialchars($lista_val)."\" size=\"26\"></td>
 <td>(".str_replace(" ","&nbsp;",mex("separati da virgole",$pag)).").
 </td></tr></table></td></tr>
 <tr onclick=\"document.getElementById('arr_cop').checked='1'\"><td>

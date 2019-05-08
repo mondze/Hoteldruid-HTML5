@@ -68,6 +68,7 @@ if ($idfineperiodo < $idinizioperiodo) {
 echo mex("Le date sono sbagliate",$pag).".<br>";
 } # fine if ($idfineperiodo < $idinizioperiodo)
 else {
+$appartamento = htmlspecialchars($appartamento);
 $vecchia_regola = esegui_query("select * from $tableregole where app_agenzia = '".aggslashdb($appartamento)."' and iddatainizio <= '$idfineperiodo' and iddatafine >= '$idinizioperiodo'");
 $num_vecchia_regola = numlin_query($vecchia_regola);
 if ($num_vecchia_regola != 0) {
@@ -75,6 +76,9 @@ echo mex("Esiste già una regola di questo tipo nell'appartamento e nel periodo 
 } # fine if ($num_vecchia_regola != 0)
 else {
 if ($motivazione == " ") echo mex("Motivazione non valida",$pag).".<br>";
+else {
+$app_esistente = esegui_query("select idappartamenti from $tableappartamenti where idappartamenti = '".aggslashdb($appartamento)."' ");
+if (!numlin_query($app_esistente)) echo mex("Non sono stati inseriti tutti i dati necessari",$pag).".<br>";
 else {
 $idregole = esegui_query("select max(idregole) from $tableregole");
 $idregole = risul_query($idregole,0,0);
@@ -138,7 +142,8 @@ unset($tabelle_lock);
 $aggiorna_ic_disp = 1;
 } # fine if ($chiudi_app)
 echo mex("La regola è stata inserita",$pag).".";
-} # fine else if ($motivazione == "nessuna")
+} # fine else if (!numlin_query($app_esistente))
+} # fine else if ($motivazione == " ")
 } # fine else if ($num_vecchia_regola != 0)
 } # fine else if ($idfineperiodo < $idinizioperiodo)
 } # fine else if (!$inizioperiodo or !$fineperiodo or !$appartamento)

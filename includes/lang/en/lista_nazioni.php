@@ -1,9 +1,9 @@
 <?php
 
-$lista_nazioni = "";
-$cod_nazioni = "";
-$cod2_nazioni = "";
-$cod3_nazioni = "";
+$lista_nazioni = array();
+$cod_nazioni = array();
+$cod2_nazioni = array();
+$cod3_nazioni = array();
 
 $lista_nazioni[0] = "Austria";
 #$cod_nazioni[0] = "00001";

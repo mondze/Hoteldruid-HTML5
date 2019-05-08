@@ -1,9 +1,9 @@
 <?php
 
-$lista_regioni = "";
-$cod_regioni = "";
-$cod2_regioni = "";
-$cod3_regioni = "";
+$lista_regioni = array();
+$cod_regioni = array();
+$cod2_regioni = array();
+$cod3_regioni = array();
 $cod_nazione_regioni = "";
 
 #$lista_regioni[0] = "Andalucía";

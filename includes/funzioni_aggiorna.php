@@ -2612,6 +2612,59 @@ distruggi_lock_file($filelock,$file);
 } # fine for $num1
 } # fine if ($versione_corrente < "2.23")
 
+if ($versione_corrente < "2.24") {
+$aggiornato = "SI";
+$privilegi_anni = esegui_query("select * from ".$PHPR_TAB_PRE."privilegi where anno != '1' ");
+for ($num1 = 0 ; $num1 < numlin_query($privilegi_anni) ; $num1++) {
+$anno_priv =  risul_query($privilegi_anni,$num1,'anno');
+$idutente_priv =  risul_query($privilegi_anni,$num1,'idutente');
+$priv_mod_prec = risul_query($privilegi_anni,$num1,'priv_mod_prenota');
+$priv_mod_tariffa = substr($priv_mod_prec,3,1);
+if ($priv_mod_tariffa == "n") $priv_mod_tariffa = "v";
+$priv_mod_sconto = substr($priv_mod_prec,6,1);
+if ($priv_mod_sconto == "n") $priv_mod_sconto = "v";
+$priv_mod_caparra = substr($priv_mod_prec,7,1);
+if ($priv_mod_caparra == "n") $priv_mod_caparra = "v";
+$priv_mod_ca = substr($priv_mod_prec,8,1);
+if ($priv_mod_ca == "n") $priv_mod_ca = "v";
+$priv_mod_pagato = substr($priv_mod_prec,10,1);
+if ($priv_mod_pagato == "n") $priv_mod_pagato = "v";
+$priv_mod = substr($priv_mod_prec,0,3).$priv_mod_tariffa.substr($priv_mod_prec,4,2).$priv_mod_sconto.$priv_mod_caparra.$priv_mod_ca."n".$priv_mod_pagato.substr($priv_mod_prec,11);
+if ($priv_mod != $priv_mod_prec) esegui_query("update ".$PHPR_TAB_PRE."privilegi set priv_mod_prenota = '$priv_mod' where idutente = '$idutente_priv' and anno = '$anno_priv' ");
+} # fine for $num1
+} # fine if ($versione_corrente < "2.24")
+
+/*if ($versione_corrente < "3.00") {
+$aggiornato = "SI";
+esegui_query("insert into ".$PHPR_TAB_PRE."personalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_categorie_persone','1','1')");
+for ($num1 = 0 ; $num1 < $num_anni ; $num1++) {
+$anno_mostra = risul_query($anni,$num1,'idanni');
+#$tableperiodi = $PHPR_TAB_PRE."periodi".$anno_mostra;
+#$tableperiodi_temp = $PHPR_TAB_PRE."perio".$anno_mostra;
+#$tablenometariffe = $PHPR_TAB_PRE."ntariffe".$anno_mostra;
+#$rigatariffe = esegui_query("select * from $tablenometariffe where idntariffe < 6 order by idntariffe ");
+#$num_tariffe_tab = risul_query($rigatariffe,0,'nomecostoagg');
+#$query = "create table $tableperiodi (idperiodi integer primary key, datainizio date not null, datafine date";
+#$colonne = "idperiodi,datainizio,datafine";
+#for ($num2 = 1 ; $num2 <= $num_tariffe_tab ; $num2++) {
+#$query .= ", tariffa$num2 float8, tariffa$num2"."p text";
+#$colonne .= ",tariffa$num2,tariffa$num2"."p";
+#} # fine for $num2
+#esegui_query("alter table $tableperiodi rename to $tableperiodi_temp ");
+#esegui_query($query.")");
+## Provati mysql, postgresql e sqlite per l'importazione dat tipi di dati diversi (da float8 a text)
+#esegui_query("insert into $tableperiodi select $colonne from $tableperiodi_temp ");
+#esegui_query("drop table $tableperiodi_temp ");
+$tableprenota = $PHPR_TAB_PRE."prenota".$anno_mostra;
+$tableprenota_temp = $PHPR_TAB_PRE."pren".$anno_mostra;
+esegui_query("alter table $tableprenota add column cat_persone text ");
+esegui_query("alter table $tableprenota rename to $tableprenota_temp ");
+esegui_query("create table $tableprenota (idprenota integer primary key, idclienti integer, idappartamenti varchar(100), iddatainizio integer, iddatafine integer, assegnazioneapp varchar(4), app_assegnabili text, num_persone integer, cat_persone text, idprenota_compagna text, tariffa text, tariffesettimanali text, incompatibilita text, sconto float8, tariffa_tot float8, caparra float8, commissioni float8, tasseperc float4, pagato float8, metodo_pagamento text, codice varchar(10), origine varchar(70), commento text, conferma varchar(4), checkin $DATETIME, checkout $DATETIME, id_anni_prec text, datainserimento $DATETIME, hostinserimento varchar(50), data_modifica $DATETIME, utente_inserimento integer) ");
+esegui_query("insert into $tableprenota select idprenota,idclienti,idappartamenti,iddatainizio,iddatafine,assegnazioneapp,app_assegnabili,num_persone,cat_persone,idprenota_compagna,tariffa,tariffesettimanali,incompatibilita,sconto,tariffa_tot,caparra,commissioni,tasseperc,pagato,metodo_pagamento,codice,origine,commento,conferma,checkin,checkout,id_anni_prec,datainserimento,hostinserimento,data_modifica,utente_inserimento from $tableprenota_temp ");
+esegui_query("drop table $tableprenota_temp ");
+} # fine for $num1
+} # fine if ($versione_corrente < "3.00")*/
+
 
 
 
@@ -2810,6 +2863,7 @@ fclose($file_lock_update);
 } # fine if ($file_lock_update)
 else echo mex("Non ho i permessi di scrittura sulla cartella dati",'inizio.php').".<br>";
 @unlink(C_DATI_PATH."/update.lock");
+if (function_exists('opcache_reset')) opcache_reset();
 
 } # fine function aggiorna_versione_phpr
 

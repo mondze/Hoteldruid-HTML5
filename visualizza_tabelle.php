@@ -1636,12 +1636,12 @@ if ($colonna_docsalvati) {
 $documenti_salvati = "";
 if (@is_array($contratti_prenota[$numero])) {
 reset($contratti_prenota[$numero]);
-foreach ($contratti_prenota as $num_contr => $arr_num_doc) {
+foreach ($contratti_prenota[$numero] as $num_contr => $arr_num_doc) {
 $contr_doc_num = $arr_num_doc;
 foreach ($contr_doc_num as $num_doc => $file_doc) {
 $documenti_salvati .= "<a href=\"./visualizza_contratto.php?id_sessione=$id_sessione&amp;anno=$anno&amp;id_transazione=tabdoc&amp;numero_contratto=$num_contr&amp;contr_corr=$file_doc\">".$nomi_contratti['salv'][$num_contr]." $num_doc</a>, ";
 } # fine foreach ($contr_doc_num as $num_doc => $file_doc)
-} # fine foreach ($contratti_prenota as $num_contr => $arr_num_doc)
+} # fine foreach ($contratti_prenota[$numero] as $num_contr => $arr_num_doc)
 $documenti_salvati = substr($documenti_salvati,0,-2);
 } # fine if (@is_array($contratti_prenota[$numero]))
 if (!$documenti_salvati) $documenti_salvati = "&nbsp;";

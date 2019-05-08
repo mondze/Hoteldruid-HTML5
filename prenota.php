@@ -627,8 +627,9 @@ $vett_idfine[$n_t] = explode(",",$vett_idfine_u);
 
 else {
 # Tento di spezzare la prenotazione solo se ne è stata richiesta una sola. Quindi
-# n_tronchi = num_app_richiesti se num_app_richiesti != 1 e se, dopo questo else,
-# num_app_richiesti = 1 e n_tronchi != 1 allora la prenotazione è stata spezzata.
+# n_tronchi = num_app_richiesti se num_app_richiesti != 1 o $num_tipologie != 1 Se,
+# dopo questo else, num_app_richiesti = 1, $num_tipologie = 1 e n_tronchi != 1 allora
+# la prenotazione è stata spezzata.
 
 ${"assegnazioneapp".$n_t} = "v";
 ${"lista_app".$n_t} = "";
@@ -653,6 +654,9 @@ unset($app_assegnabili_id);
 unset($prenota_in_app_sett);
 unset($dati_app);
 unset($profondita);
+unset($vet_appartamenti);
+unset($vett_idinizio);
+unset($vett_idfine);
 $limiti_var['n_ini'] = $inizioperiodo;
 $limiti_var['n_fine'] = $fineperiodo;
 $profondita['iniziale'] = "";
@@ -677,6 +681,17 @@ if ($n_tronchi != -1) {
 $risul_agg = aggiorna_tableprenota($app_prenota_id,$app_orig_prenota_id,$tableprenota);
 if (!$risul_agg) $n_tronchi = -1;
 } # fine if ($n_tronchi != -1)
+
+if ($n_tronchi == 1) {
+${"n_tronchi".$n_t} = 1;
+$appartamento = $vet_appartamenti[1];
+unset($vet_appartamenti);
+unset($vett_idinizio);
+unset($vett_idfine);
+$vet_appartamenti[$n_t][1] = $appartamento;
+$vett_idinizio[$n_t][1] = $inizioperiodo;
+$vett_idfine[$n_t][1] = $fineperiodo;
+} # fine if ($n_tronchi == 1)
 
 if ($n_tronchi != 1) {
 $torna_invece_di_ok = "SI";
@@ -730,6 +745,9 @@ unset($app_assegnabili_id);
 unset($prenota_in_app_sett);
 unset($dati_app);
 unset($profondita);
+unset($vet_appartamenti);
+unset($vett_idinizio);
+unset($vett_idfine);
 $limiti_var['n_ini'] = $inizioperiodo;
 $limiti_var['n_fine'] = $fineperiodo;
 $profondita['iniziale'] = "";
@@ -1838,10 +1856,25 @@ include("./includes/funzioni_costi_agg.php");
 $dati_tariffe = dati_tariffe($tablenometariffe);
 $dati_ca = dati_costi_agg_ntariffe($tablenometariffe,"NO","SI");
 
+if ($priv_ins_num_persone == "s") {
+$num_categorie_persone = 1;
+/*$num_categorie_persone = esegui_query("select valpersonalizza_num from $tablepersonalizza where idpersonalizza = 'num_categorie_persone' and idutente = '1' ");
+$num_categorie_persone = risul_query($num_categorie_persone,0,'valpersonalizza_num');
+if ($num_categorie_persone > 1) {
+$nomi_categorie_persone = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_".aggslashdb($lingua_mex)."' and idutente = '1'");
+if (!numlin_query($nomi_categorie_persone)) {
+$nomi_categorie_persone = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_en' and idutente = '1'");
+if (!numlin_query($nomi_categorie_persone)) $nomi_categorie_persone = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'nomi_cat_pers_ita' and idutente = '1'");
+} # fine if if (!numlin_query($nomi_categorie_persone))
+$nomi_categorie_persone = explode("#@%",risul_query($nomi_categorie_persone,0,'valpersonalizza'));
+for ($num1 = 0 ; $num1 < $num_categorie_persone ; $num1++) $nomi_categorie_persone[$num1] = substr(strstr($nomi_categorie_persone[$num1],"#@?"),3);
+} # fine if ($num_categorie_persone > 1)*/
+} # fine if ($priv_ins_num_persone == "s")
+
 if ($priv_ins_checkin == "s") {
 $attiva_checkin = esegui_query("select valpersonalizza from $tablepersonalizza where idpersonalizza = 'attiva_checkin' and idutente = '$id_utente'");
 $attiva_checkin = risul_query($attiva_checkin,0,'valpersonalizza');
-} # fine ($priv_ins_checkin == "s")
+} # fine if ($priv_ins_checkin == "s")
 else $attiva_checkin = "";
 
 if ($priv_ins_assegnazione_app == "s") {
@@ -2010,8 +2043,9 @@ echo " <select name=\"tipo_val_sconto$n_t\" id=\"tvsc$n_t\">
 } # fine if ($priv_ins_sconto == "s")
 echo "</tr><tr><td>";
 if ($priv_ins_num_persone == "s") {
-echo " ".mex("nº di persone",$pag).":
-<input type=\"text\" name=\"numpersone$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"numpersone".$n_t}."\">";
+if ($num_categorie_persone > 1) echo " ".ucfirst($nomi_categorie_persone[0]);
+else echo " ".mex("nº di persone",$pag);
+echo ": <input type=\"text\" name=\"numpersone$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"numpersone".$n_t}."\">";
 $punto = ".";
 } # fine if ($priv_ins_num_persone == "s")
 if ($priv_ins_caparra == "s") {
@@ -2025,7 +2059,16 @@ echo ";</td><td style=\"width: 30px;\"></td><td>".mex("caparra",$pag).": <input 
 <option value=\"tar\"$sel_tar>".mex("% della tariffa",$pag)."</option>
 </select> (".mex("se diversa dalla normale",$pag).")";
 } # fine if ($priv_ins_caparra == "s")
-echo "$punto</td></tr></table></div>";
+echo "$punto</td></tr></table>";
+/*if ($num_categorie_persone > 1 and $priv_ins_num_persone == "s") {
+echo "<table id=\"cat_p\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr><td>";
+for ($num1 = 1 ; $num1 < $num_categorie_persone ; $num1++) {
+echo ucfirst($nomi_categorie_persone[$num1]).": <input type=\"text\" name=\"cat$num1"."_numpers$n_t\" size=\"2\" maxlength=\"2\" value =\"".${"cat$num1"."_numpers$n_t"}."\">";
+if ($num1 != ($num_categorie_persone - 1)) echo ";</td><td style=\"width: 20px;\"></td><td>";
+} # for $num1
+echo ".</td></tr></table>";
+} # fine if ($num_categorie_persone > 1 and $priv_ins_num_persone == "s")*/
+echo "</div>";
 
 if ($priv_ins_assegnazione_app == "s") {
 echo "<br><div class=\"linhbox\">".mex("Metodo per l'assegnazione dell'appartamento",'unit.php').":<br>

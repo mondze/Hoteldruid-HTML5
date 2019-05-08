@@ -15,6 +15,10 @@ table.t1 a, table.me1 a, table.usrs a { display: inline-block; padding-top: 3px;
 
 hr.pos { width: 300px; }
 
+.dbutton { width: 22px; background-size: cover; }
+.calbutton { font-size: 14px; padding: 0 8px 0 8px; }
+.datepick table table tr td { font-size: 14px; }
+
 
 
 @media only screen and (max-width: 480px) {
@@ -42,6 +46,7 @@ table.m1 tr td { padding: 0; height: 12px; }
 .pren table { padding: 0; }
 hr.pos { width: 70px; }
 .buttonbar td { float: left; padding-bottom: 4px; padding-right: 8px; }
+.buttonbar table td { float: none; }
 
 }
 

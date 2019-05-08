@@ -1,9 +1,9 @@
 <?php
 
-$lista_parentele = "";
-$cod_parentele = "";
-$cod2_parentele = "";
-$cod3_parentele = "";
+$lista_parentele = array();
+$cod_parentele = array();
+$cod2_parentele = array();
+$cod3_parentele = array();
 
 #$lista_parentele[0] = "Marido/Mujer";
 #$cod_parentele[0] = "001";

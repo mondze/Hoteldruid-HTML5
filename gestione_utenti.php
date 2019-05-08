@@ -623,6 +623,14 @@ $pers_importate = "SI";
 } # fine if ($tipo_importa == "pers" or $tipo_importa == "priv_pers" or $tipo_importa == "pers_grup" or $tipo_importa == "pers_grup")
 
 if ($tipo_importa == "priv" or $tipo_importa == "priv_pers" or $tipo_importa == "priv_grup" or $tipo_importa == "priv_pers_grup") {
+$priv = esegui_query("select anno from $tableprivilegi where idutente = '$id_utente_importa' and anno != '1' ");
+$num_priv = numlin_query($priv);
+for ($num1 = 0 ; $num1 < $num_priv ; $num1++) {
+$disattiva_anno = aggslashdb(risul_query($priv,$num1,'anno'));
+if (@is_file(C_DATI_PATH."/selectperiodi$disattiva_anno.$id_utente_importa.php")) unlink(C_DATI_PATH."/selectperiodi$disattiva_anno.$id_utente_importa.php");
+if (@is_file(C_DATI_PATH."/selperiodimenu$disattiva_anno.$id_utente_importa.php")) unlink(C_DATI_PATH."/selperiodimenu$disattiva_anno.$id_utente_importa.php");
+esegui_query("delete from $tablepersonalizza where idpersonalizza = 'giorno_vedi_ini_sett$disattiva_anno' and idutente = '$id_utente_importa'");
+} # fine for $num1
 esegui_query("delete from $tableprivilegi where idutente = '$id_utente_importa' ");
 $priv = esegui_query("select * from $tableprivilegi where idutente = '$id_utente_esporta' ");
 $num_priv = numlin_query($priv);

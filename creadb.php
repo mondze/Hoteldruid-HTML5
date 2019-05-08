@@ -252,6 +252,7 @@ esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersona
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_righe_tab_doc_salvati','1','100')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_righe_tab_storia_soldi','1','200')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza) values ('stile_data','1','europa')");
+#esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('num_categorie_persone','1','1')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('minuti_durata_sessione','1','90')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('minuti_durata_insprenota','1','10')");
 esegui_query("insert into $tablepersonalizza (idpersonalizza,idutente,valpersonalizza_num) values ('ore_anticipa_periodo_corrente','1','0')");
